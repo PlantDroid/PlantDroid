@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">PlantDroid</string>
+    <string name="title_activity_bottom_navigation">BottomNavigation</string>
+    <string name="title_home">Catalog</string>
+    <string name="title_dashboard">Photo</string>
+    <string name="title_notifications">Map</string>
 </resources>
