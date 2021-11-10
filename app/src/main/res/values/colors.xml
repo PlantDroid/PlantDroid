@@ -9,4 +9,8 @@
     <color name="white">#FFFFFFFF</color>
     <color name="grey_light_1">#bbbbbb</color>
     <color name="green_light_1">#ebf6e8</color>
+    <color name="green_light_2">#cde9c6</color>
+    <color name="green_light_3">#84C872</color>
+    <color name="green_dark_1">#3e792f</color>
+    <color name="green_grey_light_1">#bdc6bb</color>
 </resources>
