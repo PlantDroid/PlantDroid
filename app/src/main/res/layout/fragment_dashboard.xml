@@ -19,4 +19,21 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="76dp"
+        android:layout_height="72dp"
+        tools:layout_editor_absoluteX="52dp"
+        tools:layout_editor_absoluteY="32dp"
+        tools:src="@tools:sample/avatars" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        tools:layout_editor_absoluteX="60dp"
+        tools:layout_editor_absoluteY="115dp" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
