@@ -9,12 +9,14 @@
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tablayout"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:tabSelectedTextColor="@color/green_light_3"
+        app:tabIndicatorColor="@color/green_light_3"
         app:layout_constraintVertical_bias="0.106">
 
     </com.google.android.material.tabs.TabLayout>
@@ -25,8 +27,6 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         app:layout_constraintBottom_toTopOf="parent" />
-
-
 
 
     <LinearLayout
@@ -41,6 +41,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.005">
+
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -50,19 +51,22 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/textInputEditText"
+
+            <EditText
+                android:id="@+id/edittext"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="8dp"
                 android:background="@color/cardview_light_background"
                 android:hint="Search..."
-                android:padding="10dp"
-           android:pointerIcon="arrow"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.0" />
+                android:maxLength="10"
+                android:paddingLeft="15dp"
+                android:singleLine="true"
+                android:drawableLeft="@drawable/ic_baseline_search_24"
+                android:textSize="12sp" />
+
         </androidx.cardview.widget.CardView>
 
     </LinearLayout>

@@ -10,11 +10,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PlantDroid">
         <activity
-            android:name=".DetailPageActivity"
-            android:exported="true">
+            android:name=".DetailCatalogue"
+            android:exported="true" >
+
         </activity>
         <activity
-            android:name=".CameraActivity"
+            android:name=".DetailPageActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,9 +23,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".BottomNavigationActivity"
+            android:name=".CameraActivity"
             android:exported="true">
 
+        </activity>
+        <activity
+            android:name=".BottomNavigationActivity"
+            android:exported="true">
         </activity>
         <provider
             android:name="androidx.core.content.FileProvider"
