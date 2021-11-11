@@ -55,6 +55,11 @@ public class BottomNavigationActivity extends AppCompatActivity {
             transaction = fragmentManager.beginTransaction();
 
             switch (item.getItemId()) {
+                case R.id.navigation_notifications:
+                    transaction.replace(R.id.content,new NotificationsFragment());  //对应的java class
+                    transaction.commit();  //一定不要忘记commit，否则不会显示
+                    return true;
+
                 case R.id.navigation_home:
                     transaction.replace(R.id.content,new HomeFragment());  //对应的java class
                     transaction.commit();  //一定不要忘记commit，否则不会显示
@@ -64,10 +69,6 @@ public class BottomNavigationActivity extends AppCompatActivity {
                     transaction.replace(R.id.content,new DashboardFragment());  //对应的java class
                     transaction.commit();  //一定不要忘记commit，否则不会显示
 
-                    return true;
-                case R.id.navigation_notifications:
-                    transaction.replace(R.id.content,new NotificationsFragment());  //对应的java class
-                    transaction.commit();  //一定不要忘记commit，否则不会显示
                     return true;
             }
             return false;
