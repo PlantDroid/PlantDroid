@@ -1,47 +1,41 @@
 package com.example.plantdroid;
 
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.FileProvider;
-
-
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import java.io.DataOutputStream;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
+
+import com.bumptech.glide.Glide;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Base64;
-import com.bumptech.glide.Glide;
-
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-import java.io.IOException;
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
+import java.util.Base64;
 import java.util.Date;
 import java.util.Objects;
-import util.Base64Util;
+
 import util.FileUtil;
 
 public class CameraActivity extends AppCompatActivity {
@@ -91,24 +85,29 @@ public class CameraActivity extends AppCompatActivity {
         fis.close();
         return res;
     }
+
     /**
      * 图像识别请求
      * <p>
      * //     * @param token       token
      *
      * @param imageBase64 图片Base64
-     //* @param imgUrl      网络图片Url
+     *                    //* @param imgUrl      网络图片Url
      */
-    private void ImageDiscern(String imageBase64) throws Exception{
-        String apiKey  = "ojlt9sSkvTjiugRGANYWXD1JQ035ttwx5oUILTL4rSYVGbzzN2";
+    private void ImageDiscern(String imageBase64) throws Exception {
+        String apiKey = "ojlt9sSkvTjiugRGANYWXD1JQ035ttwx5oUILTL4rSYVGbzzN2";
         JSONObject data = new JSONObject();
         data.put("api_key", apiKey);
-        data.put("image", imageBase64);
+
+        JSONArray images = new JSONArray();
+        images.put(imageBase64);
+        data.put("images", images);
+
         // add modifiers
         JSONArray modifiers = new JSONArray()
                 .put("crops_fast")
                 .put("similar_images");
-        System.out.println("modifiers"+modifiers);
+        System.out.println("modifiers" + modifiers);
         data.put("modifiers", modifiers);
         data.put("plant_language", "en");
 
@@ -121,36 +120,61 @@ public class CameraActivity extends AppCompatActivity {
                 .put("taxonomy")
                 .put("synonyms");
         data.put("plant_details", plantDetails);
-        String response = sendPostRequest("https://api.plant.id/v2/identify", data);
-        System.out.println(response);
+        sendPostRequest("https://api.plant.id/v2/identify", data);
     }
-    public static String sendPostRequest(String urlString, JSONObject data) throws Exception {
 
+    public static void sendPostRequest(String urlString, JSONObject data) throws Exception {
+
+        Thread t;
         URL url = new URL(urlString);
-        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
 
-        con.setDoOutput(true);//允許輸入流，即允許下載
-        con.setDoInput(true);//允許輸出流，即允許上傳
-        con.setUseCaches(false); //設置是否使用緩存
-        con.setRequestMethod("POST");
-        con.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
-        con.setRequestProperty("Accept", "application/json");
-        // con.setConnectTimeout(10000);
-        // con.setReadTimeout(10000);
-        System.out.println("con"+con.toString());
+                    HttpURLConnection con = (HttpURLConnection) url.openConnection();
 
-        OutputStream os = con.getOutputStream();
-        os.write(data.toString().getBytes());
-        os.close();
+                    con.setDoOutput(true);//允許輸入流，即允許下載
+                    con.setDoInput(true);//允許輸出流，即允許上傳
+                    con.setUseCaches(false); //設置是否使用緩存
+                    con.setConnectTimeout(30000);
+                    con.setReadTimeout(30000);
+                    con.setRequestMethod("POST");
+                    con.setRequestProperty("Content-type", "application/x-javascript->json");
+                    con.addRequestProperty("Charset", "UTF-8");
+                    // System.out.println("[Connection] " + con.toString());
+                    con.connect();
+                    // System.out.println("[Connection] " + con.getRequestMethod());
+                    // System.out.println("[Connection] is connected.");
+                    OutputStream os = con.getOutputStream();
+                    os.write(data.toString().getBytes());
+                    os.flush();
+                    os.close();
+                    // System.out.println("[Output Stream] finished.");
+                    System.out.println("[Response code] " + con.getResponseCode());
 
-        InputStream is = con.getInputStream();
-        String response = is.toString();
-
-        System.out.println("Response code : " + con.getResponseCode());
-        System.out.println("Response : " + response);
-        con.disconnect();
-        return response;
+                    // System.out.println("[Connection] " + con.getRequestMethod());
+                    InputStream inputStream = con.getInputStream();
+                    // System.out.println("[Input Stream] get.");
+                    byte[] data = new byte[1024];
+                    StringBuffer sb1 = new StringBuffer();
+                    int length = 0;
+                    while ((length = inputStream.read(data))!=-1){
+                        String s=new String(data, Charset.forName("utf-8"));
+                        sb1.append(s);
+                    }
+                    String response = sb1.toString();
+                    System.out.println("[Response] " + response);
+                    con.disconnect();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        t.start();
+        return;
     }
+
     /**
      * 识别拍照图片
      *
@@ -207,6 +231,7 @@ public class CameraActivity extends AppCompatActivity {
         intent.setType("image/*");
         startActivityForResult(intent, OPEN_ALBUM_CODE);
     }
+
     /**
      * 打开相机
      */
@@ -215,7 +240,7 @@ public class CameraActivity extends AppCompatActivity {
         String filename = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()) + "takephoto" + ".jpg";
         String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath()
                 + "/" + filename;
-       // 创建File对象,获取文件的ContentURI
+        // 创建File对象,获取文件的ContentURI
         outputImage = new File(path);
         Uri imageUri;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -284,13 +309,13 @@ public class CameraActivity extends AppCompatActivity {
     private void localImageDiscern(String imagePath) throws Exception {
         try {
             //String token = getAccessToken();
-            System.out.println("imagePath"+imagePath);
+            System.out.println("imagePath" + imagePath);
             //通过图片路径显示图片
             Glide.with(this).load(imagePath).into(ivPicture);
             //按字节读取文件
             //byte[] imgData = FileUtil.readFileByBytes(imagePath);
             //字节转Base64
-            String imageBase64=base64EncodeFromFile(imagePath);
+            String imageBase64 = base64EncodeFromFile(imagePath);
             //String imageBase64 = Base64Util.encode(imgData);
             //图像识别
             ImageDiscern(imageBase64);
