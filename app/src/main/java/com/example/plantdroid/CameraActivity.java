@@ -1,11 +1,11 @@
 package com.example.plantdroid;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.database.Cursor;
@@ -22,18 +22,25 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Base64;
 import com.bumptech.glide.Glide;
 
 
+import org.json.JSONArray;
 import org.json.JSONObject;
-
-import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
-
-//import network.ApiService;
 import util.Base64Util;
 import util.FileUtil;
 
@@ -72,42 +79,78 @@ public class CameraActivity extends AppCompatActivity {
     }
 
 
+    private static String base64EncodeFromFile(String fileString) throws Exception {
+        File file = new File(fileString);
+
+        FileInputStream fis = new FileInputStream(file);
+
+        String res = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            res = Base64.getEncoder().encodeToString(FileUtil.readFileByBytes(fileString));
+        }
+        fis.close();
+        return res;
+    }
     /**
      * 图像识别请求
      * <p>
      * //     * @param token       token
      *
      * @param imageBase64 图片Base64
-     * @param imgUrl      网络图片Url
+     //* @param imgUrl      网络图片Url
      */
-    private void ImageDiscern(String imageBase64, String imgUrl) {
-        String your_api_key = "fd3slj47dj... -- ask for one: https://web.plant.id/api-access-request/ --";
-        JSONObject object = new JSONObject();
-//        service.getDiscernResult(token, imageBase64, imgUrl).enqueue(new NetCallBack<GetDiscernResultResponse>() {
-//            @Override
-//            public void onSuccess(Call<GetDiscernResultResponse> call, Response<GetDiscernResultResponse> response) {
-//                if(response.body() == null){
-//                    showMsg("未获得相应的识别结果");
-//                    return;
-//                }
-//                List<GetDiscernResultResponse.ResultBean> result = response.body().getResult();
-//                if (result != null && result.size() > 0) {
-//                    //显示识别结果
-//                    showDiscernResult(result);
-//                } else {
-//                    pbLoading.setVisibility(View.GONE);
-//                    showMsg("未获得相应的识别结果");
-//                }
-//            }
-//
-//            @Override
-//            public void onFailed(String errorStr) {
-//                pbLoading.setVisibility(View.GONE);
-//                Log.e(TAG, "图像识别失败，失败原因：" + errorStr);
-//            }
-//        });
-    }
+    private void ImageDiscern(String imageBase64) throws Exception{
+        String apiKey  = "ojlt9sSkvTjiugRGANYWXD1JQ035ttwx5oUILTL4rSYVGbzzN2";
+        JSONObject data = new JSONObject();
+        data.put("api_key", apiKey);
+        data.put("image", imageBase64);
+        // add modifiers
+        JSONArray modifiers = new JSONArray()
+                .put("crops_fast")
+                .put("similar_images");
+        System.out.println("modifiers"+modifiers);
+        data.put("modifiers", modifiers);
+        data.put("plant_language", "en");
 
+        // add details
+        JSONArray plantDetails = new JSONArray()
+                .put("common_names")
+                .put("url")
+                .put("name_authority")
+                .put("wiki_description")
+                .put("taxonomy")
+                .put("synonyms");
+        data.put("plant_details", plantDetails);
+        String response = sendPostRequest("https://api.plant.id/v2/identify", data);
+        System.out.println(response);
+    }
+    public static String sendPostRequest(String urlString, JSONObject data) throws Exception {
+
+        URL url = new URL(urlString);
+        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+
+        con.setDoOutput(true);//允許輸入流，即允許下載
+        con.setDoInput(true);//允許輸出流，即允許上傳
+        con.setUseCaches(false); //設置是否使用緩存
+        con.setRequestMethod("POST");
+        con.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
+        con.setRequestProperty("Accept", "application/json");
+        // con.setConnectTimeout(10000);
+        // con.setReadTimeout(10000);
+        System.out.println("con"+con.toString());
+
+        OutputStream os = con.getOutputStream();
+        os.write(data.toString().getBytes());
+        os.close();
+
+        InputStream is = con.getInputStream();
+        String response = is.toString();
+
+        System.out.println("Response code : " + con.getResponseCode());
+        System.out.println("Response : " + response);
+        con.disconnect();
+        return response;
+    }
     /**
      * 识别拍照图片
      *
@@ -164,7 +207,6 @@ public class CameraActivity extends AppCompatActivity {
         intent.setType("image/*");
         startActivityForResult(intent, OPEN_ALBUM_CODE);
     }
-
     /**
      * 打开相机
      */
@@ -173,7 +215,7 @@ public class CameraActivity extends AppCompatActivity {
         String filename = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()) + "takephoto" + ".jpg";
         String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath()
                 + "/" + filename;
-        //创建File对象,获取文件的ContentURI
+       // 创建File对象,获取文件的ContentURI
         outputImage = new File(path);
         Uri imageUri;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -213,16 +255,22 @@ public class CameraActivity extends AppCompatActivity {
                 String imagePath = cursor.getString(columnIndex);
                 cursor.close();
                 //识别
-                localImageDiscern(imagePath);
+                try {
+                    localImageDiscern(imagePath);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
             } else if (requestCode == TAKE_PHOTO_CODE) {
                 Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show();
-//                    Bitmap bp = (Bitmap) data.getExtras().get("data");
-//                    imgFavorite.setImageBitmap(bp);
                 //拍照返回
                 String imagePath = outputImage.getAbsolutePath();
                 //识别
-                localImageDiscern(imagePath);
+                try {
+                    localImageDiscern(imagePath);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         } else {
             showMsg("没有上传图片呦");
@@ -232,18 +280,20 @@ public class CameraActivity extends AppCompatActivity {
     /**
      * 本地图片识别
      */
-    private void localImageDiscern(String imagePath) {
+
+    private void localImageDiscern(String imagePath) throws Exception {
         try {
             //String token = getAccessToken();
+            System.out.println("imagePath"+imagePath);
             //通过图片路径显示图片
             Glide.with(this).load(imagePath).into(ivPicture);
             //按字节读取文件
-            byte[] imgData = FileUtil.readFileByBytes(imagePath);
+            //byte[] imgData = FileUtil.readFileByBytes(imagePath);
             //字节转Base64
-            String imageBase64 = Base64Util.encode(imgData);
-            System.out.println(imageBase64);
+            String imageBase64=base64EncodeFromFile(imagePath);
+            //String imageBase64 = Base64Util.encode(imgData);
             //图像识别
-            ImageDiscern(imageBase64, null);
+            ImageDiscern(imageBase64);
         } catch (IOException e) {
             e.printStackTrace();
         }
