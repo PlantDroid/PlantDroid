@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.example.plantdroid.R;
 import com.example.plantdroid.databinding.FragmentItemBinding;
 
 import java.util.List;
@@ -38,7 +40,11 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mIdView.setText(plant_name[position]);
-        holder.mContentView.setImageDrawable(Drawable.createFromPath(plant_picture_url[position]));
+//        holder.mContentView.setImageDrawable(Drawable.createFromPath(plant_picture_url[position]));
+        holder.mContentView.setImageResource(R.drawable.eustoma_grandiflorum);
+//        Glide.with(holder.mContentView)
+//                .load(plant_picture_url[position])
+//                .into(holder.mContentView);
     }
 
     @Override

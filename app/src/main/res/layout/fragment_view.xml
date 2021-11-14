@@ -7,9 +7,11 @@
     <TextView
         android:id="@+id/textView"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="320dp"
         android:layout_marginTop="200dp"
         android:layout_weight="1"
+        android:background="@drawable/ic_baseline_location_on_18"
         android:paddingTop="30dp"
-        android:text="mad" />
+        android:text="mad"
+        android:visibility="visible" />
 </LinearLayout>

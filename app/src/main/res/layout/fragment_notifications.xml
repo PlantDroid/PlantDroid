@@ -26,9 +26,6 @@
         android:layout_weight="1"
         app:layout_constraintBottom_toTopOf="parent" />
 
-
-
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -57,7 +54,7 @@
                 android:background="@color/cardview_light_background"
                 android:hint="Search..."
                 android:padding="10dp"
-           android:pointerIcon="arrow"
+                android:pointerIcon="arrow"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

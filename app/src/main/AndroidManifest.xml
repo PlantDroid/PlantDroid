@@ -12,15 +12,15 @@
         <activity
             android:name=".DetailCatalogue"
             android:exported="true" >
-
-        </activity>
-        <activity
-            android:name=".DetailPageActivity"
-            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".DetailPageActivity"
+            android:exported="true">
+
         </activity>
         <activity
             android:name=".CameraActivity"
@@ -30,6 +30,7 @@
         <activity
             android:name=".BottomNavigationActivity"
             android:exported="true">
+
         </activity>
         <provider
             android:name="androidx.core.content.FileProvider"
