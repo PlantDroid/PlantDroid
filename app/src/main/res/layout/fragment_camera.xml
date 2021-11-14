@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context=".CameraActivity">
+    tools:context=".ui.camera.CameraFragment">
+
+    <!-- TODO: Update blank fragment layout -->
 
     <ImageView
-        android:id="@+id/iv_picture"
+        android:id="@+id/preImgView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginTop="100dp"
         android:scaleType="centerCrop" />
 
     <LinearLayout
@@ -20,16 +22,17 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:gravity="center">
+
         <Button
+            android:id="@+id/albumBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="IdentifyAlbumPictures"
             android:text="识别相册图片" />
 
         <Button
+            android:id="@+id/cameraBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="IdentifyTakePhotoImage"
             android:text="识别拍照图片" />
     </LinearLayout>
 
@@ -39,5 +42,4 @@
         android:layout_centerInParent="true"
         android:layout_width="60dp"
         android:layout_height="60dp"/>
-
-</RelativeLayout>
+</FrameLayout>
