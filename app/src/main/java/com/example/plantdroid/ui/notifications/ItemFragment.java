@@ -9,11 +9,13 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.OrientationHelper;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.example.plantdroid.R;
 
@@ -28,8 +30,8 @@ public class ItemFragment extends Fragment {
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
     private int mColumnCount = 1;
-    private String[] name = {"eustoma", "eustoma_grandiflorum", "grandiflorum", "eustoma_grandiflorum", "eustoma_grandiflorum"};
-    private String[] picture_url = {"https://tse1-mm.cn.bing.net/th/id/R-C.49705e2909f66cc8a21e8a657819975c?rik=O%2f0XI5s%2f87PnNg&riu=http%3a%2f%2fimage.huahuibk.com%2fuploads%2f20190119%2f16%2f1547885202-IOApmoKPfT.jpeg&ehk=yjJ2CzidOQrrnV6pgiNxo6EKxS9PnJBfkFNgO6pv%2f1I%3d&risl=&pid=ImgRaw&r=0", "https://tse1-mm.cn.bing.net/th/id/R-C.49705e2909f66cc8a21e8a657819975c?rik=O%2f0XI5s%2f87PnNg&riu=http%3a%2f%2fimage.huahuibk.com%2fuploads%2f20190119%2f16%2f1547885202-IOApmoKPfT.jpeg&ehk=yjJ2CzidOQrrnV6pgiNxo6EKxS9PnJBfkFNgO6pv%2f1I%3d&risl=&pid=ImgRaw&r=0", "https://tse1-mm.cn.bing.net/th/id/R-C.49705e2909f66cc8a21e8a657819975c?rik=O%2f0XI5s%2f87PnNg&riu=http%3a%2f%2fimage.huahuibk.com%2fuploads%2f20190119%2f16%2f1547885202-IOApmoKPfT.jpeg&ehk=yjJ2CzidOQrrnV6pgiNxo6EKxS9PnJBfkFNgO6pv%2f1I%3d&risl=&pid=ImgRaw&r=0", "https://tse1-mm.cn.bing.net/th/id/R-C.49705e2909f66cc8a21e8a657819975c?rik=O%2f0XI5s%2f87PnNg&riu=http%3a%2f%2fimage.huahuibk.com%2fuploads%2f20190119%2f16%2f1547885202-IOApmoKPfT.jpeg&ehk=yjJ2CzidOQrrnV6pgiNxo6EKxS9PnJBfkFNgO6pv%2f1I%3d&risl=&pid=ImgRaw&r=0", "https://tse1-mm.cn.bing.net/th/id/R-C.49705e2909f66cc8a21e8a657819975c?rik=O%2f0XI5s%2f87PnNg&riu=http%3a%2f%2fimage.huahuibk.com%2fuploads%2f20190119%2f16%2f1547885202-IOApmoKPfT.jpeg&ehk=yjJ2CzidOQrrnV6pgiNxo6EKxS9PnJBfkFNgO6pv%2f1I%3d&risl=&pid=ImgRaw&r=0"};
+    private String[] name = {"eustoma", "eustoma_grandiflorum", "grandiflorum", "eustoma_grandiflorum", "eustoma_grandiflorum","eustoma", "eustoma_grandiflorum", "grandiflorum", "eustoma_grandiflorum", "eustoma_grandiflorum","eustoma", "eustoma_grandiflorum", "grandiflorum", "eustoma_grandiflorum", "eustoma_grandiflorum","eustoma", "eustoma_grandiflorum", "grandiflorum", "eustoma_grandiflorum", "eustoma_grandiflorum","eustoma", "eustoma_grandiflorum", "grandiflorum", "eustoma_grandiflorum", "eustoma_grandiflorum"};
+    private String[] picture_url = {"eustoma", "eustoma_grandiflorum", "grandiflorum", "eustoma_grandiflorum", "eustoma_grandiflorum","eustoma", "eustoma_grandiflorum", "grandiflorum", "eustoma_grandiflorum", "eustoma_grandiflorum","eustoma", "eustoma_grandiflorum", "grandiflorum", "eustoma_grandiflorum", "eustoma_grandiflorum","eustoma", "eustoma_grandiflorum", "grandiflorum", "eustoma_grandiflorum", "eustoma_grandiflorum","eustoma", "eustoma_grandiflorum", "grandiflorum", "eustoma_grandiflorum", "eustoma_grandiflorum"};
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -66,8 +68,7 @@ public class ItemFragment extends Fragment {
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
             RecyclerView recyclerView = (RecyclerView) view;
-            LinearLayoutManager layoutManager;
-            layoutManager = new GridLayoutManager(context, (int) Math.ceil((float)name.length/3), GridLayoutManager.HORIZONTAL, false);
+            StaggeredGridLayoutManager layoutManager=new StaggeredGridLayoutManager(3,StaggeredGridLayoutManager.VERTICAL);
             recyclerView.setLayoutManager(layoutManager);
             recyclerView.setAdapter(new MyItemRecyclerViewAdapter(name, picture_url));
         }

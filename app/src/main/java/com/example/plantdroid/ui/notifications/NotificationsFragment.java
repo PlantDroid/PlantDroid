@@ -44,21 +44,13 @@ public class NotificationsFragment extends Fragment {
         mTabLayout = (TabLayout) root.findViewById(R.id.tablayout);
         mViewPager = (ViewPager) root.findViewById(R.id.viewpager);
         fragments = new ArrayList<>();
-//        for (int i = 0; i < mTitles.length; i++) {
-//            Fragment fragment=MainFragment.newInstance(mTitles[i]);
-//            fragments.add(fragment);
-//        }
-        Fragment Tab1Fragment=MainFragment.newInstance(mTitles[0]);
-        Fragment Tab2Fragment=MainFragment.newInstance(mTitles[1]);
-
-        fragments.add(Tab1Fragment);
-        fragments.add(new BlankFragment());
-//        fragments.add(new Tab3Fragment());
-
+        for (int i = 0; i < mTitles.length; i++) {
+            Fragment fragment=MainFragment.newInstance(mTitles[i]);
+            fragments.add(fragment);
+        }
         ViewPagerAdapter adapter = new ViewPagerAdapter(getFragmentManager(), fragments, mTitles);
         mViewPager.setAdapter(adapter);
         mTabLayout.setupWithViewPager(mViewPager);
-        Log.e(TAG, "onCreateView: get it!");
         return root;
     }
 

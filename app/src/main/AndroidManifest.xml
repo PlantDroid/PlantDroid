@@ -20,25 +20,23 @@
         <activity
             android:name=".DetailCatalogue"
             android:exported="true" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".DetailPageActivity"
             android:exported="true">
-
         </activity>
         <activity
             android:name=".CameraActivity"
             android:exported="true">
-=
+
         </activity>
         <activity
             android:name=".BottomNavigationActivity"
             android:exported="true">
-
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <provider
             android:name="androidx.core.content.FileProvider"

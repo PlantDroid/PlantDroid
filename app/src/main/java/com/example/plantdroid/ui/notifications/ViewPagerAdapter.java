@@ -19,22 +19,11 @@ class ViewPagerAdapter extends FragmentStatePagerAdapter {
     }
 
     @Override
-//    public MainFragment getItem(int position) {
-//        return (MainFragment) mFragments.get(position);
-//    }
-//    public Fragment getItem(int position) {
-//        return mFragments.get(position);
-//    }
-        public Fragment getItem(int position) {
-        switch(position) {
-            case 0:
-                return new BlankFragment();
-            case 1:
-                return new BlankFragment();
-            default:
-                throw new IllegalArgumentException();
-        }
+    public MainFragment getItem(int position) {
+        return (MainFragment) mFragments.get(position);
     }
+
+
 
     @Override
     public int getCount() {

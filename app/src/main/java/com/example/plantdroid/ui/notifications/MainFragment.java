@@ -36,31 +36,29 @@ public class MainFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_view, container, false);
-        mTextView = view.findViewById(R.id.textView);
-        mTextView.setText((CharSequence) getArguments().get("title"));
         Log.e(TAG, "onCreateView: !!!!" );
-        view.setBackground(new Drawable() {
-            @Override
-            public void draw(@NonNull Canvas canvas) {
-                canvas.drawColor(Color.BLACK);
-            }
-
-            @Override
-            public void setAlpha(int i) {
-
-            }
-
-            @Override
-            public void setColorFilter(@Nullable ColorFilter colorFilter) {
-
-            }
-
-            @SuppressLint("WrongConstant")
-            @Override
-            public int getOpacity() {
-                return 0;
-            }
-        });
+//        view.setBackground(new Drawable() {
+//            @Override
+//            public void draw(@NonNull Canvas canvas) {
+//                canvas.drawColor(Color.BLACK);
+//            }
+//
+//            @Override
+//            public void setAlpha(int i) {
+//
+//            }
+//
+//            @Override
+//            public void setColorFilter(@Nullable ColorFilter colorFilter) {
+//
+//            }
+//
+//            @SuppressLint("WrongConstant")
+//            @Override
+//            public int getOpacity() {
+//                return 0;
+//            }
+//        });
         return view;
     }
 }
