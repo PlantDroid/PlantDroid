@@ -16,20 +16,20 @@ public class PlantDroidViewModel extends AndroidViewModel {
         plantDroidRepository = new PlantDroidRepository(application);
     }
 
-    LiveData<List<Plant>> getAllPlantsLive(){
+    public LiveData<List<Plant>> getAllPlantsLive(){
         return plantDroidRepository.getAllPlantList();
     }
 
-    void insertPlants(Plant... plants){
+    public void insertPlants(Plant... plants){
         plantDroidRepository.insertPlants(plants);
     }
-    void updatePlants(Plant... plants){
+    public void updatePlants(Plant... plants){
         plantDroidRepository.updatePlants(plants);
     }
-    void deletePlants(Plant... plants){
+    public void deletePlants(Plant... plants){
         plantDroidRepository.deletePlants(plants);
     }
-    void deleteAllPlants(){
+    public void deleteAllPlants(){
         plantDroidRepository.deleteAllPlants();
     }
 
