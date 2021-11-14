@@ -5,7 +5,7 @@
     android:id="@+id/list"
     android:name="com.example.plantdroid.ui.notifications.ItemFragment"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:layout_marginLeft="32dp"
     android:layout_marginRight="32dp"
     android:layout_marginTop="15dp"
