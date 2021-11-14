@@ -1,13 +1,15 @@
 package com.example.plantdroid.ui.camera;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.TransitionDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
@@ -17,14 +19,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.annotation.GlideModule;
-import com.bumptech.glide.module.AppGlideModule;
 
+import com.bumptech.glide.load.engine.Resource;
 import com.example.plantdroid.R;
 
 import org.json.JSONArray;
@@ -87,16 +89,21 @@ public class CameraFragment extends Fragment {
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        Button cameraBtn = getActivity().findViewById(R.id.cameraBtn);
+        ImageButton cameraBtn = getActivity().findViewById(R.id.cameraBtn);
         cameraBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 turnOnCamera();
             }
         });
-        Button albumBtn = getActivity().findViewById(R.id.albumBtn);
+        ImageButton albumBtn = getActivity().findViewById(R.id.albumBtn);
         albumBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -106,6 +113,7 @@ public class CameraFragment extends Fragment {
 
         ivPicture = getActivity().findViewById(R.id.preImgView);
         pbLoading = getActivity().findViewById(R.id.loadingPB);
+
     }
 
     /**
@@ -131,11 +139,6 @@ public class CameraFragment extends Fragment {
     //private ApiService service;
     ImageView imgFavorite;
     private File outputImage;
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
 
 
     private static String base64EncodeFromFile(String fileString) throws Exception {

@@ -73,7 +73,6 @@ public class CameraActivity extends AppCompatActivity {
         setContentView(R.layout.activity_camera);
 
         ivPicture = findViewById(R.id.iv_picture);
-        pbLoading = findViewById(R.id.pb_loading);
 
         rxPermissions = new RxPermissions(this);
     }
