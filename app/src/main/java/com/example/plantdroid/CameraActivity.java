@@ -1,8 +1,10 @@
 package com.example.plantdroid;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,7 +21,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
 import com.bumptech.glide.Glide;
-
+//import com.yalantis.ucrop.UCrop;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -36,6 +39,7 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.Objects;
 
+import kotlin.jvm.internal.Intrinsics;
 import util.FileUtil;
 
 public class CameraActivity extends AppCompatActivity {
@@ -57,9 +61,9 @@ public class CameraActivity extends AppCompatActivity {
     private ImageView ivPicture;
 
     /**
-     * Api服务
+     * 动态权限管理
      */
-    //private ApiService service;
+    private RxPermissions rxPermissions;
     ImageView imgFavorite;
     private File outputImage;
 
@@ -70,7 +74,10 @@ public class CameraActivity extends AppCompatActivity {
 
         ivPicture = findViewById(R.id.iv_picture);
         pbLoading = findViewById(R.id.pb_loading);
+
+        rxPermissions = new RxPermissions(this);
     }
+
 
 
     private static String base64EncodeFromFile(String fileString) throws Exception {
@@ -182,20 +189,20 @@ public class CameraActivity extends AppCompatActivity {
      */
     @SuppressLint("CheckResult")
     public void IdentifyTakePhotoImage(View view) {
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//            rxPermissions.request(
-//                    Manifest.permission.CAMERA)
-//                    .subscribe(grant -> {
-//                        if (grant) {
-//                            //获得权限
-//                            turnOnCamera();
-//                        } else {
-//                            showMsg("未获取到权限");
-//                        }
-//                    });
-//        } else {
+       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+           rxPermissions
+                   .request(Manifest.permission.CAMERA)
+                   .subscribe(granted -> {
+                       if (granted) {
+                           //获得权限
+                           turnOnCamera();
+                       } else {
+                           showMsg("未获取到权限");
+                       }
+                   });
+       } else {
         turnOnCamera();
-        //}
+        }
     }
 
     /**
@@ -205,21 +212,22 @@ public class CameraActivity extends AppCompatActivity {
      */
     @SuppressLint("CheckResult")
     public void IdentifyAlbumPictures(View view) {
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//            rxPermissions.request(
-//                    Manifest.permission.READ_EXTERNAL_STORAGE,
-//                    Manifest.permission.WRITE_EXTERNAL_STORAGE)
-//                    .subscribe(grant -> {
-//                        if (grant) {
-//                            //获得权限
-//                            openAlbum();
-//                        } else {
-//                            showMsg("未获取到权限");
-//                        }
-//                    });
-//        } else {
+       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+           rxPermissions
+                   .request(
+                   Manifest.permission.READ_EXTERNAL_STORAGE,
+                   Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                   .subscribe(granted -> {
+                       if (granted) {
+                           //获得权限
+                           openAlbum();
+                       } else {
+                           showMsg("未获取到权限");
+                       }
+                   });
+       } else {
         openAlbum();
-        //}
+        }
     }
 
     /**
@@ -270,6 +278,7 @@ public class CameraActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK) {
             pbLoading.setVisibility(View.VISIBLE);
             if (requestCode == OPEN_ALBUM_CODE) {
+
                 //打开相册返回
                 String[] filePathColumns = {MediaStore.Images.Media.DATA};
                 final Uri imageUri = Objects.requireNonNull(data).getData();
@@ -301,6 +310,7 @@ public class CameraActivity extends AppCompatActivity {
             showMsg("没有上传图片呦");
         }
     }
+
 
     /**
      * 本地图片识别
