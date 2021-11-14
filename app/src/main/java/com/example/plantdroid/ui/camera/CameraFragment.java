@@ -16,7 +16,7 @@ import androidx.fragment.app.Fragment;
 
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,12 +26,10 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.annotation.GlideModule;
-import com.bumptech.glide.module.AppGlideModule;
 
 import com.example.plantdroid.R;
 import com.tbruyelle.rxpermissions2.RxPermissions;
-import com.tbruyelle.rxpermissions2.RxPermissionsFragment;
+
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -48,7 +46,7 @@ import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.Date;
 import java.util.Objects;
-
+import com.yalantis.ucrop.UCrop;
 import util.FileUtil;
 
 /**
@@ -312,6 +310,7 @@ public class CameraFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == getActivity().RESULT_OK) {
             System.out.println("RESULT_OK");
+            //final Uri resultUri = UCrop.getOutput(data);
             // pbLoading.setVisibility(View.VISIBLE);
             if (requestCode == OPEN_ALBUM_CODE) {
                 //打开相册返回
@@ -362,11 +361,10 @@ public class CameraFragment extends Fragment {
                     e.printStackTrace();
                 }
             }
-        } else {
-            showMsg("没有上传图片呦");
+        }  else {
+            showMsg("没有上传图片呦(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧");
         }
     }
-
     /**
      * 本地图片识别
      */
@@ -390,6 +388,7 @@ public class CameraFragment extends Fragment {
             e.printStackTrace();
         }
     }
+
 
     // @Override
     // public boolean onCreateOptionsMenu(Menu menu) {
