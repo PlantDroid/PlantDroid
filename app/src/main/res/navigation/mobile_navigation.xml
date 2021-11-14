@@ -20,7 +20,7 @@
         android:id="@+id/navigation_dashboard"
         android:name="com.example.plantdroid.ui.dashboard.DashboardFragment"
         android:label="@string/title_catalog"
-        tools:layout="@layout/activity_detail_catalogue" />
+        tools:layout="@layout/fragment_dashboard" />
 
     <fragment
         android:id="@+id/navigation_notifications"
