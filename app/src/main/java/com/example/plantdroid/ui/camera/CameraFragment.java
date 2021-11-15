@@ -86,10 +86,10 @@ public class CameraFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_camera, container, false);
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
+//    @Override
+//    public void onCreate(Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+//    }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
