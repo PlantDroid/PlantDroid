@@ -8,7 +8,7 @@
 
         <com.example.plantdroid.ui.component.CircleImageView
             android:id="@+id/content"
-            android:layout_width="72dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center" />
 

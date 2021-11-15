@@ -50,17 +50,14 @@ public class CircleImageView extends androidx.appcompat.widget.AppCompatImageVie
     protected void onDraw(Canvas canvas) {
 
         mPaint = new Paint();
-
         Drawable drawable = getDrawable();
 
         if (null != drawable) {
             Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
-
             //初始化BitmapShader，传入bitmap对象
             BitmapShader bitmapShader = new BitmapShader(bitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
             //计算缩放比例
             mScale = (mRadius * 2.0f) / Math.min(bitmap.getHeight(), bitmap.getWidth());
-
             Matrix matrix = new Matrix();
             matrix.setScale(mScale, mScale);
             bitmapShader.setLocalMatrix(matrix);
