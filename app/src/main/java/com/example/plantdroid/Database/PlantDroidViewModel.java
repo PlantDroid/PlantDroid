@@ -16,6 +16,10 @@ public class PlantDroidViewModel extends AndroidViewModel {
         plantDroidRepository = new PlantDroidRepository(application);
     }
 
+    public PlantDroidRepository testRp(){
+        return plantDroidRepository;
+    }
+
     public LiveData<List<Plant>> getAllPlantsLive(){
         return plantDroidRepository.getAllPlantList();
     }
@@ -31,6 +35,24 @@ public class PlantDroidViewModel extends AndroidViewModel {
     }
     public void deleteAllPlants(){
         plantDroidRepository.deleteAllPlants();
+    }
+
+
+
+    public LiveData<List<DiscoveredPlant>> getAllDiscoveredPlantsLive(){
+        return plantDroidRepository.getAllDiscoveredPlantList();
+    }
+    public void insertDiscoveredPlants(DiscoveredPlant... discoveredPlants){
+        plantDroidRepository.insertDiscoveredPlants(discoveredPlants);
+    }
+    public void updateDiscoveredPlants(DiscoveredPlant... discoveredPlants){
+        plantDroidRepository.updateDiscoveredPlants(discoveredPlants);
+    }
+    public void deleteDiscoveredPlants(DiscoveredPlant... discoveredPlants){
+        plantDroidRepository.deleteDiscoveredPlants(discoveredPlants);
+    }
+    public void deleteAllDiscoveredPlants(){
+        plantDroidRepository.deleteAllDiscoveredPlants();
     }
 
 
