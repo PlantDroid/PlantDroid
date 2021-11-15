@@ -2,9 +2,11 @@ package com.example.plantdroid.Database;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-@Entity
+@Entity(indices = {@Index("id"),
+        @Index(value = {"plant_name"})})
 public class Plant {
     public Plant(String name, String commonNames, String kingdom, String phylum, String plantClass, String order, String genus, String description, String img, String edibleParts, String propagationMethods, String isOwned) {
         this.name = name;

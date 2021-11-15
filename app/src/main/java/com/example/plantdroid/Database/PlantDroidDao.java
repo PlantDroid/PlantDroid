@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
@@ -12,7 +13,7 @@ import java.util.List;
 @Dao
 public interface PlantDroidDao {
     //operation for table plant
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.ABORT)
     void insertPlants(Plant... plants);
 
     @Update
@@ -26,6 +27,20 @@ public interface PlantDroidDao {
 
     @Query("SELECT * FROM PLANT ORDER BY ID DESC")
     LiveData<List<Plant>> getAllPlantsLive();
+
+    @Query("SELECT * FROM PLANT WHERE id LIKE :id")
+    LiveData<List<Plant>> getPlantById(int id);
+
+    @Query("SELECT * FROM PLANT WHERE plant_name LIKE :name")
+    LiveData<List<Plant>> getPlantByName(String name);
+
+    @Query("SELECT * FROM PLANT WHERE plant_name LIKE :name "
+            + "OR common_names LIKE '%' + :name + '%' ")
+    LiveData<List<Plant>> searchPlantByName(String name);
+
+    @Query("SELECT * FROM PLANT WHERE phylum LIKE :phylum")
+    LiveData<List<Plant>> getPlantListByPhylum(String phylum);
+
 
 
     //operation for table found_list
@@ -42,6 +57,7 @@ public interface PlantDroidDao {
     void deleteAllDiscoveredPlants();
 
     @Query("SELECT * FROM DiscoveredPlant ORDER BY ID DESC")
-    LiveData<List<Plant>> getAllDiscoveredPlantsLive();
+    LiveData<List<DiscoveredPlant>> getAllDiscoveredPlantsLive();
+
 
 }
