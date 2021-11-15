@@ -6,14 +6,18 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
@@ -41,6 +45,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -51,7 +56,11 @@ import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.Date;
 import java.util.Objects;
+
 import com.yalantis.ucrop.UCrop;
+import com.yalantis.ucrop.UCropActivity;
+
+import util.CacheUtil;
 import util.FileUtil;
 
 /**
@@ -163,6 +172,7 @@ public class CameraFragment extends Fragment {
     private RxPermissions rxPermissions;
     ImageView imgFavorite;
     private File outputImage;
+    private File outputImageCut;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -252,8 +262,8 @@ public class CameraFragment extends Fragment {
                     byte[] data = new byte[1024];
                     StringBuffer sb1 = new StringBuffer();
                     int length = 0;
-                    while ((length = inputStream.read(data))!=-1){
-                        String s=new String(data, Charset.forName("utf-8"));
+                    while ((length = inputStream.read(data)) != -1) {
+                        String s = new String(data, Charset.forName("utf-8"));
                         sb1.append(s);
                     }
                     String response = sb1.toString();
@@ -281,24 +291,55 @@ public class CameraFragment extends Fragment {
     /**
      * 打开相机
      */
+    Uri imageUri;
+
     public void turnOnCamera() {
         //定义文件名称
         String filename = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()) + "takephoto" + ".jpg";
-        String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath()
+        String path = CacheUtil.getCacheDirectory(getContext(), null)
                 + "/" + filename;
         // 创建File对象,获取文件的ContentURI
         outputImage = new File(path);
-        Uri imageUri;
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             imageUri = FileProvider.getUriForFile(getActivity(), "com.example.plantdroid.fileprovider", outputImage);
         } else {
             imageUri = Uri.fromFile(outputImage);
         }
+
         //打开相机
         Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);//设置Action为MediaStore下的ACTION_IMAGE_CAPTURE
         intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);//设置Extra标志为输出类型
         intent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);//授予临时权限
         startActivityForResult(intent, TAKE_PHOTO_CODE);
+    }
+
+    private void startUCrop() {
+        //裁剪后保存到文件中
+        String filename = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()) + "takephotocut" + ".jpg";
+        outputImageCut = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath() + "/" + filename);
+        Uri destinationUri = Uri.fromFile(outputImageCut);
+        System.out.println("destinationUri" + destinationUri);
+
+        UCrop uCrop = UCrop.of(imageUri, destinationUri);
+        UCrop.Options options = new UCrop.Options();
+        //设置裁剪图片可操作的手势
+        options.setToolbarTitle("Clip");
+        options.setToolbarWidgetColor(ActivityCompat.getColor(getContext(), R.color.white));
+        options.setAllowedGestures(UCropActivity.SCALE, UCropActivity.ROTATE, UCropActivity.ALL);
+        options.setCropGridColor(ActivityCompat.getColor(getContext(), R.color.green_light_2));//设置裁剪网格的颜色
+        options.setCropFrameColor(ActivityCompat.getColor(getContext(), R.color.green_light_2));//设置裁剪框的颜色
+        options.setActiveControlsWidgetColor(ActivityCompat.getColor(getContext(), R.color.green_light_3));
+        //options.setDimmedLayerColor(ActivityCompat.getColor(getContext(), R.color.green_light_3));
+        //设置toolbar颜色
+        options.setToolbarColor(ActivityCompat.getColor(getContext(), R.color.green_light_3));
+        //设置状态栏颜色
+        options.setStatusBarColor(ActivityCompat.getColor(getContext(), R.color.green_light_3));
+        //是否能调整裁剪框
+        options.setFreeStyleCropEnabled(false);
+        uCrop.withOptions(options);
+        uCrop.withAspectRatio(4, 3); //比例
+        uCrop.start(getActivity());
     }
 
     /**
@@ -310,6 +351,7 @@ public class CameraFragment extends Fragment {
         Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
     }
 
+    @SuppressLint("CheckResult")
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -320,11 +362,11 @@ public class CameraFragment extends Fragment {
             if (requestCode == OPEN_ALBUM_CODE) {
                 //打开相册返回
                 final String[] filePathColumns = {
-                MediaStore.Images.Media.DATA,
-                MediaStore.Images.Media.DISPLAY_NAME,
-                MediaStore.Images.Media.DATE_ADDED,
-                MediaStore.Images.Media.LATITUDE,
-                MediaStore.Images.Media.LONGITUDE,};
+                        MediaStore.Images.Media.DATA,
+                        MediaStore.Images.Media.DISPLAY_NAME,
+                        MediaStore.Images.Media.DATE_ADDED,
+                        MediaStore.Images.Media.LATITUDE,
+                        MediaStore.Images.Media.LONGITUDE,};
 
                 final Uri imageUri = Objects.requireNonNull(data).getData();
                 Cursor cursor = getActivity().getContentResolver().query(imageUri, filePathColumns, null, null, null);
@@ -341,35 +383,93 @@ public class CameraFragment extends Fragment {
                 long addDate = cursor.getLong(columnIndexAddDate);
                 float latitude = cursor.getFloat(columnIndexLatitude);
                 float longitude = cursor.getFloat(columnIndexLongitude);
-                System.out.println("path:-------"+imagePath +"\n"
-                        +"name:-------"+name +"            "
-                        +"addDate:----"+addDate+"\n"
-                        +"latitude:---"+latitude+"    "
-                        +"longitude:--"+longitude);
+                System.out.println("path:-------" + imagePath + "\n"
+                        + "name:-------" + name + "            "
+                        + "addDate:----" + addDate + "\n"
+                        + "latitude:---" + latitude + "    "
+                        + "longitude:--" + longitude);
                 cursor.close();
-                //识别
-                try {
-                    localImageDiscern(imagePath);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+
+                // //识别
+                // try {
+                //     localImageDiscern(imagePath);
+                // } catch (Exception e) {
+                //     e.printStackTrace();
+                // }
 
             } else if (requestCode == TAKE_PHOTO_CODE) {
                 Toast.makeText(getActivity(), "Success", Toast.LENGTH_SHORT).show();
+
                 //拍照返回
                 String imagePath = outputImage.getAbsolutePath();
+                System.out.println(imagePath);
+                //调取另一个activity
+                startUCrop();
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    float[] latLong = new float[2];
+
+                    Uri photoUri = MediaStore.setRequireOriginal(imageUri);
+                    InputStream stream = null;
+                    try {
+                        stream = getActivity().getContentResolver().openInputStream(photoUri);
+                        if (stream != null) {
+
+                            ExifInterface exifInterface = new ExifInterface(stream);
+
+                            //获取经纬度信息，第一个元素为纬度，第二个元素为经度
+                            exifInterface.getLatLong(latLong);
+                            System.out.println("=============================================");
+                            System.out.println(latLong[0] + "   " + latLong[1]);
+                            System.out.println("=============================================");
+                            stream.close();
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+
+                }
 
                 //识别
-                try {
-                    localImageDiscern(imagePath);
-                } catch (Exception e) {
-                    e.printStackTrace();
+                // try {
+                //     localImageDiscern(imagePath);
+                // } catch (Exception e) {
+                //     e.printStackTrace();
+                // }
+            }
+        } else if (requestCode == UCrop.REQUEST_CROP) {
+            Uri croppedUri = UCrop.getOutput(data);
+            String imagePath = outputImageCut.getAbsolutePath();
+
+            //识别
+            try {
+                localImageDiscern(imagePath);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            if (resultCode == UCrop.RESULT_ERROR) {
+                if (data != null) {
+                    Throwable throwable = UCrop.getError(data);
+                    Toast.makeText(getActivity(), throwable.getMessage().toString() + "裁剪失败", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getActivity(), "裁剪失败", Toast.LENGTH_SHORT).show();
                 }
             }
-        }  else {
             showMsg("没有上传图片呦(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧");
         }
     }
+    /**
+     * 裁剪图片
+     */
+    /**
+     * 最终结果
+     *
+     * @param data
+     */
+
+
     /**
      * 本地图片识别
      */
@@ -394,11 +494,4 @@ public class CameraFragment extends Fragment {
         }
     }
 
-
-    // @Override
-    // public boolean onCreateOptionsMenu(Menu menu) {
-    //     // Inflate the menu; this adds items to the action bar if it is present.
-    //     getMenuInflater().inflate(R.menu.bottom_nav_menu, menu);
-    //     return true;
-    // }
 }
