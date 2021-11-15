@@ -87,11 +87,6 @@ public class CameraFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         ImageButton cameraBtn = getActivity().findViewById(R.id.cameraBtn);
