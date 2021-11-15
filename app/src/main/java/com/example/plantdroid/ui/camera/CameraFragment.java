@@ -1,31 +1,40 @@
 package com.example.plantdroid.ui.camera;
 
+import static android.content.ContentValues.TAG;
+
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.TransitionDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
 import android.os.Environment;
 import android.provider.MediaStore;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.annotation.GlideModule;
-import com.bumptech.glide.module.AppGlideModule;
 
+import com.bumptech.glide.load.engine.Resource;
 import com.example.plantdroid.R;
+import com.tbruyelle.rxpermissions2.RxPermissions;
+
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -42,7 +51,7 @@ import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.Date;
 import java.util.Objects;
-
+import com.yalantis.ucrop.UCrop;
 import util.FileUtil;
 
 /**
@@ -51,15 +60,6 @@ import util.FileUtil;
  * create an instance of this fragment.
  */
 public class CameraFragment extends Fragment {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     public CameraFragment() {
         // Required empty public constructor
@@ -87,25 +87,62 @@ public class CameraFragment extends Fragment {
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        Button cameraBtn = getActivity().findViewById(R.id.cameraBtn);
+        ImageButton cameraBtn = getActivity().findViewById(R.id.cameraBtn);
         cameraBtn.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("CheckResult")
             @Override
             public void onClick(View view) {
-                turnOnCamera();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    rxPermissions
+                            .request(Manifest.permission.CAMERA)
+                            .subscribe(granted -> {
+                                if (granted) {
+                                    //获得权限
+                                    turnOnCamera();
+                                } else {
+                                    showMsg("未获取到权限,请在设置内打开");
+                                }
+                            });
+                } else {
+                    turnOnCamera();
+                }
             }
         });
-        Button albumBtn = getActivity().findViewById(R.id.albumBtn);
+        ImageButton albumBtn = getActivity().findViewById(R.id.albumBtn);
         albumBtn.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("CheckResult")
             @Override
             public void onClick(View view) {
-                openAlbum();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    rxPermissions
+                            .request(
+                                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                                    Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                            .subscribe(granted -> {
+                                System.out.println("[Granted] " + granted);
+                                if (granted) {
+                                    //获得权限
+                                    openAlbum();
+                                } else {
+                                    showMsg("未获取到权限,请在设置内打开");
+                                }
+                            });
+                } else {
+                    openAlbum();
+                }
             }
         });
 
         ivPicture = getActivity().findViewById(R.id.preImgView);
         pbLoading = getActivity().findViewById(R.id.loadingPB);
+
     }
 
     /**
@@ -126,15 +163,16 @@ public class CameraFragment extends Fragment {
     private ImageView ivPicture;
 
     /**
-     * Api服务
+     * 动态权限
      */
-    //private ApiService service;
+    private RxPermissions rxPermissions;
     ImageView imgFavorite;
     private File outputImage;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        rxPermissions = new RxPermissions(getParentFragment().getActivity());
     }
 
 
@@ -152,12 +190,7 @@ public class CameraFragment extends Fragment {
     }
 
     /**
-     * 图像识别请求
-     * <p>
-     * //     * @param token       token
-     *
      * @param imageBase64 图片Base64
-     *                    //* @param imgUrl      网络图片Url
      */
     private void ImageDiscern(String imageBase64) throws Exception {
         String apiKey = "ojlt9sSkvTjiugRGANYWXD1JQ035ttwx5oUILTL4rSYVGbzzN2";
@@ -287,16 +320,37 @@ public class CameraFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == getActivity().RESULT_OK) {
             System.out.println("RESULT_OK");
+            //final Uri resultUri = UCrop.getOutput(data);
             // pbLoading.setVisibility(View.VISIBLE);
             if (requestCode == OPEN_ALBUM_CODE) {
                 //打开相册返回
-                String[] filePathColumns = {MediaStore.Images.Media.DATA};
+                final String[] filePathColumns = {
+                MediaStore.Images.Media.DATA,
+                MediaStore.Images.Media.DISPLAY_NAME,
+                MediaStore.Images.Media.DATE_ADDED,
+                MediaStore.Images.Media.LATITUDE,
+                MediaStore.Images.Media.LONGITUDE,};
+
                 final Uri imageUri = Objects.requireNonNull(data).getData();
                 Cursor cursor = getActivity().getContentResolver().query(imageUri, filePathColumns, null, null, null);
                 cursor.moveToFirst();
-                int columnIndex = cursor.getColumnIndex(filePathColumns[0]);
-                //获取图片路径
+                //获取index
+                int columnIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATA);
+                int columnIndexName = cursor.getColumnIndex(MediaStore.Images.Media.DISPLAY_NAME);
+                int columnIndexAddDate = cursor.getColumnIndex(MediaStore.Images.Media.DATE_ADDED);
+                int columnIndexLatitude = cursor.getColumnIndex(MediaStore.Images.Media.LATITUDE);
+                int columnIndexLongitude = cursor.getColumnIndex(MediaStore.Images.Media.LONGITUDE);
+                //获取图片路径,名字，添加日期，经度，纬度
                 String imagePath = cursor.getString(columnIndex);
+                String name = cursor.getString(columnIndexName);
+                long addDate = cursor.getLong(columnIndexAddDate);
+                float latitude = cursor.getFloat(columnIndexLatitude);
+                float longitude = cursor.getFloat(columnIndexLongitude);
+                System.out.println("path:-------"+imagePath +"\n"
+                        +"name:-------"+name +"            "
+                        +"addDate:----"+addDate+"\n"
+                        +"latitude:---"+latitude+"    "
+                        +"longitude:--"+longitude);
                 cursor.close();
                 //识别
                 try {
@@ -309,6 +363,7 @@ public class CameraFragment extends Fragment {
                 Toast.makeText(getActivity(), "Success", Toast.LENGTH_SHORT).show();
                 //拍照返回
                 String imagePath = outputImage.getAbsolutePath();
+
                 //识别
                 try {
                     localImageDiscern(imagePath);
@@ -316,11 +371,10 @@ public class CameraFragment extends Fragment {
                     e.printStackTrace();
                 }
             }
-        } else {
-            showMsg("没有上传图片呦");
+        }  else {
+            showMsg("没有上传图片呦(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧");
         }
     }
-
     /**
      * 本地图片识别
      */
@@ -344,6 +398,7 @@ public class CameraFragment extends Fragment {
             e.printStackTrace();
         }
     }
+
 
     // @Override
     // public boolean onCreateOptionsMenu(Menu menu) {

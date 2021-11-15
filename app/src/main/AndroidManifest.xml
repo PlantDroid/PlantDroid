@@ -6,7 +6,8 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- 相机 -->
     <uses-permission android:name="android.permission.CAMERA" />
-
+<!--    位置权限-->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -14,19 +15,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PlantDroid">
-        <activity
-            android:name=".DbTestActivity"
-            android:exported="true" />
-        <activity
-            android:name=".DetailCatalogue"
-            android:exported="true" >
-        </activity>
+<!--        <activity-->
+<!--            android:name=".DbTestActivity"-->
+<!--            android:exported="true" />-->
         <activity
             android:name=".DetailPageActivity"
             android:exported="true"></activity>
         <activity
-            android:name=".CameraActivity"
-            android:exported="true"></activity>
+            android:name="com.yalantis.ucrop.UCropActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
         <activity
             android:name=".BottomNavigationActivity"
             android:exported="true">
