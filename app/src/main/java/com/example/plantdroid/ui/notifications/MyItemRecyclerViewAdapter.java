@@ -41,7 +41,7 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mIdView.setText(plant_name[position]);
 //        holder.mContentView.setImageDrawable(Drawable.createFromPath(plant_picture_url[position]));
-        holder.mContentView.setImageResource(R.drawable.eustoma_grandiflorum);
+        holder.mContentView.setImageResource(R.drawable.jiegeng);
 //        Glide.with(holder.mContentView)
 //                .load(plant_picture_url[position])
 //                .into(holder.mContentView);
