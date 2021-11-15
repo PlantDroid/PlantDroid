@@ -4,17 +4,22 @@ import static android.content.ContentValues.TAG;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
@@ -24,6 +29,7 @@ import androidx.fragment.app.Fragment;
 import android.os.Environment;
 import android.provider.MediaStore;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +37,8 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -147,6 +155,19 @@ public class CameraFragment extends Fragment {
         ivPicture = getActivity().findViewById(R.id.preImgView);
         pbLoading = getActivity().findViewById(R.id.loadingPB);
 
+
+        // location manager
+        final LocationManager locationManager =
+                (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        try {
+            locationManager.removeUpdates(listener);
+            locationManager.requestLocationUpdates(
+                    LocationManager.GPS_PROVIDER, 0, 0, listener
+            );
+        } catch (SecurityException e) {
+            System.out.println("[Error]");
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -179,6 +200,33 @@ public class CameraFragment extends Fragment {
         super.onCreate(savedInstanceState);
         rxPermissions = new RxPermissions(getParentFragment().getActivity());
     }
+
+
+    LocationListener listener = new LocationListener() {
+        @Override
+        public void onLocationChanged(@NonNull Location location) {
+            System.out.println("change");
+            System.out.println("[Location] location=" + location.getLatitude()
+                    + "\n time=" + location.getTime() + "\n accuracy="
+                    + location.getAccuracy());
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+            Log.i("LocationTester", "provider status is changed");
+        }
+
+        @Override
+        public void onProviderEnabled(@NonNull String provider) {
+            Log.i("LocationTester", "provider is enabled");
+        }
+
+        @Override
+        public void onProviderDisabled(@NonNull String provider) {
+            Log.i("LocationTester", "provider is closed");
+        }
+    };
+
 
 
     private static String base64EncodeFromFile(String fileString) throws Exception {
