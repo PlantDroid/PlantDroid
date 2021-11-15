@@ -15,9 +15,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PlantDroid">
-<!--        <activity-->
-<!--            android:name=".DbTestActivity"-->
-<!--            android:exported="true" />-->
+        <activity
+            android:name=".DbTestActivity"
+            android:exported="true" />
         <activity
             android:name=".DetailPageActivity"
             android:exported="true"></activity>
