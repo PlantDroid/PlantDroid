@@ -29,7 +29,6 @@ public class PlantDroidViewModel extends AndroidViewModel {
             plantDroidRepository.getPlantByName(plants[0].getName());
 
             plantDroidRepository.insertPlants(plants[0]);
-
         }
         plantDroidRepository.insertPlants(plants);
     }
@@ -42,17 +41,17 @@ public class PlantDroidViewModel extends AndroidViewModel {
     public void deleteAllPlants(){
         plantDroidRepository.deleteAllPlants();
     }
-    public void getPlantListByPhylum(String name){
-        plantDroidRepository.getPlantListByPhylum(name);
+    public LiveData<List<Plant>> getPlantListByPhylum(String name){
+       return plantDroidRepository.getPlantListByPhylum(name);
     }
-    public void searchPlantsByName(String name){
-        plantDroidRepository.getSearchPlantByName(name);
+    public LiveData<List<Plant>> searchPlantsByName(String name){
+       return plantDroidRepository.getSearchPlantByName(name);
     }
-    public void getPlantByName(String name){
-        plantDroidRepository.getPlantByName(name);
+    public LiveData<List<Plant>> getPlantByName(String name){
+       return plantDroidRepository.getPlantByName(name);
     }
-    public void getPlantById(int id){
-        plantDroidRepository.getPlantById(id);
+    public LiveData<List<Plant>> getPlantById(int id){
+       return plantDroidRepository.getPlantById(id);
     }
 
 
