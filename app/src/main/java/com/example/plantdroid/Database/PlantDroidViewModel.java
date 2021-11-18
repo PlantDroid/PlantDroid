@@ -16,6 +16,7 @@ public class PlantDroidViewModel extends AndroidViewModel {
         plantDroidRepository = new PlantDroidRepository(application);
     }
 
+    //only for test! Do not call this function in any activity!
     public PlantDroidRepository testRp(){
         return plantDroidRepository;
     }
@@ -41,6 +42,19 @@ public class PlantDroidViewModel extends AndroidViewModel {
     public void deleteAllPlants(){
         plantDroidRepository.deleteAllPlants();
     }
+    public void getPlantListByPhylum(String name){
+        plantDroidRepository.getPlantListByPhylum(name);
+    }
+    public void searchPlantsByName(String name){
+        plantDroidRepository.getSearchPlantByName(name);
+    }
+    public void getPlantByName(String name){
+        plantDroidRepository.getPlantByName(name);
+    }
+    public void getPlantById(int id){
+        plantDroidRepository.getPlantById(id);
+    }
+
 
 
 
