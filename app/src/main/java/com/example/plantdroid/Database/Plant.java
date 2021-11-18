@@ -5,10 +5,9 @@ import androidx.room.Entity;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-@Entity(indices = {@Index("id"),
-        @Index(value = {"plant_name"})})
+@Entity(indices = {@Index("id"), @Index(value = {"plant_name"}, unique = true)})
 public class Plant {
-    public Plant(String name, String commonNames, String kingdom, String phylum, String plantClass, String order, String genus, String description, String img, String edibleParts, String propagationMethods, String isOwned) {
+    public Plant(String name, String commonNames, String kingdom, String phylum, String plantClass, String order, String genus, String description, String img, String edibleParts, String propagationMethods, Boolean isOwned) {
         this.name = name;
         this.commonNames = commonNames;
         this.kingdom = kingdom;
@@ -60,7 +59,7 @@ public class Plant {
     private String propagationMethods;
 
     @ColumnInfo(name = "is_owned")
-    private String isOwned;
+    private Boolean isOwned;
 
 
     public int getId() {
@@ -159,12 +158,12 @@ public class Plant {
         this.propagationMethods = propagationMethods;
     }
 
-    public String getIsOwned() {
+    public Boolean getOwned() {
         return isOwned;
     }
 
-    public void setIsOwned(String isOwned) {
-        this.isOwned = isOwned;
+    public void setOwned(Boolean owned) {
+        isOwned = owned;
     }
 }
 

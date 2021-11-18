@@ -55,8 +55,8 @@ public class DbTestActivity extends AppCompatActivity {
         buttonInsert.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Plant plant1 = new Plant("Flower","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa");
-                Plant plant2 = new Plant("Sunflower","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa");
+                Plant plant1 = new Plant("Flower","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa",false);
+                Plant plant2 = new Plant("Sunflower","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa",false);
                 plantDroidViewModel.insertPlants(plant1,plant2);
             }
         });
@@ -70,7 +70,7 @@ public class DbTestActivity extends AppCompatActivity {
         buttonUpdate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Plant plant = new Plant("Lily","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa");
+                Plant plant = new Plant("Lily","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa",false);
                 plant.setId(90);
                 plantDroidViewModel.updatePlants(plant);
             }
@@ -79,7 +79,7 @@ public class DbTestActivity extends AppCompatActivity {
         buttonDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Plant plant = new Plant("Lily","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa");
+                Plant plant = new Plant("Lily","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa",false);
                 plant.setId(90);
                 plantDroidViewModel.deletePlants(plant);
             }

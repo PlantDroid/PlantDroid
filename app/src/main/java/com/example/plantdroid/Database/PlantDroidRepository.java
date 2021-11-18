@@ -135,6 +135,15 @@ public class PlantDroidRepository {
             return null;
         }
     }
+    
+//    static void asd(PlantDroidDao plantDroidDao, Runnable onFinish,  DiscoveredPlant ...d){
+//        new Thread(() -> {
+//            plantDroidDao.insertDiscoveredPlants(d);
+//            if (onFinish != null) {
+//                onFinish.run();
+//            }
+//        }).start();
+//    }
 
     static class InsertDiscoveredPlantAsyncTask extends AsyncTask<DiscoveredPlant, Void, Void> {
         private PlantDroidDao plantDroidDao;

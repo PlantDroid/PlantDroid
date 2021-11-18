@@ -23,16 +23,17 @@
             android:name=".SplashActivity"
             android:exported="true" >
         </activity>
-        <!-- <activity -->
-        <!-- android:name=".DbTestActivity" -->
-        <!-- android:exported="true" /> -->
+         <activity
+         android:name=".DbTestActivity"
+         android:exported="true" />
         <activity
             android:name=".DetailPageActivity"
             android:exported="true" />
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:exported="true" />
         <activity
             android:name=".BottomNavigationActivity"
             android:exported="true">
