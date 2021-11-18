@@ -12,6 +12,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
+import android.view.View;
 import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -50,6 +51,12 @@ public class CameraResultActivity extends AppCompatActivity {
             "    arophorum f. conicum\", \"Acer saccharophorum f. glaucum\", \"Acer saccharophorum var. subvestitum\", \"Acer saccharum f. angustilobatum\", \"Acer saccharum f. conicum\", \"Acer saccharum f. euconcolor\", \"Acer saccharum f. glabratum\", \"Acer saccharum f. hispidum\", \"Acer saccharum f. integrilobum\", \"Acer saccharum f. pubescens\", \"Acer saccharum f. rubrocarpum\", \"Acer saccharum f. subvestitum\", \"Acer saccharum f. truncatum\", \"Acer saccharum f. villipes\", \"Acer saccharum f. villosum\", \"Acer saccharum var. quinquelobulatum\", \"Acer saccharum var. viride\", \"Acer subglaucum\", \"Acer subglaucum var. sinuosum\", \"Acer treleaseanum\", \"Saccharodendron hispidum\", \"Saccharodendron saccharum\"], \"scientific_name\": \"Acer saccharum\", \"structured_name\": {\"genus\": \"acer\", \"species\": \"saccharum\"}}, \"probability\": 0.013896970030333846, \"confirmed\": false, \"similar_images\": [{\"id\": \"39eb6ff2e076154121841cafc74fa8df\", \"similarity\": 0.608939381086905, \"url\": \"https://plant-id.ams3.cdn.digitaloceanspaces.com/similar_image\n" +
             "    s/images/39e/b6ff2e076154121841cafc74fa8df.jpg\", \"url_small\": \"https://plant-id.ams3.cdn.digitaloceanspaces.com/similar_images/images/39e/b6ff2e076154121841cafc74fa8df.small.jpg\"}, {\"id\": \"584081db09ae1ca0127e2faa79d440fe\", \"similarity\": 0.09214662071630311, \"url\": \"https://plant-id.ams3.cdn.digitaloceanspaces.com/similar_images/images/584/081db09ae1ca0127e2faa79d440fe.jpg\", \"url_small\": \"https://plant-id.ams3.cdn.digitaloceanspaces.com/similar_images/images/584/081db09ae1ca0127e2faa79d440fe.small.jpg\"}]}], \"modifiers\": [\"crops_fast\", \"similar_images\"], \"secret\": \"uq01yaGDx1xsBBt\", \"fail_cause\": null, \"countable\": true, \"feedback\": null, \"is_plant_probability\": 0.07250318489999999, \"is_plant\": false}ific_name\": \"Acer saccharum\", \"structured_name\": {\"genus\": \"acer\", \"species\": \"saccharum\"}}, \"probability\": 0.013896970030333846, \"confirmed\": false, \"similar_images\": [{\"id\": \"39eb6ff2e076154121841cafc74fa8df\", \"similarity\": 0.608939381086905, \"url\": \"https://plant-id.ams3.cdn.digitaloceanspaces.com/similar_images/images/39e/b6ff2e076154121841cafc74fa8df.jpg\", \"url_small\": \"https://plant-id.ams3.cdn.digitaloceanspaces.com/similar_images/images/39e/b6ff2e076154121841cafc74fa8df.small.jpg\"}, {\"id\": \"584081db09ae1ca0127e2faa79d440fe\", \"similarity\": 0.09214662071630311, \"url\": \"https://plant-id.ams3.cdn.digitaloceanspaces.com/similar_images/image";
 
+    ArrayList<CardView> cardViews = new ArrayList<>();
+    ArrayList<String> probabilities = new ArrayList<>();
+
+    int DP15;
+    int DP90;
+
     private int getPixelsFromDp(int size) {
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
@@ -60,6 +67,9 @@ public class CameraResultActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera_result);
+
+        DP15 = getPixelsFromDp(15);
+        DP90 = getPixelsFromDp(90);
 
         // set result image to square
         DisplayMetrics dm = new DisplayMetrics();
@@ -109,21 +119,23 @@ public class CameraResultActivity extends AppCompatActivity {
 
     public void setCandidatePlantImgCards(JSONArray plantsJsonArray) {
         LinearLayout candidatePlantImgCardsLayout = findViewById(R.id.candidatePlantImgCardsLayout);
-        int index = 0;
         for (int i = 0; i < plantsJsonArray.length(); i++) {
             try {
                 JSONObject plantJson = (JSONObject) plantsJsonArray.getJSONObject(i);
+                String plantProbabilityStr = "";
+                plantProbabilityStr = plantJson.getString("probability");
+                float plantProbability =  ((float) (int) (10000 * Float.parseFloat(plantProbabilityStr))) / 100;
+                plantProbabilityStr = Float.toString(plantProbability) + "%";
+                System.out.println("[plant probability] " + plantProbability);
                 CardView cv = setCandidatePlantImgCard(plantJson);
                 candidatePlantImgCardsLayout.addView(cv);
-
-                if (i == 0)
-                    selectCandidateCard(cv);
+                probabilities.add(plantProbabilityStr);
+                cardViews.add(cv);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
-
         }
+        selectCandidateCard(cardViews.get(0));
     }
 
     public CardView setCandidatePlantImgCard(JSONObject plantJson) {
@@ -137,38 +149,83 @@ public class CameraResultActivity extends AppCompatActivity {
         }
 
         CardView candidatePlantImgCard = new CardView(this);
-        ConstraintLayout.LayoutParams candidatePlantImgCardLayoutParams = new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.WRAP_CONTENT);
-        candidatePlantImgCardLayoutParams.setMargins(getPixelsFromDp(15), 0, 0, 0);
+        ConstraintLayout.LayoutParams candidatePlantImgCardLayoutParams = new ConstraintLayout.LayoutParams(DP90, DP90);
+        candidatePlantImgCardLayoutParams.setMargins(DP15, DP15, 0, DP15);
         candidatePlantImgCard.setLayoutParams(candidatePlantImgCardLayoutParams);
-        candidatePlantImgCard.setRadius(getPixelsFromDp(100));
+        candidatePlantImgCard.setRadius(DP90);
+
+        candidatePlantImgCard.setClickable(true);
+        candidatePlantImgCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                System.out.println("[On Click] ");
+                selectCandidateCard((CardView) view);
+            }
+        });
+
 
         ImageView candidatePlantImg = new ImageView(this);
-        ConstraintLayout.LayoutParams candidatePlantImgLayoutParams = new ConstraintLayout.LayoutParams(getPixelsFromDp(90), getPixelsFromDp(90));
+        ConstraintLayout.LayoutParams candidatePlantImgLayoutParams = new ConstraintLayout.LayoutParams(DP90, DP90);
 
+        // 加载网络图片
         final String imgUrl = plantImgUrl;
         LoadImage.setImageView(candidatePlantImg, imgUrl);
-
         candidatePlantImg.setLayoutParams(candidatePlantImgLayoutParams);
         candidatePlantImgCard.addView(candidatePlantImg);
-
         return candidatePlantImgCard;
     }
 
 
-    public void selectCandidateCard(CardView cv) {
+    public void selectCandidateCard(CardView selectCardView) {
+        int index = 0;
+        for (int i = 0; i < cardViews.size(); i++) {
+            CardView cv = cardViews.get(i);
+            if (cv.equals(selectCardView)) setCardSelected(cv, probabilities.get(i));
+            else setCardUnselected(cv, probabilities.get(i));
+            index++;
+        }
+    }
+
+    public void setCardSelected(CardView cv, String probability) {
+        ImageView imageView = (ImageView) cv.getChildAt(0);
+        cv.removeAllViews();
+        cv.addView(imageView);
+
         ImageView selectMark = new ImageView(this);
         selectMark.setImageResource(R.drawable.ic_check);
-        ConstraintLayout.LayoutParams selectMarkLayoutParams = new ConstraintLayout.LayoutParams(getPixelsFromDp(90), getPixelsFromDp(90));
+        ConstraintLayout.LayoutParams selectMarkLayoutParams = new ConstraintLayout.LayoutParams(DP90, DP90);
         selectMark.setLayoutParams(selectMarkLayoutParams);
         cv.addView(selectMark);
 
-        TextView candidatePlantProbabilityText = new TextView(this);
-        ConstraintLayout.LayoutParams candidatePlantProbabilityLayoutParams = new ConstraintLayout.LayoutParams(getPixelsFromDp(90), getPixelsFromDp(90));
-        candidatePlantProbabilityText.setLayoutParams(candidatePlantProbabilityLayoutParams);
-        candidatePlantProbabilityText.setText("88.6%");
-        candidatePlantProbabilityText.setGravity(Gravity.CENTER);
-        candidatePlantProbabilityText.setTextColor(getResources().getColorStateList(R.color.white));
-        candidatePlantProbabilityText.setTextSize(16);
+        TextView candidatePlantProbabilityText = getProbabilityText(0, probability);
         cv.addView(candidatePlantProbabilityText);
+    }
+
+    public void setCardUnselected(CardView cv, String probability) {
+        ImageView imageView = (ImageView) cv.getChildAt(0);
+        cv.removeAllViews();
+        cv.addView(imageView);
+
+        TextView candidatePlantProbabilityText = getProbabilityText(1, probability);
+        cv.addView(candidatePlantProbabilityText);
+    }
+
+    public TextView getProbabilityText(int type, String probability) {
+        // type 0 - select
+        // type 1 - unselect
+
+        TextView tv = new TextView(this);
+        ConstraintLayout.LayoutParams candidatePlantProbabilityLayoutParams = new ConstraintLayout.LayoutParams(DP90, DP90);
+        tv.setLayoutParams(candidatePlantProbabilityLayoutParams);
+        tv.setText(probability);
+        if (type == 0) {
+            tv.setTextColor(getResources().getColorStateList(R.color.white));
+        }
+        else if (type == 1) {
+            tv.setTextColor(getResources().getColorStateList(R.color.black));
+        }
+        tv.setGravity(Gravity.CENTER);
+        tv.setTextSize(16);
+        return tv;
     }
 }
