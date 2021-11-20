@@ -33,18 +33,15 @@ public class DbTestActivity extends AppCompatActivity {
         plantDroidViewModel = ViewModelProviders.of(this).get(PlantDroidViewModel.class);
 
         textView = findViewById(R.id.textView);
-        plantDroidViewModel.getAllPlantsLive().observe(this, new Observer<List<Plant>>() {
-            @Override
-            public void onChanged(List<Plant> plants) {
-                StringBuilder text = new StringBuilder();
+        plantDroidViewModel.getAllPlantsLive().observe(this, plants -> {
+            StringBuilder text = new StringBuilder();
 
-                for(int i=0;i<plants.size();i++) {
-                    Plant plant = plants.get(i);
-                    text.append(plant.getId()).append(":").append(plant.getName()).append("!!").append("\n");
-                }
-
-                textView.setText(text.toString());
+            for(int i=0;i<plants.size();i++) {
+                Plant plant = plants.get(i);
+                text.append(plant.getId()).append(":").append(plant.getName()).append("!!").append("\n");
             }
+
+            textView.setText(text.toString());
         });
 
         buttonInsert = findViewById(R.id.buttonInsert);

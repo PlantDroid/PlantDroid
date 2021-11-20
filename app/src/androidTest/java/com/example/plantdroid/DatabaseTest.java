@@ -65,8 +65,6 @@ public class DatabaseTest {
                 assertEquals(100, plants.size());
             }
         };
-
-
     }
 
     @Test
