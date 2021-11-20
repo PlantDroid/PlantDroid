@@ -438,12 +438,12 @@ public class CameraFragment extends Fragment {
                         + "longitude:--" + longitude);
                 cursor.close();
 
-                // //识别
-                // try {
-                //     localImageDiscern(imagePath);
-                // } catch (Exception e) {
-                //     e.printStackTrace();
-                // }
+                //识别
+                try {
+                    localImageDiscern(imagePath);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
             } else if (requestCode == TAKE_PHOTO_CODE) {
                 Toast.makeText(getActivity(), "Success", Toast.LENGTH_SHORT).show();
@@ -480,11 +480,11 @@ public class CameraFragment extends Fragment {
                 }
 
                 //识别
-                // try {
-                //     localImageDiscern(imagePath);
-                // } catch (Exception e) {
-                //     e.printStackTrace();
-                // }
+                try {
+                    localImageDiscern(imagePath);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         } else if (requestCode == UCrop.REQUEST_CROP) {
             Uri croppedUri = UCrop.getOutput(data);
