@@ -8,9 +8,9 @@ import androidx.room.PrimaryKey;
 @Entity
 public class DiscoveredPlant {
 
-    public DiscoveredPlant(String foundTime, String altitude, String longitude, String accuracy, int plant_id) {
+    public DiscoveredPlant(String foundTime, float latitude, float longitude, float accuracy, int plant_id) {
         this.foundTime = foundTime;
-        this.altitude = altitude;
+        this.latitude = latitude;
         this.longitude = longitude;
         this.accuracy = accuracy;
         this.plant_id = plant_id;
@@ -22,14 +22,14 @@ public class DiscoveredPlant {
     @ColumnInfo(name = "found_time")
     private String foundTime;
 
-    @ColumnInfo(name = "altitude")
-    private String altitude;
+    @ColumnInfo(name = "latitude")
+    private float latitude;
 
     @ColumnInfo(name = "longitude")
-    private String longitude;
+    private float longitude;
 
     @ColumnInfo(name = "accuracy")
-    private String accuracy;
+    private float accuracy;
 
     @ColumnInfo(name = "plant_id")
     private int plant_id;
@@ -50,27 +50,27 @@ public class DiscoveredPlant {
         this.foundTime = foundTime;
     }
 
-    public String getAltitude() {
-        return altitude;
+    public float getLatitude() {
+        return latitude;
     }
 
-    public void setAltitude(String altitude) {
-        this.altitude = altitude;
+    public void setLatitude(float latitude) {
+        this.latitude = latitude;
     }
 
-    public String getLongitude() {
+    public float getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(String longitude) {
+    public void setLongitude(float longitude) {
         this.longitude = longitude;
     }
 
-    public String getAccuracy() {
+    public float getAccuracy() {
         return accuracy;
     }
 
-    public void setAccuracy(String accuracy) {
+    public void setAccuracy(float accuracy) {
         this.accuracy = accuracy;
     }
 

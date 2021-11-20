@@ -59,5 +59,10 @@ public interface PlantDroidDao {
     @Query("SELECT * FROM DiscoveredPlant ORDER BY ID DESC")
     LiveData<List<DiscoveredPlant>> getAllDiscoveredPlantsLive();
 
+    @Query("SELECT * FROM DISCOVEREDPLANT WHERE plant_id LIKE :plantID")
+    LiveData<List<DiscoveredPlant>> getDiscoveredPlantsByPlantID(int plantID);
+
+//    @Query("SELECT * FROM DISCOVEREDPLANT WHERE plant_name LIKE :plant_name")
+//    LiveData<List<DiscoveredPlant>> getDiscoveredPlantsByPlantName(String plant_name);
 
 }

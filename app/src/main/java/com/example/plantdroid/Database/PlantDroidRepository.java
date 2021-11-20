@@ -11,10 +11,6 @@ public class PlantDroidRepository {
     private PlantDroidDao plantDroidDao;
     private LiveData<List<Plant>> allPlantList;
 
-//    private LiveData<List<Plant>> PlantById;
-//    private LiveData<List<Plant>> PlantByName;
-//    private LiveData<List<Plant>> searchPlantByName;
-
     private LiveData<List<DiscoveredPlant>> allDiscoveredPlantList;
 
 
@@ -47,7 +43,6 @@ public class PlantDroidRepository {
     }
 
 
-
     void insertPlants(Plant... plants){
         new InsertPlantAsyncTask(plantDroidDao).execute(plants);
     }
@@ -65,6 +60,7 @@ public class PlantDroidRepository {
     LiveData<List<DiscoveredPlant>> getAllDiscoveredPlantList(){
         return allDiscoveredPlantList;
     }
+    LiveData<List<DiscoveredPlant>> getDiscoveredPlantsByPlantID(int plant_id){return getDiscoveredPlantsByPlantID(plant_id);}
     void insertDiscoveredPlants(DiscoveredPlant... discoveredPlants){
         new InsertDiscoveredPlantAsyncTask(plantDroidDao).execute(discoveredPlants);
     }

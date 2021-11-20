@@ -101,21 +101,54 @@ public class PlantDroidViewModel extends AndroidViewModel {
     }
 
 
+    /**
+     * method to get all Discovered Plants in Database
+     * @return a LiveData<List<Plant>>
+     */
     public LiveData<List<DiscoveredPlant>> getAllDiscoveredPlantsLive(){
         return plantDroidRepository.getAllDiscoveredPlantList();
     }
+
+    /**
+     * method to insert Discovered plants to database, can add more than one instance by one call
+     * raise error if plant already exist
+     * @param discoveredPlants discoveredPlants to insert
+     */
     public void insertDiscoveredPlants(DiscoveredPlant... discoveredPlants){
         plantDroidRepository.insertDiscoveredPlants(discoveredPlants);
     }
+
+    /**
+     * method to update Discovered plants in database, can add more than one instance by one call
+     * @param discoveredPlants discoveredPlants to be updated
+     */
     public void updateDiscoveredPlants(DiscoveredPlant... discoveredPlants){
         plantDroidRepository.updateDiscoveredPlants(discoveredPlants);
     }
+
+    /**
+     * method to delete Discovered plants to database, can add more than one instance by one call
+     * @param discoveredPlants discoveredPlants to be deleted
+     */
     public void deleteDiscoveredPlants(DiscoveredPlant... discoveredPlants){
         plantDroidRepository.deleteDiscoveredPlants(discoveredPlants);
     }
+
+    /**
+     * method to delete all Discovered plants
+     */
     public void deleteAllDiscoveredPlants(){
         plantDroidRepository.deleteAllDiscoveredPlants();
     }
 
+
+    /**
+     * method to get all Discovered plants matching the given plant_id in Database
+     * @param plant_id plant id
+     * @return a LiveData<List<Plant>>
+     */
+    public LiveData<List<DiscoveredPlant>> getDiscoveredPlantsByPlantID(int plant_id){
+        return plantDroidRepository.getDiscoveredPlantsByPlantID(plant_id);
+    }
 
 }
