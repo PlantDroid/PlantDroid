@@ -18,8 +18,13 @@ public class LoadImage {
                 try {
                     byte[] data = LoadImage.getImage(imgUrl);
                     if (data != null) {
-                        Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);// bitmap
-                        imgView.setImageBitmap(bitmap);// display image
+                        Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);    // bitmap
+                        imgView.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                imgView.setImageBitmap(bitmap);// display image
+                            }
+                        });
                     } else {
                         System.out.println("[Image error!]");
                     }

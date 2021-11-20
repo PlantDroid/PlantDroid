@@ -1,11 +1,14 @@
 package com.example.plantdroid;
 
 import androidx.annotation.DrawableRes;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -14,6 +17,7 @@ import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -21,7 +25,9 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.plantdroid.Database.Plant;
+import com.example.plantdroid.ui.camera.CameraFragment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -52,10 +58,14 @@ public class CameraResultActivity extends AppCompatActivity {
             "    s/images/39e/b6ff2e076154121841cafc74fa8df.jpg\", \"url_small\": \"https://plant-id.ams3.cdn.digitaloceanspaces.com/similar_images/images/39e/b6ff2e076154121841cafc74fa8df.small.jpg\"}, {\"id\": \"584081db09ae1ca0127e2faa79d440fe\", \"similarity\": 0.09214662071630311, \"url\": \"https://plant-id.ams3.cdn.digitaloceanspaces.com/similar_images/images/584/081db09ae1ca0127e2faa79d440fe.jpg\", \"url_small\": \"https://plant-id.ams3.cdn.digitaloceanspaces.com/similar_images/images/584/081db09ae1ca0127e2faa79d440fe.small.jpg\"}]}], \"modifiers\": [\"crops_fast\", \"similar_images\"], \"secret\": \"uq01yaGDx1xsBBt\", \"fail_cause\": null, \"countable\": true, \"feedback\": null, \"is_plant_probability\": 0.07250318489999999, \"is_plant\": false}ific_name\": \"Acer saccharum\", \"structured_name\": {\"genus\": \"acer\", \"species\": \"saccharum\"}}, \"probability\": 0.013896970030333846, \"confirmed\": false, \"similar_images\": [{\"id\": \"39eb6ff2e076154121841cafc74fa8df\", \"similarity\": 0.608939381086905, \"url\": \"https://plant-id.ams3.cdn.digitaloceanspaces.com/similar_images/images/39e/b6ff2e076154121841cafc74fa8df.jpg\", \"url_small\": \"https://plant-id.ams3.cdn.digitaloceanspaces.com/similar_images/images/39e/b6ff2e076154121841cafc74fa8df.small.jpg\"}, {\"id\": \"584081db09ae1ca0127e2faa79d440fe\", \"similarity\": 0.09214662071630311, \"url\": \"https://plant-id.ams3.cdn.digitaloceanspaces.com/similar_images/image";
 
     ArrayList<CardView> cardViews = new ArrayList<>();
-    ArrayList<String> probabilities = new ArrayList<>();
+    ArrayList<String> plantPros = new ArrayList<>();
+    ArrayList<String> plantNames = new ArrayList<>();
+    ArrayList<String> plantDescs = new ArrayList<>();
+    ArrayList<String> plantWikiUrls = new ArrayList<>();
 
-    int DP15;
-    int DP90;
+    int selectId = 0, recordId = -1;
+
+    int DP15, DP90, DP140;
 
     private int getPixelsFromDp(int size) {
         DisplayMetrics metrics = new DisplayMetrics();
@@ -70,6 +80,7 @@ public class CameraResultActivity extends AppCompatActivity {
 
         DP15 = getPixelsFromDp(15);
         DP90 = getPixelsFromDp(90);
+        DP140 = getPixelsFromDp(150);
 
         // set result image to square
         DisplayMetrics dm = new DisplayMetrics();
@@ -82,39 +93,134 @@ public class CameraResultActivity extends AppCompatActivity {
         resultImgLayoutParams.width = screenWidth;
         resultImgLayout.setLayoutParams(resultImgLayoutParams);
 
+        TextView candidatePlantName = findViewById(R.id.candidatePlantName);
+        ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) candidatePlantName.getLayoutParams();
+        layoutParams.width = screenWidth - DP140;
+        candidatePlantName.setLayoutParams(layoutParams);
+
         // plants information initialize
-        JSONArray plantsJsonArray = new JSONArray();
         try {
-            plantsJsonArray = new JSONObject(plantsStr).getJSONArray("suggestions");
+            JSONObject plantJson = new JSONObject(plantsStr);
+            JSONArray plantsJsonArray = plantJson.getJSONArray("suggestions");
+            initializePlantInfos(plantsJsonArray);
+            JSONObject resultImgInfoJson = plantJson.getJSONArray("images").getJSONObject(0);
+            setResultImg(resultImgInfoJson);
+
+            // information
+            setPlantInfo(0);
+            setCandidatePlantImgCards(plantsJsonArray);
+            setRecordBtn();
+
+            // record
+            Button recordBtn = findViewById(R.id.recordButton);
+            recordBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (recordId != selectId) {
+                        recordId = selectId;
+                        showDialog();
+                    } else
+                        recordId = -1;
+                    setRecordBtn();
+                }
+            });
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        ArrayList<Plant> plants = new ArrayList<>();
-        Plant p1 = new Plant("Bluebell", "common names", "kingdom", "p", "c", "order", "genus",
-                "Lily of the valley, Convallaria majalis (), sometimes written lily-of-the-valley, is a woodland flowering plant with sweetly scented, pendent, bell-shaped white flowers borne in sprays in spring. It is native throughout the cool temperate Northern Hemisphere in Asia and Europe. Due to its dense content of cardiac glycosides, it is highly poisonous if consumed by humans or domestic animals. Other names include May bells, Our Lady's tears, and Mary's tears. Its French name, muguet, sometimes appears in the names of perfumes imitating the flower's scent. In pre-modern England, the plant was known as glovewort (as it was a wort used to create a salve for sore hands), or Apollinaris (according to a legend that it was discovered by Apollo).",
-                "img", "edible parts", "propagation methods", false);
-        Plant p2 = new Plant("Chrysanthemum", "common names", "kingdom", "p", "c", "order", "genus",
-                "Wild Chrysanthemum taxa are herbaceous perennial plants or subshrubs. They have alternately arrang\"edible parts\", \"propagation methods\", false);\n" +
-                        "    }ed leaves divided into leaflets with toothed or occasionally smooth edges. The compound inflorescence is an array of several flower heads, or sometimes a solitary head. The head has a base covered in layers of phyllaries. The simple row of ray florets is white, yellow, or red; many horticultural specimens have been bred to bear many rows of ray florets in a great variety of colors. The disc florets of wild taxa are yellow. Pollen grains are appropriately 34 microns. The fruit is a ribbed achene.[8] Chrysanthemums start blooming early in the autumn. This is also known as the favorite flower for the month of November.[9]",
-                "img", "edible parts", "propagation methods", false);
-        Plant p3 = new Plant("Cherry Blossom", "common names", "kingdom", "p", "c", "order", "genus",
-                "The botanical classification of cherry blossoms varies from period to period and from country to country. As of the 21st century, in the mainstream classification in Europe and North America, cherry trees for ornamental purposes are classified into the genus Prunus which consists of about 400 species. In the mainstream classification in Japan, China, and Russia, on the other hand, ornamental cherry trees are classified into the genus Cerasus, which consists of about 100 species separated from the genus Prunus, and the genus Cerasus does not include Prunus salicina, Prunus persica (Peach), Prunus mume, Prunus grayana, etc.[4] In Japan, the genus Prunus was the mainstream as in Europe and America until around 1992, but it was reclassified into the genus Cerasus in order to more accurately reflect the latest botanical situation of cherry blossoms. However, it is often classified into the genus Prunus for presentation in English-speaking countries. In general, cherry blossom (sakura) refers only to some of these about 100 species and the cultivars produced from them, and it does not refer to plum blossoms (梅, ume) which are similar to sakura.[4]\n" +
-                        "In addition, since cherry trees are relatively prone to mutation and have a variety of flowers and trees, there are many varieties, such as variety which is a sub-classification of species, hybrids between species, and cultivar. For this reason, many researchers have named different scientific names for a particular type of cherry tree in different periods, and there is confusion in the classification of cherry trees.[14]",
-                "img", "edible parts", "propagation methods", false);
-        plants.add(p1);
-        plants.add(p2);
-        plants.add(p3);
+    }
 
-        // information
+    public void showDialog() {
+        AlertDialog.Builder alertdialogbuilder = new AlertDialog.Builder(this);
+        alertdialogbuilder.setTitle("Record success");
+        alertdialogbuilder.setMessage("Record this recognition result success! Go to the detail page to see more information about this plant now?");
+        alertdialogbuilder.setPositiveButton("Go", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(CameraResultActivity.this, DetailPageActivity.class);
+                // intent.putExtra(MESSAGE_KEY,message);
+                startActivity(intent);
+            }});
+        alertdialogbuilder.setNeutralButton("Back to camera", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(CameraResultActivity.this, BottomNavigationActivity.class);
+                // intent.putExtra(MESSAGE_KEY,message);
+                startActivity(intent);
+        }});
+        alertdialogbuilder.setNegativeButton("Stay", null);
+        final AlertDialog alertdialog1 = alertdialogbuilder.create();
+        alertdialog1.show();
+    }
+
+    public void initializePlantInfos(JSONArray plantsJsonArray) {
+        for (int i = 0; i < plantsJsonArray.length(); i++) {
+            try {
+                JSONObject plantJson = (JSONObject) plantsJsonArray.getJSONObject(i);
+                String plantProbabilityStr = plantJson.getString("probability");
+                String plantNameStr = plantJson.getString("plant_name");
+                JSONObject plantDetailJson = plantJson.getJSONObject("plant_details");
+                String plantUrl = plantDetailJson.getString("url");
+                JSONObject plantWikiDescJson = plantDetailJson.getJSONObject("wiki_description");
+                String plantDescStr = plantWikiDescJson.getString("value");
+                float plantProbability = ((float) (int) (10000 * Float.parseFloat(plantProbabilityStr))) / 100;
+                plantProbabilityStr = Float.toString(plantProbability) + "%";
+                System.out.println("[plant probability] " + plantProbabilityStr);
+                System.out.println("[plant name] " + plantNameStr);
+                System.out.println("[plant description] " + plantDescStr);
+                plantPros.add(plantProbabilityStr);
+                plantNames.add(plantNameStr);
+                plantDescs.add(plantDescStr);
+                plantWikiUrls.add(plantUrl);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void setResultImg(JSONObject imageInfoJson) {
+        try {
+            String filePath = imageInfoJson.getString("file_name");
+            String fileUrl = imageInfoJson.getString("url");
+            ImageView resultImg = findViewById(R.id.resultImg);
+            // Glide.with(this)
+            //         .load(filePath)
+            //         .placeholder(R.drawable.bluebell)
+            //         .fitCenter()
+            //         .into(resultImg);
+            System.out.println("[File url] " + fileUrl);
+            LoadImage.setImageView(resultImg, fileUrl);
+        } catch (JSONException e) {
+            System.out.println("[Load result image failed]");
+            e.printStackTrace();
+        }
+    }
+
+    public void setPlantInfo(Integer index) {
+        String plantName = plantNames.get(index);
+        String plantDescription = plantDescs.get(index);
+        String plantWikiUrl = plantWikiUrls.get(index);
+        String plantPro = plantPros.get(index);
         TextView candidatePlantName = findViewById(R.id.candidatePlantName);
         TextView candidatePlantDescription = findViewById(R.id.candidatePlantDescription);
         TextView candidatePlantWiki = findViewById(R.id.candidatePlantWiki);
-        candidatePlantName.setText(plants.get(0).getName());
-        candidatePlantDescription.setText(plants.get(0).getDescription());
+        TextView candidatePlantProbability = findViewById(R.id.candidatePlantProbability);
+        candidatePlantName.setText(plantName);
+        candidatePlantDescription.setText("Description: " + plantDescription);
+        candidatePlantWiki.setText(plantWikiUrl);
+        candidatePlantProbability.setText("Similarity " + plantPro);
+    }
 
-        setCandidatePlantImgCards(plantsJsonArray);
-
+    public void setRecordBtn() {
+        Button recordBtn = findViewById(R.id.recordButton);
+        if (selectId == recordId) {
+            recordBtn.setText("RECORD");
+            recordBtn.setBackgroundColor(Color.GRAY);
+        } else {
+            recordBtn.setText("CHOOSE");
+            recordBtn.setBackgroundColor(getResources().getColor(R.color.green_light_3));
+        }
     }
 
     public void setCandidatePlantImgCards(JSONArray plantsJsonArray) {
@@ -122,14 +228,9 @@ public class CameraResultActivity extends AppCompatActivity {
         for (int i = 0; i < plantsJsonArray.length(); i++) {
             try {
                 JSONObject plantJson = (JSONObject) plantsJsonArray.getJSONObject(i);
-                String plantProbabilityStr = "";
-                plantProbabilityStr = plantJson.getString("probability");
-                float plantProbability =  ((float) (int) (10000 * Float.parseFloat(plantProbabilityStr))) / 100;
-                plantProbabilityStr = Float.toString(plantProbability) + "%";
-                System.out.println("[plant probability] " + plantProbability);
                 CardView cv = setCandidatePlantImgCard(plantJson);
                 candidatePlantImgCardsLayout.addView(cv);
-                probabilities.add(plantProbabilityStr);
+                cv.setId(i);
                 cardViews.add(cv);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -158,11 +259,12 @@ public class CameraResultActivity extends AppCompatActivity {
         candidatePlantImgCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                System.out.println("[On Click] ");
                 selectCandidateCard((CardView) view);
+                selectId = view.getId();
+                setPlantInfo(view.getId());
+                setRecordBtn();
             }
         });
-
 
         ImageView candidatePlantImg = new ImageView(this);
         ConstraintLayout.LayoutParams candidatePlantImgLayoutParams = new ConstraintLayout.LayoutParams(DP90, DP90);
@@ -180,8 +282,8 @@ public class CameraResultActivity extends AppCompatActivity {
         int index = 0;
         for (int i = 0; i < cardViews.size(); i++) {
             CardView cv = cardViews.get(i);
-            if (cv.equals(selectCardView)) setCardSelected(cv, probabilities.get(i));
-            else setCardUnselected(cv, probabilities.get(i));
+            if (cv.equals(selectCardView)) setCardSelected(cv, plantPros.get(i));
+            else setCardUnselected(cv, plantPros.get(i));
             index++;
         }
     }
@@ -220,9 +322,9 @@ public class CameraResultActivity extends AppCompatActivity {
         tv.setText(probability);
         if (type == 0) {
             tv.setTextColor(getResources().getColorStateList(R.color.white));
-        }
-        else if (type == 1) {
+        } else if (type == 1) {
             tv.setTextColor(getResources().getColorStateList(R.color.black));
+            tv.setShadowLayer(10, 2, 2, Color.WHITE);
         }
         tv.setGravity(Gravity.CENTER);
         tv.setTextSize(16);
