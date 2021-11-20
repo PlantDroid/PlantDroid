@@ -65,7 +65,7 @@ import util.LogUtil;
  * Use the {@link CameraFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CameraFragment extends Fragment  {
+public class CameraFragment extends Fragment {
 
     public CameraFragment() {
         // Required empty public constructor
@@ -112,10 +112,10 @@ public class CameraFragment extends Fragment  {
 
             @Override
             public void onGetLocation(double lat, double lng, double acc) {
-                coordinate[0]=String.valueOf(lat);
-                coordinate[1]=String.valueOf(lng);
-                accuracy=String.valueOf(acc);
-                System.out.println("coordinate[0]="+ coordinate[0]+"coordinate[1]"+coordinate[1]+"accuracy"+accuracy);
+                coordinate[0] = String.valueOf(lat);
+                coordinate[1] = String.valueOf(lng);
+                accuracy = String.valueOf(acc);
+                System.out.println("coordinate[0]=" + coordinate[0] + "coordinate[1]" + coordinate[1] + "accuracy" + accuracy);
             }
         });
 
@@ -215,7 +215,8 @@ public class CameraFragment extends Fragment  {
         boolean er = shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_BACKGROUND_LOCATION);
         System.out.println("===========================================" + "\n" + er);
     }
-    String[] coordinate=new String[2];
+
+    String[] coordinate = new String[2];
     String accuracy;
     /**
      * 打开相册
@@ -298,9 +299,7 @@ public class CameraFragment extends Fragment  {
     }
 
 
-    public String sendPostRequest(String urlString, JSONObject data) throws Exception
-
-    {
+    public String sendPostRequest(String urlString, JSONObject data) throws Exception {
         Thread t;
         URL url = new URL(urlString);
         t = new Thread(new Runnable() {
@@ -340,16 +339,17 @@ public class CameraFragment extends Fragment  {
                         sb1.append(s);
                     }
                     String response = sb1.toString();
-                    LogUtil.handleMessage(1,"1",response);
-                    View v=CameraFragment.super.getView();
+                    LogUtil.handleMessage(1, "1", response);
+                    View v = CameraFragment.super.getView();
                     v.post(new Runnable() {
                         @Override
                         public void run() {
                             Intent intent = new Intent();
-                            intent.setClass(getContext(),CameraResultActivity.class);
+                            intent.setClass(getContext(), CameraResultActivity.class);
                             intent.putExtra("response", response);
-                            intent.putExtra("accuracy ",accuracy );
-                            intent.putExtra("coordinate",coordinate);
+                            intent.putExtra("accuracy ", accuracy);
+                            intent.putExtra("latitude", coordinate[0]);
+                            intent.putExtra("longitude", coordinate[1]);
                             startActivity(intent);
                         }
                     });
@@ -365,7 +365,6 @@ public class CameraFragment extends Fragment  {
         t.start();
         return null;
     }
-
 
 
     /**
@@ -429,8 +428,9 @@ public class CameraFragment extends Fragment  {
         options.setFreeStyleCropEnabled(false);
         uCrop.withOptions(options);
         uCrop.withAspectRatio(4, 3); //比例
-        uCrop.start(getContext(),this,REQUEST_CROP);
+        uCrop.start(getContext(), this, REQUEST_CROP);
     }
+
     /**
      * Toast提示
      *
@@ -439,6 +439,7 @@ public class CameraFragment extends Fragment  {
     private void showMsg(String msg) {
         Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
     }
+
     @SuppressLint("CheckResult")
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -473,7 +474,7 @@ public class CameraFragment extends Fragment  {
                 coordinate[0] = String.valueOf(cursor.getFloat(columnIndexLatitude));
 
                 coordinate[1] = String.valueOf(cursor.getFloat(columnIndexLongitude));
-                accuracy="-1";
+                accuracy = "-1";
                 cursor.close();
 
                 //识别
@@ -501,14 +502,14 @@ public class CameraFragment extends Fragment  {
                             ExifInterface exifInterface = new ExifInterface(stream);
                             exifInterface.getLatLong(latLong);
                             //获取图片经纬度信息，第一个元素为纬度，第二个元素为经度
-                            if(latLong[0]==0&&latLong[1]==0){
+                            if (latLong[0] == 0 && latLong[1] == 0) {
                                 System.out.println("本图片无位置信息");
-                            }else{
-                                coordinate[0]=String.valueOf(latLong[0]);
-                                coordinate[1]=String.valueOf(latLong[1]);
-                                accuracy="-1";
+                            } else {
+                                coordinate[0] = String.valueOf(latLong[0]);
+                                coordinate[1] = String.valueOf(latLong[1]);
+                                accuracy = "-1";
                                 System.out.println("=============================================");
-                                System.out.println("latLong[0]"+latLong[0] + "latLong[1]" + latLong[1]);
+                                System.out.println("latLong[0]" + latLong[0] + "latLong[1]" + latLong[1]);
                                 System.out.println("=============================================");
                             }
                             stream.close();
@@ -517,12 +518,12 @@ public class CameraFragment extends Fragment  {
                         e.printStackTrace();
                     }
                 }
-            }else if (requestCode == REQUEST_CROP) {
+            } else if (requestCode == REQUEST_CROP) {
                 String imagePath;
                 Uri croppedUri = UCrop.getOutput(data);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     imagePath = uriToFileApiQ(getContext(), croppedUri);
-                }else{
+                } else {
                     imagePath = outputImageCut.getAbsolutePath();
                 }
                 try {
@@ -543,6 +544,7 @@ public class CameraFragment extends Fragment  {
             showMsg("没有上传图片呦(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧");
         }
     }
+
     /**
      * 最终结果
      *
@@ -576,6 +578,7 @@ public class CameraFragment extends Fragment  {
         }
         return file.getAbsolutePath();
     }
+
     /**
      * 本地图片识别
      */

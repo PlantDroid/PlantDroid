@@ -62,6 +62,9 @@ public class CameraResultActivity extends AppCompatActivity {
             "    ce of maple syrup and for its brightly colored fall foliage. It may also be known as \\\"rock maple\\\", \\\"sugar tree\\\", \\\"birds-eye maple\\\", \\\"sweet maple\\\", \\\"curly maple\\\", or \\\"hard maple\\\", particularly when referring to the wood.\", \"citation\": \"https://en.wikipedia.org/wiki/Acer_saccharum\", \"license_name\": \"CC BY-SA 3.0\", \"license_url\": \"https://creativecommons.org/licenses/by-sa/3.0/\"}, \"taxonomy\": {\"class\": \"Magnoliopsida\", \"family\": \"Sapindaceae\", \"genus\": \"Acer\", \"kingdom\": \"Plantae\", \"order\": \"Sapindales\", \"phylum\": \"Magnoliophyta\"}, \"synonyms\": [\"Acer saccharinum var. glaucum\", \"Acer barbatum f. commune\", \"Acer hispidum\", \"Acer nigrum subsp. saccharophorum\", \"Acer nigrum var. glaucum\", \"Acer palmifolium\", \"Acer palmifolium f. euconcolor\", \"Acer palmifolium f. glabratum\", \"Acer palmifolium f. integrilobum\", \"Acer palmifolium var. concolor\", \"Acer palmifolium var. glaucum\", \"Acer saccharinum var. viride\", \"Acer saccharophorum\", \"Acer saccharophorum f. angustilobatum\", \"Acer sacch\n" +
             "    arophorum f. conicum\", \"Acer saccharophorum f. glaucum\", \"Acer saccharophorum var. subvestitum\", \"Acer saccharum f. angustilobatum\", \"Acer saccharum f. conicum\", \"Acer saccharum f. euconcolor\", \"Acer saccharum f. glabratum\", \"Acer saccharum f. hispidum\", \"Acer saccharum f. integrilobum\", \"Acer saccharum f. pubescens\", \"Acer saccharum f. rubrocarpum\", \"Acer saccharum f. subvestitum\", \"Acer saccharum f. truncatum\", \"Acer saccharum f. villipes\", \"Acer saccharum f. villosum\", \"Acer saccharum var. quinquelobulatum\", \"Acer saccharum var. viride\", \"Acer subglaucum\", \"Acer subglaucum var. sinuosum\", \"Acer treleaseanum\", \"Saccharodendron hispidum\", \"Saccharodendron saccharum\"], \"scientific_name\": \"Acer saccharum\", \"structured_name\": {\"genus\": \"acer\", \"species\": \"saccharum\"}}, \"probability\": 0.013896970030333846, \"confirmed\": false, \"similar_images\": [{\"id\": \"39eb6ff2e076154121841cafc74fa8df\", \"similarity\": 0.608939381086905, \"url\": \"https://plant-id.ams3.cdn.digitaloceanspaces.com/similar_image\n" +
             "    s/images/39e/b6ff2e076154121841cafc74fa8df.jpg\", \"url_small\": \"https://plant-id.ams3.cdn.digitaloceanspaces.com/similar_images/images/39e/b6ff2e076154121841cafc74fa8df.small.jpg\"}, {\"id\": \"584081db09ae1ca0127e2faa79d440fe\", \"similarity\": 0.09214662071630311, \"url\": \"https://plant-id.ams3.cdn.digitaloceanspaces.com/similar_images/images/584/081db09ae1ca0127e2faa79d440fe.jpg\", \"url_small\": \"https://plant-id.ams3.cdn.digitaloceanspaces.com/similar_images/images/584/081db09ae1ca0127e2faa79d440fe.small.jpg\"}]}], \"modifiers\": [\"crops_fast\", \"similar_images\"], \"secret\": \"uq01yaGDx1xsBBt\", \"fail_cause\": null, \"countable\": true, \"feedback\": null, \"is_plant_probability\": 0.07250318489999999, \"is_plant\": false}ific_name\": \"Acer saccharum\", \"structured_name\": {\"genus\": \"acer\", \"species\": \"saccharum\"}}, \"probability\": 0.013896970030333846, \"confirmed\": false, \"similar_images\": [{\"id\": \"39eb6ff2e076154121841cafc74fa8df\", \"similarity\": 0.608939381086905, \"url\": \"https://plant-id.ams3.cdn.digitaloceanspaces.com/similar_images/images/39e/b6ff2e076154121841cafc74fa8df.jpg\", \"url_small\": \"https://plant-id.ams3.cdn.digitaloceanspaces.com/similar_images/images/39e/b6ff2e076154121841cafc74fa8df.small.jpg\"}, {\"id\": \"584081db09ae1ca0127e2faa79d440fe\", \"similarity\": 0.09214662071630311, \"url\": \"https://plant-id.ams3.cdn.digitaloceanspaces.com/similar_images/image";
+    String accuracy = null;
+    String longitude = null;
+    String latitude = null;
 
     ArrayList<CardView> cardViews = new ArrayList<>();
     ArrayList<String> plantPros = new ArrayList<>();
@@ -83,9 +86,17 @@ public class CameraResultActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera_result);
 
+        Intent intent = this.getIntent();
+        accuracy = this.getIntent().getStringExtra("accuracy");
+        latitude = this.getIntent().getStringExtra("latitude");
+        longitude = this.getIntent().getStringExtra("longitude");
+        plantsStr = this.getIntent().getStringExtra("response");
+
         DP15 = getPixelsFromDp(15);
         DP90 = getPixelsFromDp(90);
         DP140 = getPixelsFromDp(150);
+
+        System.out.println("[Response] " + plantsStr);
 
         // get screen width
         DisplayMetrics dm = new DisplayMetrics();
@@ -170,14 +181,15 @@ public class CameraResultActivity extends AppCompatActivity {
                 Intent intent = new Intent(CameraResultActivity.this, DetailPageActivity.class);
                 // intent.putExtra(MESSAGE_KEY,message);
                 startActivity(intent);
+                CameraResultActivity.this.finish();
             }});
         dialogbuilder.setNeutralButton("Back to camera", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Intent intent = new Intent(CameraResultActivity.this, BottomNavigationActivity.class);
-                // intent.putExtra(MESSAGE_KEY,message);
                 startActivity(intent);
-        }});
+                CameraResultActivity.this.finish();
+            }});
         final AlertDialog alertdialog1 = dialogbuilder.create();
         alertdialog1.setCancelable(false);
         alertdialog1.show();
@@ -188,14 +200,18 @@ public class CameraResultActivity extends AppCompatActivity {
             try {
                 JSONObject plantJson = (JSONObject) plantsJsonArray.getJSONObject(i);
                 JSONObject plantDetailJson = plantJson.getJSONObject("plant_details");
-                JSONObject plantWikiDescJson = plantDetailJson.getJSONObject("wiki_description");
 
                 String plantProbabilityStr = plantJson.getString("probability");
                 float plantProbability = ((float) (int) (10000 * Float.parseFloat(plantProbabilityStr))) / 100;
                 plantProbabilityStr = Float.toString(plantProbability) + "%";
                 String plantNameStr = plantJson.getString("plant_name");
                 String plantUrl = plantDetailJson.getString("url");
-                String plantDescStr = plantWikiDescJson.getString("value");
+                String plantDescStr = null;
+                try {
+                    plantDescStr = plantDetailJson.getJSONObject("wiki_description").getString("value");
+                } catch (JSONException e) {
+                    System.out.println("[JSON Error] initialize plant infos.");
+                }
 
                 plantPros.add(plantProbabilityStr);
                 plantNames.add(plantNameStr);
@@ -362,26 +378,28 @@ public class CameraResultActivity extends AppCompatActivity {
                 propagationMethods = plantDetails.getString("propagation_methods");
             } catch (JSONException e) {}
             JSONObject taxonomy = plantDetails.getJSONObject("taxonomy");
+            String time = plantJSON.getString("uploaded_datetime");
 
             Plant plant = new Plant(plantName, plantDetails.getString("common_names"),
                     taxonomy.getString("kingdom"), taxonomy.getString("phylum"), taxonomy.getString("class"),
                     taxonomy.getString("order"), taxonomy.getString("family"), taxonomy.getString("genus"), plantDesc, plantImg,
                     edibleParts, propagationMethods, plantDetails.getString("url"), true);
-            // DiscoveredPlant discovery = new DiscoveredPlant(plantJSON.getString("uploaded_datetime"), "", "", "", "");
             PlantDroidViewModel plantDroidViewModel = ViewModelProviders.of(this).get(PlantDroidViewModel.class);
-            plantDroidViewModel.deleteAllPlants();
+            // plantDroidViewModel.deleteAllPlants();
             plantDroidViewModel.getPlantByName(plantName).observe(this, new Observer<List<Plant>>() {
                 @Override
                 public void onChanged(List<Plant> plants) {
                     System.out.println(plants.size());
                     if (plants.isEmpty()) {
                         System.out.println("[Is Empty]");
-                        // plantDroidViewModel.insertPlants(plant);
+                        plantDroidViewModel.insertPlants(plant);
                         System.out.println("[Insert Finish]");
-                        // plantDroidViewModel.insertDiscoveredPlants();
                     }
                     else {
                         System.out.println("[Not Empty]");
+                        Plant p = plants.get(0);
+                        // DiscoveredPlant discovery = new DiscoveredPlant(time, "", "", "", p.getId());
+                        // plantDroidViewModel.insertDiscoveredPlants();
                     }
                 }
             });
