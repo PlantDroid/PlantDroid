@@ -217,7 +217,7 @@ public class CameraFragment extends Fragment {
     }
 
     String[] coordinate = new String[2];
-    String accuracy;
+    String accuracy = "-1";
     /**
      * 打开相册
      */
@@ -347,14 +347,15 @@ public class CameraFragment extends Fragment {
                             Intent intent = new Intent();
                             intent.setClass(getContext(), CameraResultActivity.class);
                             intent.putExtra("response", response);
-                            intent.putExtra("accuracy ", accuracy);
                             intent.putExtra("latitude", coordinate[0]);
                             intent.putExtra("longitude", coordinate[1]);
+                            intent.putExtra("accuracy", accuracy);
+                            System.out.println("[Accuracy] " + accuracy);
+
                             startActivity(intent);
+                            System.out.println("[Accuracy] " + accuracy);
                         }
                     });
-
-
                     System.out.println("[Response] " + response);
                     con.disconnect();
                 } catch (Exception e) {
