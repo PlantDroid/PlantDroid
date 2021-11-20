@@ -52,34 +52,24 @@ public class DbTestActivity extends AppCompatActivity {
         buttonDelete = findViewById(R.id.buttonDelete);
         buttonUpdate = findViewById(R.id.buttonUpdate);
 
-        buttonInsert.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Plant plant1 = new Plant("Flower","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa",false);
-                Plant plant2 = new Plant("Sunflower","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa",false);
-                plantDroidViewModel.insertPlants(plant1,plant2);
-            }
+        buttonInsert.setOnClickListener(v -> {
+            Plant plant1 = new Plant("Flower","aaaa","aaaa","aaaa","aaaa","aaaa","aaa","aaaa","aaaa","aaaa","aaaa","aaaa", "aaa", false);
+            Plant plant2 = new Plant("Sunflower","aaaa","aaaa","aaaa","aaaa","aaaa", "aaa", "aaaa","aaaa","aaaa","aaaa","aaaa","aaa",false);
+            plantDroidViewModel.insertPlants(plant1,plant2);
         });
-        buttonClear.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                plantDroidViewModel.deleteAllPlants();
-            }
-        });
+        buttonClear.setOnClickListener(v -> plantDroidViewModel.deleteAllPlants());
 
-        buttonUpdate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Plant plant = new Plant("Lily","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa",false);
-                plant.setId(90);
-                plantDroidViewModel.updatePlants(plant);
-            }
+        buttonUpdate.setOnClickListener(v -> {
+//            Plant plant = new Plant("Lily","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa",false);
+//            plant.setId(90);
+//            plantDroidViewModel.updatePlants(plant);
+            plantDroidViewModel.deleteAllPlants();
         });
 
         buttonDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Plant plant = new Plant("Lily","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa","aaaa",false);
+                Plant plant = new Plant("Flower","aaaa","aaaa","aaaa","aaaa","aaaa","aaa","aaaa","aaaa","aaaa","aaaa","aaaa", "aaa", false);
                 plant.setId(90);
                 plantDroidViewModel.deletePlants(plant);
             }

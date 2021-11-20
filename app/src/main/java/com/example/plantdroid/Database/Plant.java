@@ -7,20 +7,24 @@ import androidx.room.PrimaryKey;
 
 @Entity(indices = {@Index("id"), @Index(value = {"plant_name"}, unique = true)})
 public class Plant {
-    public Plant(String name, String commonNames, String kingdom, String phylum, String plantClass, String order, String genus, String description, String img, String edibleParts, String propagationMethods, Boolean isOwned) {
+    public Plant(String name, String commonNames, String kingdom, String phylum, String plantClass, String order, String family, String genus, String description, String img, String edibleParts, String propagationMethods, String wiki, Boolean isOwned) {
         this.name = name;
         this.commonNames = commonNames;
         this.kingdom = kingdom;
         this.phylum = phylum;
         this.plantClass = plantClass;
         this.order = order;
+        this.family = family;
         this.genus = genus;
         this.description = description;
         this.img = img;
         this.edibleParts = edibleParts;
         this.propagationMethods = propagationMethods;
         this.isOwned = isOwned;
+        this.wiki = wiki;
     }
+
+
 
     @PrimaryKey(autoGenerate = true)
     private int id;
@@ -43,6 +47,9 @@ public class Plant {
     @ColumnInfo(name = "order")
     private String order;
 
+    @ColumnInfo(name = "family")
+    private String family;
+
     @ColumnInfo(name = "genus")
     private String genus;
 
@@ -60,6 +67,9 @@ public class Plant {
 
     @ColumnInfo(name = "is_owned")
     private Boolean isOwned;
+
+    @ColumnInfo(name = "wiki")
+    private String wiki;
 
 
     public int getId() {
@@ -118,6 +128,14 @@ public class Plant {
         this.order = order;
     }
 
+    public String getFamily() {
+        return family;
+    }
+
+    public void setFamily(String family) {
+        this.family = family;
+    }
+
     public String getGenus() {
         return genus;
     }
@@ -164,6 +182,14 @@ public class Plant {
 
     public void setOwned(Boolean owned) {
         isOwned = owned;
+    }
+
+    public String getWiki() {
+        return wiki;
+    }
+
+    public void setWiki(String wiki) {
+        this.wiki = wiki;
     }
 }
 
