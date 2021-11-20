@@ -5,6 +5,9 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
@@ -26,7 +29,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.plantdroid.Database.DiscoveredPlant;
 import com.example.plantdroid.Database.Plant;
+import com.example.plantdroid.Database.PlantDroidViewModel;
 import com.example.plantdroid.ui.camera.CameraFragment;
 
 import org.json.JSONArray;
@@ -39,6 +44,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 import util.LoadImage;
 
@@ -64,7 +70,6 @@ public class CameraResultActivity extends AppCompatActivity {
     ArrayList<String> plantWikiUrls = new ArrayList<>();
 
     int selectId = 0, recordId = -1;
-
     int DP15, DP90, DP140;
 
     private int getPixelsFromDp(int size) {
@@ -82,75 +87,79 @@ public class CameraResultActivity extends AppCompatActivity {
         DP90 = getPixelsFromDp(90);
         DP140 = getPixelsFromDp(150);
 
-        // set result image to square
+        // get screen width
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
         int screenWidth = dm.widthPixels;
 
+        // set result image to 4:3
         ImageView resultImgLayout = findViewById(R.id.resultImg);
         ConstraintLayout.LayoutParams resultImgLayoutParams = (ConstraintLayout.LayoutParams) resultImgLayout.getLayoutParams();
         resultImgLayoutParams.height = screenWidth * 3 / 4;
         resultImgLayoutParams.width = screenWidth;
         resultImgLayout.setLayoutParams(resultImgLayoutParams);
 
+        // set plant name width
         TextView candidatePlantName = findViewById(R.id.candidatePlantName);
         ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) candidatePlantName.getLayoutParams();
         layoutParams.width = screenWidth - DP140;
         candidatePlantName.setLayoutParams(layoutParams);
 
-        // plants information initialize
+        // initialize plants information
         try {
             JSONObject plantJson = new JSONObject(plantsStr);
             JSONArray plantsJsonArray = plantJson.getJSONArray("suggestions");
-            initializePlantInfos(plantsJsonArray);
             JSONObject resultImgInfoJson = plantJson.getJSONArray("images").getJSONObject(0);
-            setResultImg(resultImgInfoJson);
+            // initialize information in arrays
+            initializePlantInfos(plantsJsonArray);
+            initializePlantImgCards(plantsJsonArray);
 
-            // information
+            // set information to ui
+            setResultImg(resultImgInfoJson);
             setPlantInfo(0);
-            setCandidatePlantImgCards(plantsJsonArray);
+            selectCandidateCard(cardViews.get(0));
             setRecordBtn();
 
-            // record
+            // add record button on click listener
             Button recordBtn = findViewById(R.id.recordButton);
             recordBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     if (recordId != selectId) {
                         recordId = selectId;
+                        addRecordToDB(plantJson);
                         showDialog();
                     } else
                         recordId = -1;
                     setRecordBtn();
                 }
             });
-
         } catch (JSONException e) {
+            System.out.println("[JSON Error] result JSON parse failed.");
             e.printStackTrace();
         }
-
     }
 
     public void showDialog() {
-        AlertDialog.Builder alertdialogbuilder = new AlertDialog.Builder(this);
-        alertdialogbuilder.setTitle("Record success");
-        alertdialogbuilder.setMessage("Record this recognition result success! Go to the detail page to see more information about this plant now?");
-        alertdialogbuilder.setPositiveButton("Go", new DialogInterface.OnClickListener() {
+        AlertDialog.Builder dialogbuilder = new AlertDialog.Builder(this);
+        dialogbuilder.setTitle("Record success");
+        dialogbuilder.setMessage("Record this recognition result success! Go to the detail page to see more information about this plant now?");
+        dialogbuilder.setPositiveButton("Go", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Intent intent = new Intent(CameraResultActivity.this, DetailPageActivity.class);
                 // intent.putExtra(MESSAGE_KEY,message);
                 startActivity(intent);
             }});
-        alertdialogbuilder.setNeutralButton("Back to camera", new DialogInterface.OnClickListener() {
+        dialogbuilder.setNeutralButton("Back to camera", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Intent intent = new Intent(CameraResultActivity.this, BottomNavigationActivity.class);
                 // intent.putExtra(MESSAGE_KEY,message);
                 startActivity(intent);
         }});
-        alertdialogbuilder.setNegativeButton("Stay", null);
-        final AlertDialog alertdialog1 = alertdialogbuilder.create();
+        dialogbuilder.setNegativeButton("Stay", null);
+        final AlertDialog alertdialog1 = dialogbuilder.create();
         alertdialog1.show();
     }
 
@@ -158,22 +167,22 @@ public class CameraResultActivity extends AppCompatActivity {
         for (int i = 0; i < plantsJsonArray.length(); i++) {
             try {
                 JSONObject plantJson = (JSONObject) plantsJsonArray.getJSONObject(i);
-                String plantProbabilityStr = plantJson.getString("probability");
-                String plantNameStr = plantJson.getString("plant_name");
                 JSONObject plantDetailJson = plantJson.getJSONObject("plant_details");
-                String plantUrl = plantDetailJson.getString("url");
                 JSONObject plantWikiDescJson = plantDetailJson.getJSONObject("wiki_description");
-                String plantDescStr = plantWikiDescJson.getString("value");
+
+                String plantProbabilityStr = plantJson.getString("probability");
                 float plantProbability = ((float) (int) (10000 * Float.parseFloat(plantProbabilityStr))) / 100;
                 plantProbabilityStr = Float.toString(plantProbability) + "%";
-                System.out.println("[plant probability] " + plantProbabilityStr);
-                System.out.println("[plant name] " + plantNameStr);
-                System.out.println("[plant description] " + plantDescStr);
+                String plantNameStr = plantJson.getString("plant_name");
+                String plantUrl = plantDetailJson.getString("url");
+                String plantDescStr = plantWikiDescJson.getString("value");
+
                 plantPros.add(plantProbabilityStr);
                 plantNames.add(plantNameStr);
                 plantDescs.add(plantDescStr);
                 plantWikiUrls.add(plantUrl);
             } catch (JSONException e) {
+                System.out.println("[JSON Error] inside JSON parse failed.");
                 e.printStackTrace();
             }
         }
@@ -181,7 +190,7 @@ public class CameraResultActivity extends AppCompatActivity {
 
     public void setResultImg(JSONObject imageInfoJson) {
         try {
-            String filePath = imageInfoJson.getString("file_name");
+            // String filePath = imageInfoJson.getString("file_name");
             String fileUrl = imageInfoJson.getString("url");
             ImageView resultImg = findViewById(R.id.resultImg);
             // Glide.with(this)
@@ -189,7 +198,7 @@ public class CameraResultActivity extends AppCompatActivity {
             //         .placeholder(R.drawable.bluebell)
             //         .fitCenter()
             //         .into(resultImg);
-            System.out.println("[File url] " + fileUrl);
+            // System.out.println("[File url] " + fileUrl);
             LoadImage.setImageView(resultImg, fileUrl);
         } catch (JSONException e) {
             System.out.println("[Load result image failed]");
@@ -198,18 +207,14 @@ public class CameraResultActivity extends AppCompatActivity {
     }
 
     public void setPlantInfo(Integer index) {
-        String plantName = plantNames.get(index);
-        String plantDescription = plantDescs.get(index);
-        String plantWikiUrl = plantWikiUrls.get(index);
-        String plantPro = plantPros.get(index);
         TextView candidatePlantName = findViewById(R.id.candidatePlantName);
         TextView candidatePlantDescription = findViewById(R.id.candidatePlantDescription);
         TextView candidatePlantWiki = findViewById(R.id.candidatePlantWiki);
         TextView candidatePlantProbability = findViewById(R.id.candidatePlantProbability);
-        candidatePlantName.setText(plantName);
-        candidatePlantDescription.setText("Description: " + plantDescription);
-        candidatePlantWiki.setText(plantWikiUrl);
-        candidatePlantProbability.setText("Similarity " + plantPro);
+        candidatePlantName.setText(plantNames.get(index));
+        candidatePlantDescription.setText("Description: " + plantDescs.get(index));
+        candidatePlantWiki.setText(plantWikiUrls.get(index));
+        candidatePlantProbability.setText("Similarity " + plantPros.get(index));
     }
 
     public void setRecordBtn() {
@@ -223,40 +228,33 @@ public class CameraResultActivity extends AppCompatActivity {
         }
     }
 
-    public void setCandidatePlantImgCards(JSONArray plantsJsonArray) {
+    public void initializePlantImgCards(JSONArray plantsJsonArray) {
         LinearLayout candidatePlantImgCardsLayout = findViewById(R.id.candidatePlantImgCardsLayout);
         for (int i = 0; i < plantsJsonArray.length(); i++) {
             try {
                 JSONObject plantJson = (JSONObject) plantsJsonArray.getJSONObject(i);
-                CardView cv = setCandidatePlantImgCard(plantJson);
+                String plantImgUrl = plantJson.getJSONArray("similar_images").getJSONObject(0).getString("url");
+
+                CardView cv = setPlantImgCard(plantImgUrl);
                 candidatePlantImgCardsLayout.addView(cv);
                 cv.setId(i);
                 cardViews.add(cv);
             } catch (JSONException e) {
+                System.out.println("[JSON Error] plantsJsonArray parse error.");
                 e.printStackTrace();
             }
         }
-        selectCandidateCard(cardViews.get(0));
     }
 
-    public CardView setCandidatePlantImgCard(JSONObject plantJson) {
-        System.out.println(plantJson);
-        String plantImgUrl = "";
-        try {
-            plantImgUrl = plantJson.getJSONArray("similar_images").getJSONObject(0).getString("url");
-            System.out.println("[plant image url] " + plantImgUrl);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+    public CardView setPlantImgCard(String plantImgUrl) {
+        CardView plantImgCard = new CardView(this);
+        ConstraintLayout.LayoutParams plantImgCardLayoutParams = new ConstraintLayout.LayoutParams(DP90, DP90);
+        plantImgCardLayoutParams.setMargins(DP15, DP15, 0, DP15);
+        plantImgCard.setLayoutParams(plantImgCardLayoutParams);
+        plantImgCard.setRadius(DP90);
 
-        CardView candidatePlantImgCard = new CardView(this);
-        ConstraintLayout.LayoutParams candidatePlantImgCardLayoutParams = new ConstraintLayout.LayoutParams(DP90, DP90);
-        candidatePlantImgCardLayoutParams.setMargins(DP15, DP15, 0, DP15);
-        candidatePlantImgCard.setLayoutParams(candidatePlantImgCardLayoutParams);
-        candidatePlantImgCard.setRadius(DP90);
-
-        candidatePlantImgCard.setClickable(true);
-        candidatePlantImgCard.setOnClickListener(new View.OnClickListener() {
+        plantImgCard.setClickable(true);
+        plantImgCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 selectCandidateCard((CardView) view);
@@ -266,25 +264,20 @@ public class CameraResultActivity extends AppCompatActivity {
             }
         });
 
-        ImageView candidatePlantImg = new ImageView(this);
+        ImageView plantImgView = new ImageView(this);
         ConstraintLayout.LayoutParams candidatePlantImgLayoutParams = new ConstraintLayout.LayoutParams(DP90, DP90);
-
-        // 加载网络图片
-        final String imgUrl = plantImgUrl;
-        LoadImage.setImageView(candidatePlantImg, imgUrl);
-        candidatePlantImg.setLayoutParams(candidatePlantImgLayoutParams);
-        candidatePlantImgCard.addView(candidatePlantImg);
-        return candidatePlantImgCard;
+        // load network image
+        LoadImage.setImageView(plantImgView, plantImgUrl);
+        plantImgView.setLayoutParams(candidatePlantImgLayoutParams);
+        plantImgCard.addView(plantImgView);
+        return plantImgCard;
     }
 
-
     public void selectCandidateCard(CardView selectCardView) {
-        int index = 0;
         for (int i = 0; i < cardViews.size(); i++) {
             CardView cv = cardViews.get(i);
             if (cv.equals(selectCardView)) setCardSelected(cv, plantPros.get(i));
             else setCardUnselected(cv, plantPros.get(i));
-            index++;
         }
     }
 
@@ -313,9 +306,7 @@ public class CameraResultActivity extends AppCompatActivity {
     }
 
     public TextView getProbabilityText(int type, String probability) {
-        // type 0 - select
-        // type 1 - unselect
-
+        // type 0 - select, type 1 - unselect
         TextView tv = new TextView(this);
         ConstraintLayout.LayoutParams candidatePlantProbabilityLayoutParams = new ConstraintLayout.LayoutParams(DP90, DP90);
         tv.setLayoutParams(candidatePlantProbabilityLayoutParams);
@@ -329,5 +320,54 @@ public class CameraResultActivity extends AppCompatActivity {
         tv.setGravity(Gravity.CENTER);
         tv.setTextSize(16);
         return tv;
+    }
+
+    public void addRecordToDB(JSONObject resultJSON) {
+        try {
+            JSONObject plantJSON = resultJSON.getJSONArray("suggestions").getJSONObject(recordId);
+            String plantName = plantJSON.getString("plant_name");
+            JSONObject plantDetails = plantJSON.getJSONObject("plant_details");
+            String plantDesc = plantDetails.getJSONObject("wiki_description").getString("value");
+            String plantImg = null;
+            try {
+                plantImg = plantDetails.getJSONObject("wiki_image").getString("value");
+            } catch (JSONException e) {}
+            String edibleParts = null;
+            try {
+                edibleParts = plantDetails.getString("edible_parts");
+            } catch (JSONException e) {}
+            String propagationMethods = null;
+            try {
+                propagationMethods = plantDetails.getString("propagation_methods");
+            } catch (JSONException e) {}
+            JSONObject taxonomy = plantDetails.getJSONObject("taxonomy");
+
+            Plant plant = new Plant(plantName, plantDetails.getString("common_names"),
+                    taxonomy.getString("kingdom"), taxonomy.getString("phylum"), taxonomy.getString("class"),
+                    taxonomy.getString("order"), taxonomy.getString("family"), taxonomy.getString("genus"), plantDesc, plantImg,
+                    edibleParts, propagationMethods, plantDetails.getString("url"), true);
+            // DiscoveredPlant discovery = new DiscoveredPlant(plantJSON.getString("uploaded_datetime"), "", "", "", "");
+            PlantDroidViewModel plantDroidViewModel = ViewModelProviders.of(this).get(PlantDroidViewModel.class);
+            // plantDroidViewModel.deleteAllPlants();
+            plantDroidViewModel.getPlantByName(plantName).observe(this, new Observer<List<Plant>>() {
+                @Override
+                public void onChanged(List<Plant> plants) {
+                    System.out.println(plants.size());
+                    if (plants.isEmpty()) {
+                        System.out.println("[Is Empty]");
+                        plantDroidViewModel.insertPlants(plant);
+                        System.out.println("[Insert Finish]");
+                        // plantDroidViewModel.insertDiscoveredPlants();
+                    }
+                    else {
+                        System.out.println("[Not Empty]");
+                    }
+                }
+            });
+        } catch (JSONException e) {
+            System.out.println("[JSON Error] database error");
+            e.printStackTrace();
+        }
+        System.out.println("[Add Success]");
     }
 }
