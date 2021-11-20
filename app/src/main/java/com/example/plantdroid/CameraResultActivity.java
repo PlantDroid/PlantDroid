@@ -72,6 +72,9 @@ public class CameraResultActivity extends AppCompatActivity {
     int selectId = 0, recordId = -1;
     int DP15, DP90, DP140;
 
+    PlantDroidViewModel plantDroidViewModel;
+
+
     private int getPixelsFromDp(int size) {
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
@@ -80,12 +83,15 @@ public class CameraResultActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera_result);
 
         DP15 = getPixelsFromDp(15);
         DP90 = getPixelsFromDp(90);
         DP140 = getPixelsFromDp(150);
+
+        plantDroidViewModel = ViewModelProviders.of(this).get(PlantDroidViewModel.class);
 
         // get screen width
         DisplayMetrics dm = new DisplayMetrics();
@@ -347,23 +353,24 @@ public class CameraResultActivity extends AppCompatActivity {
                     taxonomy.getString("order"), taxonomy.getString("family"), taxonomy.getString("genus"), plantDesc, plantImg,
                     edibleParts, propagationMethods, plantDetails.getString("url"), true);
             // DiscoveredPlant discovery = new DiscoveredPlant(plantJSON.getString("uploaded_datetime"), "", "", "", "");
-            PlantDroidViewModel plantDroidViewModel = ViewModelProviders.of(this).get(PlantDroidViewModel.class);
+//            PlantDroidViewModel plantDroidViewModel = ViewModelProviders.of(this).get(PlantDroidViewModel.class);
             // plantDroidViewModel.deleteAllPlants();
-            plantDroidViewModel.getPlantByName(plantName).observe(this, new Observer<List<Plant>>() {
-                @Override
-                public void onChanged(List<Plant> plants) {
-                    System.out.println(plants.size());
-                    if (plants.isEmpty()) {
-                        System.out.println("[Is Empty]");
-                        plantDroidViewModel.insertPlants(plant);
-                        System.out.println("[Insert Finish]");
-                        // plantDroidViewModel.insertDiscoveredPlants();
-                    }
-                    else {
-                        System.out.println("[Not Empty]");
-                    }
+
+            plantDroidViewModel.getAllPlantsLive().observe(this, plants -> {
+
+                System.out.println(plants.size());
+                if (plants.isEmpty()) {
+                    System.out.println("[Is Empty]");
+                    plantDroidViewModel.insertPlants(plant);
+                    System.out.println("[Insert Finish]");
+                    // plantDroidViewModel.insertDiscoveredPlants();
+                }
+                else {
+                    System.out.println("[Not Empty]");
                 }
             });
+
+
         } catch (JSONException e) {
             System.out.println("[JSON Error] database error");
             e.printStackTrace();

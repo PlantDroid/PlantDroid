@@ -36,17 +36,12 @@ public class PlantDroidViewModel extends AndroidViewModel {
      * @param plants Pants to be added
      */
     public void insertPlants(Plant... plants){
-        if (plants.length == 1 ){
-            plantDroidRepository.getPlantByName(plants[0].getName());
-
-            plantDroidRepository.insertPlants(plants[0]);
-        }
         plantDroidRepository.insertPlants(plants);
     }
 
     /**
      *method to update plants in database, can add more than one instance by one call
-     * @param plants Pants to be update
+     * @param plants Pants to be updated
      */
     public void updatePlants(Plant... plants){
         plantDroidRepository.updatePlants(plants);
