@@ -102,7 +102,8 @@ public class LocationUtil {
             //GPS 定位的精准度比较高，但是非常耗电。
             System.out.println("=====GPS_PROVIDER=====");
             locationProvider = LocationManager.GPS_PROVIDER;
-        } else if (providerList.contains(LocationManager.NETWORK_PROVIDER)) {//Google服务被墙不可用
+        } else
+            if (providerList.contains(LocationManager.NETWORK_PROVIDER)) {//Google服务被墙不可用
             //网络定位的精准度稍差，但耗电量比较少。
             System.out.println("=====NETWORK_PROVIDER=====");
             locationProvider = LocationManager.NETWORK_PROVIDER;
@@ -116,15 +117,15 @@ public class LocationUtil {
         }
 
         //3.获取上次的位置，一般第一次运行，此值为null
-        location = locationManager.getLastKnownLocation(locationProvider);
-        if (location != null) {
-            // 显示当前设备的位置信息
-            System.out.println("==显示当前设备的位置信息==");
-            showLocation();
-        } else {//当GPS信号弱没获取到位置的时候可从网络获取
-            System.out.println("==Google服务被墙的解决办法==");
-            getLngAndLatWithNetwork();//Google服务被墙的解决办法
-        }
+        // location = locationManager.getLastKnownLocation(locationProvider);
+        // if (location != null) {
+        //     // 显示当前设备的位置信息
+        //     System.out.println("==显示当前设备的位置信息==");
+        //     showLocation();
+        // } else {//当GPS信号弱没获取到位置的时候可从网络获取
+        //     System.out.println("==Google服务被墙的解决办法==");
+        //     getLngAndLatWithNetwork();//Google服务被墙的解决办法
+        // }
         // 监视地理位置变化，第二个和第三个参数分别为更新的最短时间minTime和最短距离minDistace
         //LocationManager 每隔 5 秒钟会检测一下位置的变化情况，当移动距离超过 10 米的时候，
         // 就会调用 LocationListener 的 onLocationChanged() 方法，并把新的位置信息作为参数传入。
