@@ -98,12 +98,12 @@ public class LocationUtil {
         // 获取所有可用的位置提供器
         List<String> providerList = locationManager.getProviders(true);
         String locationProvider;
+
         if (providerList.contains(LocationManager.GPS_PROVIDER)) {
             //GPS 定位的精准度比较高，但是非常耗电。
             System.out.println("=====GPS_PROVIDER=====");
             locationProvider = LocationManager.GPS_PROVIDER;
-        } else
-            if (providerList.contains(LocationManager.NETWORK_PROVIDER)) {//Google服务被墙不可用
+        } else if (providerList.contains(LocationManager.NETWORK_PROVIDER)) {//Google服务被墙不可用
             //网络定位的精准度稍差，但耗电量比较少。
             System.out.println("=====NETWORK_PROVIDER=====");
             locationProvider = LocationManager.NETWORK_PROVIDER;
@@ -113,6 +113,7 @@ public class LocationUtil {
             Intent intent = new Intent();
             intent.setAction(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
             mContext.startActivity(intent);
+
             return;
         }
 
