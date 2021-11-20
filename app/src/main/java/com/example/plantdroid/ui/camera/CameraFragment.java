@@ -1,70 +1,49 @@
 package com.example.plantdroid.ui.camera;
 
-import static android.content.ContentValues.TAG;
-
 import static com.yalantis.ucrop.UCrop.REQUEST_CROP;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
+import android.content.ContentResolver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.TransitionDrawable;
 import android.location.Address;
-import android.location.Geocoder;
-import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
-import androidx.cardview.widget.CardView;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.FileProvider;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-
 import android.os.Environment;
+import android.os.FileUtils;
 import android.provider.MediaStore;
-
-import android.provider.Settings;
-import android.util.Log;
+import android.provider.OpenableColumns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.RadioGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
+import androidx.fragment.app.Fragment;
 
-import com.bumptech.glide.load.engine.Resource;
+import com.bumptech.glide.Glide;
 import com.example.plantdroid.CameraResultActivity;
 import com.example.plantdroid.R;
 import com.tbruyelle.rxpermissions2.RxPermissions;
-
+import com.yalantis.ucrop.UCrop;
+import com.yalantis.ucrop.UCropActivity;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.w3c.dom.ls.LSOutput;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -72,15 +51,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
-import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
-
-import com.yalantis.ucrop.UCrop;
-import com.yalantis.ucrop.UCropActivity;
 
 import util.CacheUtil;
 import util.FileUtil;
@@ -92,7 +65,7 @@ import util.LogUtil;
  * Use the {@link CameraFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CameraFragment extends Fragment {
+public class CameraFragment extends Fragment  {
 
     public CameraFragment() {
         // Required empty public constructor
@@ -138,8 +111,11 @@ public class CameraFragment extends Fragment {
             }
 
             @Override
-            public void onGetLocation(double lat, double lng) {
-
+            public void onGetLocation(double lat, double lng, double acc) {
+                coordinate[0]=String.valueOf(lat);
+                coordinate[1]=String.valueOf(lng);
+                accuracy=String.valueOf(acc);
+                System.out.println("coordinate[0]="+ coordinate[0]+"coordinate[1]"+coordinate[1]+"accuracy"+accuracy);
             }
         });
 
@@ -239,7 +215,8 @@ public class CameraFragment extends Fragment {
         boolean er = shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_BACKGROUND_LOCATION);
         System.out.println("===========================================" + "\n" + er);
     }
-
+    String[] coordinate=new String[2];
+    String accuracy;
     /**
      * 打开相册
      */
@@ -258,7 +235,7 @@ public class CameraFragment extends Fragment {
      * 动态权限
      */
     private RxPermissions rxPermissions;
-    ImageView imgFavorite;
+
     private File outputImage;
     private File outputImageCut;
     Context mContext;
@@ -272,33 +249,6 @@ public class CameraFragment extends Fragment {
 
 
     }
-
-    // LocationListener listener = new LocationListener() {
-    //
-    //     @Override
-    //     public void onLocationChanged(@NonNull Location location) {
-    //         System.out.println("change");
-    //         System.out.println("[Location] Latitude=" + location.getLatitude()+"\n"+ "[Location] Longitude=" + location.getLongitude()
-    //                 + "\n time=" + location.getTime() + "\n accuracy="
-    //                 + location.getAccuracy());
-    //     }
-    //
-    //     @Override
-    //     public void onStatusChanged(String provider, int status, Bundle extras) {
-    //         Log.i("LocationTester", "provider status is changed");
-    //     }
-    //
-    //     @Override
-    //     public void onProviderEnabled(@NonNull String provider) {
-    //         Log.i("LocationTester", "provider is enabled");
-    //     }
-    //
-    //     @Override
-    //     public void onProviderDisabled(@NonNull String provider) {
-    //         Log.i("LocationTester", "provider is closed");
-    //     }
-    // };
-
 
     private static String base64EncodeFromFile(String fileString) throws Exception {
         File file = new File(fileString);
@@ -343,15 +293,14 @@ public class CameraFragment extends Fragment {
                 .put("synonyms");
         data.put("plant_details", plantDetails);
         sendPostRequest("https://api.plant.id/v2/identify", data);
-        //跳转到结果页
-        Intent i = new Intent(getActivity(), CameraResultActivity.class);
 
-        startActivity(i);
 
     }
 
-    public static void sendPostRequest(String urlString, JSONObject data) throws Exception {
 
+    public String sendPostRequest(String urlString, JSONObject data) throws Exception
+
+    {
         Thread t;
         URL url = new URL(urlString);
         t = new Thread(new Runnable() {
@@ -392,6 +341,20 @@ public class CameraFragment extends Fragment {
                     }
                     String response = sb1.toString();
                     LogUtil.handleMessage(1,"1",response);
+                    View v=CameraFragment.super.getView();
+                    v.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Intent intent = new Intent();
+                            intent.setClass(getContext(),CameraResultActivity.class);
+                            intent.putExtra("response", response);
+                            intent.putExtra("accuracy ",accuracy );
+                            intent.putExtra("coordinate",coordinate);
+                            startActivity(intent);
+                        }
+                    });
+
+
                     System.out.println("[Response] " + response);
                     con.disconnect();
                 } catch (Exception e) {
@@ -400,10 +363,10 @@ public class CameraFragment extends Fragment {
             }
         });
         t.start();
-
-
-        return;
+        return null;
     }
+
+
 
     /**
      * 打开相册
@@ -436,8 +399,8 @@ public class CameraFragment extends Fragment {
 
         //打开相机
         Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);//设置Action为MediaStore下的ACTION_IMAGE_CAPTURE
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);//设置Extra标志为输出类型
-        intent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);//授予临时权限
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+        intent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         startActivityForResult(intent, TAKE_PHOTO_CODE);
     }
 
@@ -468,7 +431,6 @@ public class CameraFragment extends Fragment {
         uCrop.withAspectRatio(4, 3); //比例
         uCrop.start(getContext(),this,REQUEST_CROP);
     }
-
     /**
      * Toast提示
      *
@@ -477,16 +439,14 @@ public class CameraFragment extends Fragment {
     private void showMsg(String msg) {
         Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
     }
-
     @SuppressLint("CheckResult")
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == getActivity().RESULT_OK) {
-            System.out.println("RESULT_OK");
+
             System.out.println(requestCode);
-            //final Uri resultUri = UCrop.getOutput(data);
-            // pbLoading.setVisibility(View.VISIBLE);
+
             if (requestCode == OPEN_ALBUM_CODE) {
                 //打开相册返回
                 final String[] filePathColumns = {
@@ -494,8 +454,9 @@ public class CameraFragment extends Fragment {
                         MediaStore.Images.Media.DISPLAY_NAME,
                         MediaStore.Images.Media.DATE_ADDED,
                         MediaStore.Images.Media.LATITUDE,
-                        MediaStore.Images.Media.LONGITUDE,};
+                        MediaStore.Images.Media.LONGITUDE,
 
+                };
                 final Uri imageUri = Objects.requireNonNull(data).getData();
                 Cursor cursor = getActivity().getContentResolver().query(imageUri, filePathColumns, null, null, null);
                 cursor.moveToFirst();
@@ -507,15 +468,12 @@ public class CameraFragment extends Fragment {
                 int columnIndexLongitude = cursor.getColumnIndex(MediaStore.Images.Media.LONGITUDE);
                 //获取图片路径,名字，添加日期，经度，纬度
                 String imagePath = cursor.getString(columnIndex);
-                String name = cursor.getString(columnIndexName);
-                long addDate = cursor.getLong(columnIndexAddDate);
-                float latitude = cursor.getFloat(columnIndexLatitude);
-                float longitude = cursor.getFloat(columnIndexLongitude);
-                System.out.println("path:-------" + imagePath + "\n"
-                        + "name:-------" + name + "            "
-                        + "addDate:----" + addDate + "\n"
-                        + "latitude:---" + latitude + "    "
-                        + "longitude:--" + longitude);
+                //String name = cursor.getString(columnIndexName);
+                //long addDate = cursor.getLong(columnIndexAddDate);
+                coordinate[0] = String.valueOf(cursor.getFloat(columnIndexLatitude));
+
+                coordinate[1] = String.valueOf(cursor.getFloat(columnIndexLongitude));
+                accuracy="-1";
                 cursor.close();
 
                 //识别
@@ -546,6 +504,9 @@ public class CameraFragment extends Fragment {
                             if(latLong[0]==0&&latLong[1]==0){
                                 System.out.println("本图片无位置信息");
                             }else{
+                                coordinate[0]=String.valueOf(latLong[0]);
+                                coordinate[1]=String.valueOf(latLong[1]);
+                                accuracy="-1";
                                 System.out.println("=============================================");
                                 System.out.println("latLong[0]"+latLong[0] + "latLong[1]" + latLong[1]);
                                 System.out.println("=============================================");
@@ -556,24 +517,19 @@ public class CameraFragment extends Fragment {
                         e.printStackTrace();
                     }
                 }
-                // //识别
-                // try {
-                //     localImageDiscern(imagePath);
-                // } catch (Exception e) {
-                //     e.printStackTrace();
-                // }
-
-            }
-            }
-            else if (requestCode == REQUEST_CROP) {
-            Uri croppedUri = UCrop.getOutput(data);
-            String imagePath = outputImageCut.getAbsolutePath();
-            System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++=="+"\n"+imagePath);
-            //识别
-            try {
-                localImageDiscern(imagePath);
-            } catch (Exception e) {
-                e.printStackTrace();
+            }else if (requestCode == REQUEST_CROP) {
+                String imagePath;
+                Uri croppedUri = UCrop.getOutput(data);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    imagePath = uriToFileApiQ(getContext(), croppedUri);
+                }else{
+                    imagePath = outputImageCut.getAbsolutePath();
+                }
+                try {
+                    localImageDiscern(imagePath);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         } else {
             if (resultCode == UCrop.RESULT_ERROR) {
@@ -586,18 +542,40 @@ public class CameraFragment extends Fragment {
             }
             showMsg("没有上传图片呦(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧");
         }
-
     }
-    /**
-     * 裁剪图片
-     */
     /**
      * 最终结果
      *
-     * @param data
+     * @param context
      */
 
-
+    @RequiresApi(api = Build.VERSION_CODES.Q)
+    private static String uriToFileApiQ(Context context, Uri uri) {
+        File file = null;
+        //android10以上转换
+        if (uri.getScheme().equals(ContentResolver.SCHEME_FILE)) {
+            file = new File(uri.getPath());
+        } else if (uri.getScheme().equals(ContentResolver.SCHEME_CONTENT)) {
+            //把文件复制到沙盒目录
+            ContentResolver contentResolver = context.getContentResolver();
+            Cursor cursor = contentResolver.query(uri, null, null, null, null);
+            if (cursor.moveToFirst()) {
+                @SuppressLint("Range") String displayName = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                try {
+                    InputStream is = contentResolver.openInputStream(uri);
+                    File cache = new File(context.getExternalCacheDir().getAbsolutePath(), Math.round((Math.random() + 1) * 1000) + displayName);
+                    FileOutputStream fos = new FileOutputStream(cache);
+                    FileUtils.copy(is, fos);
+                    file = cache;
+                    fos.close();
+                    is.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return file.getAbsolutePath();
+    }
     /**
      * 本地图片识别
      */
@@ -610,16 +588,11 @@ public class CameraFragment extends Fragment {
                     .placeholder(R.drawable.bluebell)
                     .fitCenter()
                     .into(ivPicture);
-            //按字节读取文件
-            //byte[] imgData = FileUtil.readFileByBytes(imagePath);
-            //字节转Base64
             String imageBase64 = base64EncodeFromFile(imagePath);
-            //String imageBase64 = Base64Util.encode(imgData);
             //图像识别
             ImageDiscern(imageBase64);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
 }
