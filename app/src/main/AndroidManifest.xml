@@ -25,17 +25,22 @@
         android:theme="@style/Theme.PlantDroid">
         <meta-data
             android:name="com.amap.api.v2.apikey"
-            android:value="ac5b167f8f467f4527ddecca83a2668a"></meta-data>
+            android:value="ac5b167f8f467f4527ddecca83a2668a">
+
+        </meta-data>
 
         <activity
             android:name=".CameraResultActivity"
-            android:exported="true"></activity>
+            android:exported="true">
+        </activity>
         <activity
             android:name=".SplashActivity"
-            android:exported="true"></activity>
+            android:exported="true">
+        </activity>
         <activity
             android:name=".DbTestActivity"
-            android:exported="true" />
+            android:exported="true" >
+        </activity>
         <activity
             android:name=".DetailPageActivity"
             android:exported="true" />
@@ -57,7 +62,6 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
 
         <provider

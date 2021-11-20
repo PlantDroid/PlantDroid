@@ -78,4 +78,12 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/buttonClear"
         app:layout_constraintTop_toTopOf="@+id/buttonClear" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Get allitems"
+        tools:layout_editor_absoluteX="156dp"
+        tools:layout_editor_absoluteY="452dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

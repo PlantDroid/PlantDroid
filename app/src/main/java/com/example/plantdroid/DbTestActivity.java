@@ -23,8 +23,10 @@ import java.util.List;
 
 public class DbTestActivity extends AppCompatActivity {
     TextView textView;
-    Button buttonInsert,buttonUpdate,buttonDelete,buttonClear;
+    Button buttonInsert,buttonUpdate,buttonDelete,buttonClear,buttonGatAll;
     PlantDroidViewModel plantDroidViewModel;
+
+    LiveData<List<Plant>> plantCatalog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +42,6 @@ public class DbTestActivity extends AppCompatActivity {
                 Plant plant = plants.get(i);
                 text.append(plant.getId()).append(":").append(plant.getName()).append("!!").append("\n");
             }
-
             textView.setText(text.toString());
         });
 
@@ -48,7 +49,7 @@ public class DbTestActivity extends AppCompatActivity {
         buttonClear = findViewById(R.id.buttonClear);
         buttonDelete = findViewById(R.id.buttonDelete);
         buttonUpdate = findViewById(R.id.buttonUpdate);
-
+buttonGatAll=findViewById(R.id.button);
         buttonInsert.setOnClickListener(v -> {
             Plant plant1 = new Plant("Flower","aaaa","aaaa","aaaa","aaaa","aaaa","aaa","aaaa","aaaa","aaaa","aaaa","aaaa", "aaa", false);
             Plant plant2 = new Plant("Sunflower","aaaa","aaaa","aaaa","aaaa","aaaa", "aaa", "aaaa","aaaa","aaaa","aaaa","aaaa","aaa",false);
@@ -72,7 +73,6 @@ public class DbTestActivity extends AppCompatActivity {
                 plantDroidViewModel.deletePlants(plant);
             }
         });
-
     }
 
 

@@ -1,24 +1,21 @@
 package com.example.plantdroid.ui.notifications;
 
-
 import android.content.Context;
 import android.os.Bundle;
-
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.OrientationHelper;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-
+import com.example.plantdroid.Database.Plant;
+import com.example.plantdroid.Database.PlantDroidViewModel;
 import com.example.plantdroid.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,15 +27,14 @@ public class ItemFragment extends Fragment {
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
     private int mColumnCount = 1;
-    private String[] name = {"eustoma", "eustoma_grandiflorum", "grandiflorum", "eustoma_grandiflorum", "eustoma_grandiflorum","eustoma", "eustoma_grandiflorum", "grandiflorum", "eustoma_grandiflorum", "eustoma_grandiflorum","eustoma", "eustoma_grandiflorum", "grandiflorum", "eustoma_grandiflorum", "eustoma_grandiflorum","eustoma", "eustoma_grandiflorum", "grandiflorum", "eustoma_grandiflorum", "eustoma_grandiflorum","eustoma", "eustoma_grandiflorum", "grandiflorum", "eustoma_grandiflorum", "eustoma_grandiflorum"};
-    private String[] picture_url = {"eustoma", "eustoma_grandiflorum", "grandiflorum", "eustoma_grandiflorum", "eustoma_grandiflorum","eustoma", "eustoma_grandiflorum", "grandiflorum", "eustoma_grandiflorum", "eustoma_grandiflorum","eustoma", "eustoma_grandiflorum", "grandiflorum", "eustoma_grandiflorum", "eustoma_grandiflorum","eustoma", "eustoma_grandiflorum", "grandiflorum", "eustoma_grandiflorum", "eustoma_grandiflorum","eustoma", "eustoma_grandiflorum", "grandiflorum", "eustoma_grandiflorum", "eustoma_grandiflorum"};
+    PlantDroidViewModel plantDroidViewModel;
+    private ArrayList<String> name = new ArrayList<>();
+    private ArrayList<String> picture_url = new ArrayList<>();
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public ItemFragment() {
-    }
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
@@ -63,15 +59,29 @@ public class ItemFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_item_list, container, false);
+        plantDroidViewModel = ViewModelProviders.of(this).get(PlantDroidViewModel.class);
+        plantDroidViewModel.getAllPlantsLive().observe(getViewLifecycleOwner(), new Observer<List<Plant>>() {
+            @Override
+            public void onChanged(List<Plant> plants) {
+                Log.e("TAG", "onChanged: " + plants.size());
+                for (int i = 0; i < plants.size(); i++) {
+                    String plantname = plants.get(i).getName();
+                    String planturl = plants.get(i).getImg();
+                    name.add(plantname);
+                    picture_url.add(planturl);
+                }
+                // Set the adapter
+                if (view instanceof RecyclerView) {
+                    Context context = view.getContext();
+                    RecyclerView recyclerView = (RecyclerView) view;
+                    StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL);
+                    recyclerView.setLayoutManager(layoutManager);
+                    Log.e("TAG", "onCreateView: " + name);
+                    recyclerView.setAdapter(new MyItemRecyclerViewAdapter(name, picture_url));
+                }
+            }
+        });
 
-        // Set the adapter
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
-            StaggeredGridLayoutManager layoutManager=new StaggeredGridLayoutManager(4,StaggeredGridLayoutManager.VERTICAL);
-            recyclerView.setLayoutManager(layoutManager);
-            recyclerView.setAdapter(new MyItemRecyclerViewAdapter(name, picture_url));
-        }
         return view;
     }
 
