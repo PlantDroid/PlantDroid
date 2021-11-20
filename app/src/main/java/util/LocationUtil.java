@@ -138,12 +138,13 @@ public class LocationUtil {
         }else {
             double latitude = location.getLatitude();//纬度
             double longitude = location.getLongitude();//经度
+            double accuracy = location.getAccuracy();
             System.out.println("lat==============================="+latitude+"\n"+"lng==================================" +longitude);
             for(AddressCallback addressCallback:addressCallbacks){
-                addressCallback.onGetLocation(latitude,longitude);
+                addressCallback.onGetLocation(latitude,longitude,accuracy);
             }
             if(addressCallback != null){
-                addressCallback.onGetLocation(latitude,longitude);
+                addressCallback.onGetLocation(latitude,longitude,accuracy);
             }
             getAddress(latitude, longitude);
         }
@@ -228,6 +229,6 @@ public class LocationUtil {
     }
     public interface AddressCallback{
         void onGetAddress(Address address);
-        void onGetLocation(double lat,double lng);
+        void onGetLocation(double lat,double lng,double accuracy);
     }
 }
