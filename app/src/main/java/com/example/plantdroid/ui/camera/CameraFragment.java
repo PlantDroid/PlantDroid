@@ -1,80 +1,48 @@
 package com.example.plantdroid.ui.camera;
 
-import static android.content.ContentValues.TAG;
-
 import static com.yalantis.ucrop.UCrop.REQUEST_CROP;
-import static com.yalantis.ucrop.UCrop.getOutput;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.TransitionDrawable;
 import android.location.Address;
-import android.location.Geocoder;
-import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.ExifInterface;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
-import androidx.cardview.widget.CardView;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.FileProvider;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-
 import android.os.Environment;
 import android.os.FileUtils;
-import android.os.Handler;
-import android.os.Looper;
 import android.provider.MediaStore;
-
 import android.provider.OpenableColumns;
-import android.provider.Settings;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.RadioGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
+import androidx.fragment.app.Fragment;
 
-import com.bumptech.glide.load.engine.Resource;
-import com.example.plantdroid.BottomNavigationActivity;
+import com.bumptech.glide.Glide;
 import com.example.plantdroid.CameraResultActivity;
-import com.example.plantdroid.DetailPageActivity;
 import com.example.plantdroid.R;
 import com.tbruyelle.rxpermissions2.RxPermissions;
-
+import com.yalantis.ucrop.UCrop;
+import com.yalantis.ucrop.UCropActivity;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.w3c.dom.ls.LSOutput;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -83,15 +51,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
-import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
-
-import com.yalantis.ucrop.UCrop;
-import com.yalantis.ucrop.UCropActivity;
 
 import util.CacheUtil;
 import util.FileUtil;
@@ -469,7 +431,6 @@ public class CameraFragment extends Fragment  {
         uCrop.withAspectRatio(4, 3); //比例
         uCrop.start(getContext(),this,REQUEST_CROP);
     }
-
     /**
      * Toast提示
      *
@@ -478,7 +439,6 @@ public class CameraFragment extends Fragment  {
     private void showMsg(String msg) {
         Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
     }
-
     @SuppressLint("CheckResult")
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -497,7 +457,6 @@ public class CameraFragment extends Fragment  {
                         MediaStore.Images.Media.LONGITUDE,
 
                 };
-
                 final Uri imageUri = Objects.requireNonNull(data).getData();
                 Cursor cursor = getActivity().getContentResolver().query(imageUri, filePathColumns, null, null, null);
                 cursor.moveToFirst();
@@ -572,7 +531,6 @@ public class CameraFragment extends Fragment  {
                     e.printStackTrace();
                 }
             }
-
         } else {
             if (resultCode == UCrop.RESULT_ERROR) {
                 if (data != null) {
@@ -584,11 +542,7 @@ public class CameraFragment extends Fragment  {
             }
             showMsg("没有上传图片呦(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧");
         }
-
     }
-    /**
-     * 裁剪图片
-     */
     /**
      * 最终结果
      *
@@ -622,8 +576,6 @@ public class CameraFragment extends Fragment  {
         }
         return file.getAbsolutePath();
     }
-
-
     /**
      * 本地图片识别
      */
@@ -636,16 +588,11 @@ public class CameraFragment extends Fragment  {
                     .placeholder(R.drawable.bluebell)
                     .fitCenter()
                     .into(ivPicture);
-            //按字节读取文件
-            //byte[] imgData = FileUtil.readFileByBytes(imagePath);
-            //字节转Base64
             String imageBase64 = base64EncodeFromFile(imagePath);
-            //String imageBase64 = Base64Util.encode(imgData);
             //图像识别
             ImageDiscern(imageBase64);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
 }
