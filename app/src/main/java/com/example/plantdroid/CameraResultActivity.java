@@ -62,7 +62,7 @@ public class CameraResultActivity extends AppCompatActivity {
     ArrayList<String> plantWikiUrls = new ArrayList<>();
 
     int selectId = 0, recordId = -1;
-    int DP15, DP90, DP140;
+    int DP15, DP90, DP150, DP180;
 
     private int getPixelsFromDp(int size) {
         DisplayMetrics metrics = new DisplayMetrics();
@@ -83,7 +83,8 @@ public class CameraResultActivity extends AppCompatActivity {
 
         DP15 = getPixelsFromDp(15);
         DP90 = getPixelsFromDp(90);
-        DP140 = getPixelsFromDp(150);
+        DP150 = getPixelsFromDp(150);
+        DP180 = getPixelsFromDp(260);
 
         System.out.println("[Response] " + plantsStr);
         System.out.println("[Accuracy] " + String.valueOf(accuracy));
@@ -93,6 +94,7 @@ public class CameraResultActivity extends AppCompatActivity {
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
         int screenWidth = dm.widthPixels;
+        int screenHeight = dm.heightPixels;
 
         // set result image to 4:3
         ImageView resultImgLayout = findViewById(R.id.resultImg);
@@ -104,8 +106,14 @@ public class CameraResultActivity extends AppCompatActivity {
         // set plant name width
         TextView candidatePlantName = findViewById(R.id.candidatePlantName);
         ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) candidatePlantName.getLayoutParams();
-        layoutParams.width = screenWidth - DP140;
+        layoutParams.width = screenWidth - DP150;
         candidatePlantName.setLayoutParams(layoutParams);
+
+        // set scroll height
+        ScrollView sc = findViewById(R.id.plantDetailScrollView);
+        ConstraintLayout.LayoutParams layoutParams1 = (ConstraintLayout.LayoutParams) sc.getLayoutParams();
+        layoutParams1.height = screenHeight - screenWidth * 3 / 4 - DP180;
+        sc.setLayoutParams(layoutParams1);
 
         // initialize plants information
         try {
@@ -138,6 +146,8 @@ public class CameraResultActivity extends AppCompatActivity {
         } catch (JSONException e) {
             System.out.println("[JSON Error] result JSON parse failed.");
             e.printStackTrace();
+            Toast.makeText(this, "Hard to recognize, please choose/take another photo.", Toast.LENGTH_LONG).show();
+            this.finish();
         }
     }
 
