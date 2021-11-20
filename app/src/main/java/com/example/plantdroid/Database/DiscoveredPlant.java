@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey;
 @Entity
 public class DiscoveredPlant {
 
-    public DiscoveredPlant(String foundTime, String altitude, String longitude, String accuracy, String plant_id) {
+    public DiscoveredPlant(String foundTime, String altitude, String longitude, String accuracy, int plant_id) {
         this.foundTime = foundTime;
         this.altitude = altitude;
         this.longitude = longitude;
@@ -32,7 +32,7 @@ public class DiscoveredPlant {
     private String accuracy;
 
     @ColumnInfo(name = "plant_id")
-    private String plant_id;
+    private int plant_id;
 
     public int getId() {
         return id;
@@ -74,11 +74,11 @@ public class DiscoveredPlant {
         this.accuracy = accuracy;
     }
 
-    public String getPlant_id() {
+    public int getPlant_id() {
         return plant_id;
     }
 
-    public void setPlant_id(String plant_id) {
+    public void setPlant_id(int plant_id) {
         this.plant_id = plant_id;
     }
 }

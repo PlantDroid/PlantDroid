@@ -54,6 +54,7 @@ public class DbTestActivity extends AppCompatActivity {
             Plant plant2 = new Plant("Sunflower","aaaa","aaaa","aaaa","aaaa","aaaa", "aaa", "aaaa","aaaa","aaaa","aaaa","aaaa","aaa",false);
             plantDroidViewModel.insertPlants(plant1,plant2);
         });
+
         buttonClear.setOnClickListener(v -> plantDroidViewModel.deleteAllPlants());
 
         buttonUpdate.setOnClickListener(v -> {
