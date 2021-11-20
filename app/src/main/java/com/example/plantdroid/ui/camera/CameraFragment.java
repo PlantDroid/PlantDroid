@@ -525,7 +525,6 @@ public class CameraFragment extends Fragment {
                     e.printStackTrace();
                 }
 
-
             } else if (requestCode == TAKE_PHOTO_CODE) {
                 Toast.makeText(getActivity(), "Success", Toast.LENGTH_SHORT).show();
 

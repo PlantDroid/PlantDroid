@@ -59,7 +59,7 @@ public class DetailPageActivity extends AppCompatActivity {
     private void setCardItems(LinearLayout layout, String[] items, int iconType) {
         FrameLayout.LayoutParams taxonomyLayoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
         taxonomyLayoutParams.topMargin = 3;
-        for (String item: items) {
+        for (String item : items) {
             System.out.println(item);
             TextView textView = new TextView(this);
             textView.setText(item);
