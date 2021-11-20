@@ -10,8 +10,10 @@ public class DashboardViewModel extends ViewModel {
 
     public DashboardViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is dashboard fragment");
+        mText.setValue("This is dashboard fragment55");
+
     }
+
 
     public LiveData<String> getText() {
         return mText;
