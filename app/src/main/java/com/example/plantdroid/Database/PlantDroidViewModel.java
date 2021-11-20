@@ -38,10 +38,10 @@ public class PlantDroidViewModel extends AndroidViewModel {
     public void insertPlants(Plant... plants){
         if (plants.length == 1 ){
             plantDroidRepository.getPlantByName(plants[0].getName());
-
             plantDroidRepository.insertPlants(plants[0]);
         }
-        plantDroidRepository.insertPlants(plants);
+        else
+            plantDroidRepository.insertPlants(plants);
     }
 
     /**

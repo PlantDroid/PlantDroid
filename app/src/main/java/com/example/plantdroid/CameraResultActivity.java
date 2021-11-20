@@ -127,8 +127,7 @@ public class CameraResultActivity extends AppCompatActivity {
                 public void onClick(View view) {
                     if (recordId != selectId) {
                         recordId = selectId;
-                        addRecordToDB(plantJson);
-                        showDialog();
+                        showConfirmDialog();
                     } else
                         recordId = -1;
                     setRecordBtn();
@@ -140,11 +139,32 @@ public class CameraResultActivity extends AppCompatActivity {
         }
     }
 
-    public void showDialog() {
+    public void showConfirmDialog() {
         AlertDialog.Builder dialogbuilder = new AlertDialog.Builder(this);
-        dialogbuilder.setTitle("Record success");
-        dialogbuilder.setMessage("Record this recognition result success! Go to the detail page to see more information about this plant now?");
-        dialogbuilder.setPositiveButton("Go", new DialogInterface.OnClickListener() {
+        dialogbuilder.setTitle("Record Recognition");
+        dialogbuilder.setMessage("Are you sure you want to record this plant as the recognition result?");
+        dialogbuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                addRecordToDB();
+                showNavigateDialog();
+            }});
+        dialogbuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                recordId = -1;
+                setRecordBtn();
+            }});
+        final AlertDialog alertdialog1 = dialogbuilder.create();
+        alertdialog1.setCancelable(false);
+        alertdialog1.show();
+    }
+
+    public void showNavigateDialog() {
+        AlertDialog.Builder dialogbuilder = new AlertDialog.Builder(this);
+        dialogbuilder.setTitle("Record Success!");
+        dialogbuilder.setMessage("Go to the detail page to see more information about this plant or back to the camera page.");
+        dialogbuilder.setPositiveButton("Go to Detail", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Intent intent = new Intent(CameraResultActivity.this, DetailPageActivity.class);
@@ -158,8 +178,8 @@ public class CameraResultActivity extends AppCompatActivity {
                 // intent.putExtra(MESSAGE_KEY,message);
                 startActivity(intent);
         }});
-        dialogbuilder.setNegativeButton("Stay", null);
         final AlertDialog alertdialog1 = dialogbuilder.create();
+        alertdialog1.setCancelable(false);
         alertdialog1.show();
     }
 
@@ -322,8 +342,9 @@ public class CameraResultActivity extends AppCompatActivity {
         return tv;
     }
 
-    public void addRecordToDB(JSONObject resultJSON) {
+    public void addRecordToDB() {
         try {
+            JSONObject resultJSON = new JSONObject(plantsStr);
             JSONObject plantJSON = resultJSON.getJSONArray("suggestions").getJSONObject(recordId);
             String plantName = plantJSON.getString("plant_name");
             JSONObject plantDetails = plantJSON.getJSONObject("plant_details");
@@ -348,14 +369,14 @@ public class CameraResultActivity extends AppCompatActivity {
                     edibleParts, propagationMethods, plantDetails.getString("url"), true);
             // DiscoveredPlant discovery = new DiscoveredPlant(plantJSON.getString("uploaded_datetime"), "", "", "", "");
             PlantDroidViewModel plantDroidViewModel = ViewModelProviders.of(this).get(PlantDroidViewModel.class);
-            // plantDroidViewModel.deleteAllPlants();
+            plantDroidViewModel.deleteAllPlants();
             plantDroidViewModel.getPlantByName(plantName).observe(this, new Observer<List<Plant>>() {
                 @Override
                 public void onChanged(List<Plant> plants) {
                     System.out.println(plants.size());
                     if (plants.isEmpty()) {
                         System.out.println("[Is Empty]");
-                        plantDroidViewModel.insertPlants(plant);
+                        // plantDroidViewModel.insertPlants(plant);
                         System.out.println("[Insert Finish]");
                         // plantDroidViewModel.insertDiscoveredPlants();
                     }
