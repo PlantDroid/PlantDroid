@@ -135,10 +135,17 @@ public class MapActivity extends AppCompatActivity {
 
             for (int i = 0; i < plants.size(); i++) {
                 DiscoveredPlant plant = plants.get(i);
-                LatLng latLng = new LatLng(plant.getLatitude(), plant.getLongitude());
+                double la = plant.getLatitude();
+                double lo = plant.getLongitude();
+                if (la == 0 && lo == 0) {
+                    la += Math.random() / 10;
+                    lo += Math.random() / 10;
+                }
+
+                LatLng latLng = new LatLng(la, lo);
 
                 plantDroidViewModel.getPlantById(plant.getId()).observe(this, p -> {
-//                    Log.i("33333333", "getAllLocation: " + p.get(0).getName());
+
                     BigDecimal bd;
                     bd = new BigDecimal(plant.getFoundTime());
                     Date date = new Date(bd.longValue() * 1000L);
@@ -206,7 +213,7 @@ class InfoWindow implements AMap.InfoWindowAdapter {
 
 
         String title = marker.getTitle();
-        Log.i("333333333", "render: " + marker.getTitle().isEmpty());
+//        Log.i("333333333", "render: " + marker.getTitle().isEmpty());
         if (title != null) {
             TextView title_ui = (TextView) view.findViewById(R.id.info_title);
             title_ui.setText(title);
