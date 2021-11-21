@@ -180,7 +180,7 @@ public class CameraResultActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Intent intent = new Intent(CameraResultActivity.this, DetailPageActivity.class);
-                // intent.putExtra(MESSAGE_KEY,message);
+                intent.putExtra("plantName", plantNames.get(recordId));
                 startActivity(intent);
                 CameraResultActivity.this.finish();
             }});
@@ -399,23 +399,20 @@ public class CameraResultActivity extends AppCompatActivity {
                 public void onChanged(List<Plant> plants) {
                     System.out.println(plants.size());
                     if (plants.isEmpty()) {
-                        System.out.println("[Empty]");
                         plantDroidViewModel.insertPlants(plant);
-                        System.out.println("[Insert Finish] plant");
+                        System.out.println("[Insert Finish] plant not exist, insert plant.");
                     }
                     else {
-                        System.out.println("[Not Empty]");
                         Plant p = plants.get(0);
                         discovery.setPlant_id(p.getId());
                         plantDroidViewModel.insertDiscoveredPlants(discovery);
-                        System.out.println("[Insert Finish] discovery");
+                        System.out.println("[Insert Finish] plant exist, insert discovery");
                     }
                 }
             });
         } catch (JSONException e) {
-            System.out.println("[JSON Error] database error");
+            System.out.println("[JSON Error] occur when insert database.");
             e.printStackTrace();
         }
-        System.out.println("[Add Success]");
     }
 }
