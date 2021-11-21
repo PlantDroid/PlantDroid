@@ -268,7 +268,9 @@ public class CameraFragment extends Fragment {
      * @param imageBase64 图片Base64
      */
     private void ImageDiscern(String imageBase64) throws Exception {
-        String apiKey = "ojlt9sSkvTjiugRGANYWXD1JQ035ttwx5oUILTL4rSYVGbzzN2";
+        // String apiKey = "ojlt9sSkvTjiugRGANYWXD1JQ035ttwx5oUILTL4rSYVGbzzN2";
+        String apiKey = "4PjUdBxwusXeBznHkdVREaF0WMquaTE6xIJrJprxLt5l13eU2M";
+
         JSONObject data = new JSONObject();
         data.put("api_key", apiKey);
 
