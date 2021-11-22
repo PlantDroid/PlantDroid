@@ -28,7 +28,7 @@ public class NotificationsFragment extends Fragment {
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
     //左右滑动的标题
-    private String[] mTitles = {"Angiospermae", "Gymnospermae", "Pteridophyta", "Bryophyta", "Lichens", "Mushrooms", "Algae"};
+    private String[] mTitles = {"Angiospermae", "Gymnospermae", "Pteridophyta", "Bryophyta", "Lichens", "Eumycophyta", "Chlorophyta","Other"};
     //每个标题对应的Fragment
     private  List<Fragment> fragments;
     private NotificationsViewModel notificationsViewModel;

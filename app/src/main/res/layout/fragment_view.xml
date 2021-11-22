@@ -14,7 +14,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0">
-
+<!--        <androidx.recyclerview.widget.RecyclerView-->
+<!--            android:id="@+id/list"-->
+<!--            android:name="com.example.plantdroid.ui.notifications.ItemFragment"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:layout_marginTop="15dp"-->
+<!--            android:layout_marginBottom="15dp"-->
+<!--            app:layoutManager="LinearLayoutManager"-->
+<!--            tools:context=".ui.notifications.ItemFragment"-->
+<!--            tools:listitem="@layout/fragment_item" />-->
         <fragment
             android:id="@+id/first_fragment"
             android:name="com.example.plantdroid.ui.notifications.ItemFragment"
