@@ -250,6 +250,7 @@ public class CameraFragment extends Fragment {
 
         FileInputStream fis = new FileInputStream(file);
 
+
         String res = null;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             res = Base64.getEncoder().encodeToString(FileUtil.readFileByBytes(fileString));
