@@ -32,8 +32,10 @@ import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
+import com.example.plantdroid.BottomNavigationActivity;
 import com.example.plantdroid.CameraResultActivity;
 import com.example.plantdroid.R;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.yalantis.ucrop.UCrop;
 import com.yalantis.ucrop.UCropActivity;
@@ -107,7 +109,6 @@ public class CameraFragment extends Fragment {
                 String subLocality = address.getSubLocality();//区
                 String featureName = address.getFeatureName();//街道
                 System.out.println("定位地址" + countryName + adminArea + locality + subLocality + featureName);
-
             }
 
             @Override
@@ -123,13 +124,11 @@ public class CameraFragment extends Fragment {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             rxPermissions
                     .request(
-
                             Manifest.permission.ACCESS_FINE_LOCATION)
                     .subscribe(granted -> {
                         System.out.println("[Granted] " + granted);
                         if (granted) {
                             //获得权限
-
                             try {
                                 // locationManager.removeUpdates(listener);
                                 // locationManager.requestLocationUpdates(
@@ -150,10 +149,8 @@ public class CameraFragment extends Fragment {
                         System.out.println("[Granted] " + granted);
                         if (granted) {
                             //获得权限
-
                             try {
                                 showMsg("已获后台位置权限");
-
                             } catch (SecurityException e) {
                                 System.out.println("[Error]");
                                 e.printStackTrace();
@@ -301,9 +298,8 @@ public class CameraFragment extends Fragment {
 
 
     public String sendPostRequest(String urlString, JSONObject data) throws Exception {
-        Thread t;
         URL url = new URL(urlString);
-        t = new Thread(new Runnable() {
+        Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -318,20 +314,20 @@ public class CameraFragment extends Fragment {
                     con.setRequestMethod("POST");
                     con.setRequestProperty("Content-type", "application/x-javascript->json");
                     con.addRequestProperty("Charset", "UTF-8");
-                    // System.out.println("[Connection] " + con.toString());
-                    con.connect();
-                    // System.out.println("[Connection] " + con.getRequestMethod());
-                    // System.out.println("[Connection] is connected.");
-                    OutputStream os = con.getOutputStream();
-                    os.write(data.toString().getBytes());
-                    os.flush();
-                    os.close();
-                    // System.out.println("[Output Stream] finished.");
-                    System.out.println("[Response code] " + con.getResponseCode());
-
-                    // System.out.println("[Connection] " + con.getRequestMethod());
+                    System.out.println("[Connection] " + con.toString());
+                    try {
+                        con.connect();
+                        OutputStream os = con.getOutputStream();
+                        os.write(data.toString().getBytes());
+                        os.flush();
+                        os.close();
+                        System.out.println("[Response code] " + con.getResponseCode());
+                    } catch (Exception e) {
+                        System.out.println("[Connection Error]");
+                        e.printStackTrace();
+                        Toast.makeText(getActivity(), "connection error.", Toast.LENGTH_SHORT).show();
+                    }
                     InputStream inputStream = con.getInputStream();
-                    // System.out.println("[Input Stream] get.");
                     byte[] data = new byte[1024];
                     StringBuffer sb1 = new StringBuffer();
                     int length = 0;
@@ -447,9 +443,7 @@ public class CameraFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == getActivity().RESULT_OK) {
-
             System.out.println(requestCode);
-
             if (requestCode == OPEN_ALBUM_CODE) {
                 //打开相册返回
                 final String[] filePathColumns = {
@@ -458,7 +452,6 @@ public class CameraFragment extends Fragment {
                         MediaStore.Images.Media.DATE_ADDED,
                         MediaStore.Images.Media.LATITUDE,
                         MediaStore.Images.Media.LONGITUDE,
-
                 };
                 final Uri imageUri = Objects.requireNonNull(data).getData();
                 Cursor cursor = getActivity().getContentResolver().query(imageUri, filePathColumns, null, null, null);
@@ -510,9 +503,7 @@ public class CameraFragment extends Fragment {
                                 coordinate[0] = String.valueOf(latLong[0]);
                                 coordinate[1] = String.valueOf(latLong[1]);
                                 accuracy = "-1";
-                                System.out.println("=============================================");
                                 System.out.println("latLong[0]" + latLong[0] + "latLong[1]" + latLong[1]);
-                                System.out.println("=============================================");
                             }
                             stream.close();
                         }
