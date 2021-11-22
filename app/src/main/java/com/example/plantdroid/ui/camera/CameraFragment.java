@@ -207,8 +207,6 @@ public class CameraFragment extends Fragment {
             }
         });
 
-        ivPicture = getActivity().findViewById(R.id.preImgView);
-
         boolean er = shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_BACKGROUND_LOCATION);
         System.out.println("===========================================" + "\n" + er);
     }
