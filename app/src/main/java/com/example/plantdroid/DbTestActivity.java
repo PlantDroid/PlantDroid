@@ -23,7 +23,7 @@ import java.util.List;
 
 public class DbTestActivity extends AppCompatActivity {
     TextView textView;
-    Button buttonInsert,buttonUpdate,buttonDelete,buttonClear,buttonGatAll;
+    Button buttonInsert, buttonUpdate, buttonDelete, buttonClear, buttonGatAll;
     PlantDroidViewModel plantDroidViewModel;
 
     LiveData<List<Plant>> plantCatalog;
@@ -38,7 +38,7 @@ public class DbTestActivity extends AppCompatActivity {
         plantDroidViewModel.getAllPlantsLive().observe(this, plants -> {
             StringBuilder text = new StringBuilder();
 
-            for(int i=0;i<plants.size();i++) {
+            for (int i = 0; i < plants.size(); i++) {
                 Plant plant = plants.get(i);
                 text.append(plant.getId()).append(":").append(plant.getName()).append("!!").append("\n");
             }
@@ -49,11 +49,11 @@ public class DbTestActivity extends AppCompatActivity {
         buttonClear = findViewById(R.id.buttonClear);
         buttonDelete = findViewById(R.id.buttonDelete);
         buttonUpdate = findViewById(R.id.buttonUpdate);
-buttonGatAll=findViewById(R.id.button);
+        buttonGatAll = findViewById(R.id.button);
         buttonInsert.setOnClickListener(v -> {
-            Plant plant1 = new Plant("Flower","aaaa","aaaa","aaaa","aaaa","aaaa","aaa","aaaa","aaaa","aaaa","aaaa","aaaa", "aaa", false);
-            Plant plant2 = new Plant("Sunflower","aaaa","aaaa","aaaa","aaaa","aaaa", "aaa", "aaaa","aaaa","aaaa","aaaa","aaaa","aaa",false);
-            plantDroidViewModel.insertPlants(plant1,plant2);
+            Plant plant1 = new Plant("Flower", "aaaa", "aaaa", "aaaa", "aaaa", "aaaa", "aaa", "aaaa", "aaaa", "aaaa", "aaaa", "aaaa", "aaa", false);
+            Plant plant2 = new Plant("Sunflower", "aaaa", "aaaa", "aaaa", "aaaa", "aaaa", "aaa", "aaaa", "aaaa", "aaaa", "aaaa", "aaaa", "aaa", false);
+            plantDroidViewModel.insertPlants(plant1, plant2);
         });
 
         buttonClear.setOnClickListener(v -> plantDroidViewModel.deleteAllPlants());
@@ -68,7 +68,7 @@ buttonGatAll=findViewById(R.id.button);
         buttonDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Plant plant = new Plant("Flower","aaaa","aaaa","aaaa","aaaa","aaaa","aaa","aaaa","aaaa","aaaa","aaaa","aaaa", "aaa", false);
+                Plant plant = new Plant("Flower", "aaaa", "aaaa", "aaaa", "aaaa", "aaaa", "aaa", "aaaa", "aaaa", "aaaa", "aaaa", "aaaa", "aaa", false);
                 plant.setId(90);
                 plantDroidViewModel.deletePlants(plant);
             }

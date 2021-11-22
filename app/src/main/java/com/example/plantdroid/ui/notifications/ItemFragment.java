@@ -77,7 +77,7 @@ public class ItemFragment extends Fragment {
                     StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL);
                     recyclerView.setLayoutManager(layoutManager);
                     Log.e("TAG", "onCreateView: " + name);
-                    recyclerView.setAdapter(new MyItemRecyclerViewAdapter(name, picture_url));
+                    recyclerView.setAdapter(new MyItemRecyclerViewAdapter(name, picture_url,getActivity()));
                 }
             }
         });
