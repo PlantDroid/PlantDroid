@@ -13,6 +13,7 @@ public abstract class PlantDroidDatabase extends RoomDatabase {
     static synchronized PlantDroidDatabase getDatabase(Context context){
         if (INSTANCE == null){
             INSTANCE = Room.databaseBuilder(context.getApplicationContext(), PlantDroidDatabase.class, "plant_droid_database")
+                    
                     .fallbackToDestructiveMigration()
                     .build();
         }
