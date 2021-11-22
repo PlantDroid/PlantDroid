@@ -18,6 +18,7 @@ import android.os.Environment;
 import android.os.FileUtils;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,15 +28,16 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
-import com.example.plantdroid.BottomNavigationActivity;
 import com.example.plantdroid.CameraResultActivity;
+import com.example.plantdroid.LoadingAnimatorView;
 import com.example.plantdroid.R;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.yalantis.ucrop.UCrop;
 import com.yalantis.ucrop.UCropActivity;
@@ -209,10 +211,13 @@ public class CameraFragment extends Fragment {
 
         boolean er = shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_BACKGROUND_LOCATION);
         System.out.println("===========================================" + "\n" + er);
+
+        // showLoading();
     }
 
     String[] coordinate = new String[2];
     String accuracy = "-1";
+    LoadingAnimatorView loadView;
     /**
      * 打开相册
      */
@@ -291,10 +296,32 @@ public class CameraFragment extends Fragment {
                 .put("synonyms");
         data.put("plant_details", plantDetails);
         sendPostRequest("https://api.plant.id/v2/identify", data);
+        showLoading();
 
 
     }
 
+    public void showLoading() {
+        DisplayMetrics dm = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
+        int screenWidth = dm.widthPixels;
+        int screenHeight = dm.heightPixels;
+
+        CardView layout = getActivity().findViewById(R.id.cameraCardView);
+        loadView = new LoadingAnimatorView(getActivity(), screenWidth, screenHeight);
+        layout.addView(loadView);
+        System.out.println("[Start Loading]");
+        ImageButton imageButton1 = getActivity().findViewById(R.id.cameraBtn);
+        ImageButton imageButton2 = getActivity().findViewById(R.id.albumBtn);
+        imageButton1.setClickable(false);
+        imageButton2.setClickable(false);
+    }
+
+    public void endLoading() {
+        loadView.flag = false;
+        CardView layout = getActivity().findViewById(R.id.cameraCardView);
+        layout.removeView(loadView);
+    }
 
     public String sendPostRequest(String urlString, JSONObject data) throws Exception {
         URL url = new URL(urlString);
@@ -348,6 +375,7 @@ public class CameraFragment extends Fragment {
                             intent.putExtra("accuracy", accuracy);
                             System.out.println("[Accuracy] " + accuracy);
 
+                            endLoading();
                             startActivity(intent);
                             System.out.println("[Accuracy] " + accuracy);
                         }
@@ -578,11 +606,11 @@ public class CameraFragment extends Fragment {
         try {
             System.out.println("[Image Path] " + imagePath);
             //通过图片路径显示图片
-            Glide.with(this)
-                    .load(imagePath)
-                    .placeholder(R.drawable.bluebell)
-                    .fitCenter()
-                    .into(ivPicture);
+            // Glide.with(this)
+            //         .load(imagePath)
+            //         .placeholder(R.drawable.bluebell)
+            //         .fitCenter()
+            //         .into(ivPicture);
             String imageBase64 = base64EncodeFromFile(imagePath);
             //图像识别
             ImageDiscern(imageBase64);
