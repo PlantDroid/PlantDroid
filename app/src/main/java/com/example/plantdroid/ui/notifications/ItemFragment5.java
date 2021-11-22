@@ -2,15 +2,17 @@ package com.example.plantdroid.ui.notifications;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+
 import com.example.plantdroid.Database.Plant;
 import com.example.plantdroid.Database.PlantDroidViewModel;
 import com.example.plantdroid.R;
@@ -21,7 +23,7 @@ import java.util.List;
 /**
  * A fragment representing a list of Items.
  */
-public class ItemFragment extends Fragment {
+public class ItemFragment5 extends Fragment {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
@@ -38,9 +40,8 @@ public class ItemFragment extends Fragment {
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static ItemFragment newInstance(int columnCount) {
-        ItemFragment fragment = new ItemFragment();
-        Log.e("TAG", "ItemFragment");
+    public static ItemFragment5 newInstance(int columnCount) {
+        ItemFragment5 fragment = new ItemFragment5();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
         fragment.setArguments(args);
@@ -66,12 +67,12 @@ public class ItemFragment extends Fragment {
             public void onChanged(List<Plant> plants) {
                 Log.e("TAG", "onChanged: " + plants.size());
                 for (int i = 0; i < plants.size(); i++) {
-                    if(plants.get(i).getPhylum()=="Angiospermae"){
+                    if(plants.get(i).getPhylum()== "Lichens"){
                         String plantname = plants.get(i).getName();
                         String planturl = plants.get(i).getImg();
                         name.add(plantname);
                         picture_url.add(planturl);
-                    }
+                    };
                 }
                 // Set the adapter
                 if (view instanceof RecyclerView) {

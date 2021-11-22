@@ -1,46 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.plantdroid">
+    package="com.example.plantdroid" >
     <!-- 网络权限 -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
-
     <uses-permission android:name="android.permission.INTERNET" /> <!-- 文件读写 -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- 相机 -->
     <uses-permission android:name="android.permission.CAMERA" /> <!-- 位置权限 -->
-    <!--允许程序获取网络状态-->
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <!--允许程序访问WiFi网络信息-->
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <!--允许程序读写手机状态和身份-->
+    <!-- 允许程序获取网络状态 -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- 允许程序访问WiFi网络信息 -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /> <!-- 允许程序读写手机状态和身份 -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_logo"
         android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PlantDroid"
-        android:requestLegacyExternalStorage="true"
-        tools:ignore="ExtraText">
-
+        tools:ignore="ExtraText" >
+        <activity
+            android:name=".Search_result"
+            android:exported="false" />
 
         <meta-data
             android:name="com.amap.api.v2.apikey"
-            android:value="ac5b167f8f467f4527ddecca83a2668a">
-
+            android:value="ac5b167f8f467f4527ddecca83a2668a" >
         </meta-data>
 
         <activity
             android:name=".CameraResultActivity"
-            android:exported="true">
+            android:exported="true" >
         </activity>
         <activity
             android:name=".SplashActivity"
-            android:exported="true">
+            android:exported="true" >
         </activity>
         <activity
             android:name=".DbTestActivity"
@@ -51,8 +50,7 @@
             android:exported="true" />
         <activity
             android:name=".MapActivity"
-            android:exported="true">
-
+            android:exported="true" >
         </activity>
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
@@ -61,7 +59,7 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
             android:name=".BottomNavigationActivity"
-            android:exported="true">
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -73,7 +71,7 @@
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.example.plantdroid.fileprovider"
             android:exported="false"
-            android:grantUriPermissions="true">
+            android:grantUriPermissions="true" >
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />

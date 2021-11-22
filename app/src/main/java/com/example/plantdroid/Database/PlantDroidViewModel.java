@@ -82,6 +82,7 @@ public class PlantDroidViewModel extends AndroidViewModel {
     }
 
 
+
     /**
      * method to get all Plants with provided plant in Database
      * @param name plant name
