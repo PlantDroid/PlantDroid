@@ -1,14 +1,19 @@
 package com.example.plantdroid.ui.notifications;
 
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,6 +22,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
 import com.example.plantdroid.R;
+import com.example.plantdroid.Search_result;
 import com.example.plantdroid.databinding.FragmentNotificationsBinding;
 import com.google.android.material.tabs.TabLayout;
 
@@ -26,7 +32,9 @@ import java.util.List;
 public class NotificationsFragment extends Fragment {
     private static final String TAG = "Notificationpage";
     private TabLayout mTabLayout;
+    private EditText Search_context;
     private ViewPager mViewPager;
+    private Button Search_button;
     //左右滑动的标题
     private String[] mTitles = {"Angiospermae", "Gymnospermae", "Pteridophyta", "Bryophyta", "Lichens", "Eumycophyta", "Chlorophyta","Other"};
     //每个标题对应的Fragment
@@ -41,8 +49,40 @@ public class NotificationsFragment extends Fragment {
         binding = FragmentNotificationsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        mTabLayout = (TabLayout) root.findViewById(R.id.tablayout);
-        mViewPager = (ViewPager) root.findViewById(R.id.viewpager);
+        mTabLayout = root.findViewById(R.id.tablayout);
+        mViewPager = root.findViewById(R.id.viewpager);
+        Search_context=root.findViewById(R.id.search);
+        Search_button=root.findViewById(R.id.search_button);
+        Search_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (Search_context.getText().toString().length()>0){
+                    Intent intent = new Intent(getActivity(), Search_result.class);
+                    String message = Search_context.getText().toString();
+                    intent.putExtra("Search_context", message);
+                    startActivity(intent);
+                }else {
+                    //弹出弹窗提示没有输入内容
+                }
+            }
+        });
+Search_context.addTextChangedListener(new TextWatcher(){
+
+    @Override
+    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+    }
+
+    @Override
+    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+    }
+
+    @Override
+    public void afterTextChanged(Editable editable) {
+
+    }
+});
         fragments = new ArrayList<>();
         Fragment fragment1=MainFragment.newInstance(mTitles[0]);
         fragments.add(fragment1);
