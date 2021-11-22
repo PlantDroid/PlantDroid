@@ -141,7 +141,6 @@ public class PlantDroidViewModel extends AndroidViewModel {
         plantDroidRepository.deleteAllDiscoveredPlants();
     }
 
-
     /**
      * method to get all Discovered plants matching the given plant_id in Database
      * @param plant_id plant id
