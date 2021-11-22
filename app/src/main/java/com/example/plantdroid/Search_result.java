@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.plantdroid.Database.DiscoveredPlant;
 import com.example.plantdroid.Database.Plant;
@@ -45,13 +46,23 @@ public class Search_result extends AppCompatActivity {
             @Override
             public void onChanged(List<Plant> Plants) {
                 Plants_result=Plants;
-                for (int i = 0; i < Plants_result.size(); i++) {
+                if (Plants_result.size()>0){
+                    for (int i = 0; i < Plants_result.size(); i++) {
                         String plantname = Plants_result.get(i).getName();
                         String planturl = Plants_result.get(i).getImg();
                         name.add(plantname);
                         picture_url.add(planturl);
+                    }
+                    RecyclerView.setAdapter(new MyItemRecyclerViewAdapter(name, picture_url,Search_result.this));
+                }else {
+                    //弹出弹窗提示没有输入内容
+                    CharSequence text = "No search result!";
+                    int duration = Toast.LENGTH_SHORT;
+                    Toast toast = Toast.makeText(Search_result.this, text, duration);
+                    toast.show();
+                    Search_result.this.finish();
                 }
-                RecyclerView.setAdapter(new MyItemRecyclerViewAdapter(name, picture_url,Search_result.this));
+
             }
         });
     }
