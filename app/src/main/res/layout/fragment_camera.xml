@@ -11,102 +11,138 @@
 
     <!-- TODO: Update blank fragment layout -->
 
-    <GridLayout
-        android:id="@+id/buttonLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <!--        <Button-->
-        <!--            android:id="@+id/cameraBtn1"-->
-        <!--            android:layout_width="200dp"-->
-        <!--            android:layout_height="200dp"-->
-        <!--            android:background="@drawable/round_button"-->
-        <!--            android:text="识别拍照图片" />-->
-
-        <ImageButton
-            android:id="@+id/cameraBtn"
-            android:layout_width="130dp"
-            android:layout_height="130dp"
-            android:layout_row="0"
-            android:layout_column="0"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginRight="25dp"
-            android:layout_marginBottom="5dp"
-            android:background="@drawable/round_button"
-            android:elevation="5dp"
-            android:src="@drawable/ic_baseline_photo_camera_96" />
-
-        <ImageButton
-            android:id="@+id/albumBtn"
-            android:layout_width="130dp"
-            android:layout_height="130dp"
-            android:layout_marginLeft="25dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginRight="5dp"
-            android:layout_marginBottom="5dp"
-            android:background="@drawable/round_button"
-            android:elevation="5dp"
-            android:src="@drawable/ic_baseline_image_search_96"
-            app:layout_constraintTop_toBottomOf="@+id/cameraBtn" />
-
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="120dp"
-            android:layout_height="40dp"
-            android:layout_row="1"
-            android:layout_column="0"
-            android:layout_gravity="center"
-            android:layout_marginRight="25dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:shadowColor="@color/grey_light_2"
-            android:shadowDx="4"
-            android:shadowDy="4"
-            android:shadowRadius="10"
-            android:text="Camera"
-            android:textAllCaps="true"
-            android:textColor="@color/white"
-            android:textSize="24sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/textView4"
-            android:layout_width="120dp"
-            android:layout_height="40dp"
-            android:layout_row="1"
-
-            android:layout_column="1"
-            android:layout_gravity="center"
-            android:layout_marginLeft="25dp"
-            android:contentDescription="recognize picture from album."
-            android:gravity="center"
-            android:shadowColor="@color/grey_light_2"
-            android:shadowDx="2"
-            android:shadowDy="2"
-            android:shadowRadius="10"
-            android:text="Album"
-            android:textAllCaps="true"
-            android:textColor="@color/white"
-            android:textSize="24sp"
-            android:textStyle="bold" />
-    </GridLayout>
-
     <ImageView
-        android:id="@+id/preImgView"
+        android:id="@+id/backgroundImageView"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="match_parent"
+        android:alpha="0.5"
         android:scaleType="centerCrop"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@drawable/bluebell" />
+        android:src="@drawable/bluebell"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp" />
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginHorizontal="20dp"
+        app:cardBackgroundColor="#bbffffff"
+        tools:layout_editor_absoluteY="20dp">
+
+        <LinearLayout
+            android:id="@+id/plantCardLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+
+            <TextView
+                android:id="@+id/textView5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="65dp"
+                android:text="Plant Recognition"
+                android:textAlignment="center"
+                android:textColor="@color/green_light_4"
+                android:textSize="34sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textView6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginRight="30dp"
+                android:text="Take a photo or choose a picture from album, them we will tell you what the plant in the image might be."
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/textView7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="30dp"
+                android:text="You can find more detial at https://plant.id/"
+                android:textSize="16sp" />
+
+            <GridLayout
+                android:id="@+id/buttonLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="50dp"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/cameraBtn"
+                    android:layout_width="130dp"
+                    android:layout_height="130dp"
+                    android:layout_row="0"
+                    android:layout_column="0"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginBottom="5dp"
+                    android:background="@drawable/round_button"
+                    android:elevation="5dp"
+                    android:src="@drawable/ic_baseline_photo_camera_96" />
+
+                <ImageButton
+                    android:id="@+id/albumBtn"
+                    android:layout_width="130dp"
+                    android:layout_height="130dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:background="@drawable/round_button"
+                    android:elevation="5dp"
+                    android:src="@drawable/ic_baseline_image_search_96"
+                    app:layout_constraintTop_toBottomOf="@+id/cameraBtn" />
+
+                <TextView
+                    android:id="@+id/textView2"
+                    android:layout_width="120dp"
+                    android:layout_height="40dp"
+                    android:layout_row="1"
+                    android:layout_column="0"
+                    android:layout_gravity="center"
+                    android:layout_marginRight="20dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:shadowColor="@color/grey_light_2"
+                    android:shadowDx="4"
+                    android:shadowDy="4"
+                    android:shadowRadius="10"
+                    android:text="Camera"
+                    android:textAllCaps="true"
+                    android:textColor="@color/white"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/textView4"
+                    android:layout_width="120dp"
+                    android:layout_height="40dp"
+                    android:layout_row="1"
+
+                    android:layout_column="1"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="20dp"
+                    android:contentDescription="recognize picture from album."
+                    android:gravity="center"
+                    android:shadowColor="@color/grey_light_2"
+                    android:shadowDx="2"
+                    android:shadowDy="2"
+                    android:shadowRadius="10"
+                    android:text="Album"
+                    android:textAllCaps="true"
+                    android:textColor="@color/white"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+            </GridLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
     <ProgressBar
         android:id="@+id/loadingPB"
@@ -117,17 +153,5 @@
         app:layout_constraintEnd_toStartOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/textView7"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Plant Recognition"
-        android:textColor="@color/white"
-        android:textSize="48sp"
-        android:textStyle="bold"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="223dp" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
