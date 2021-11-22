@@ -231,7 +231,6 @@ public class CameraFragment extends Fragment {
      * 动态权限
      */
     private RxPermissions rxPermissions;
-
     private File outputImage;
     private File outputImageCut;
     Context mContext;

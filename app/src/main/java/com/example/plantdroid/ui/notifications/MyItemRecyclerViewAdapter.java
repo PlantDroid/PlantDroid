@@ -2,6 +2,7 @@ package com.example.plantdroid.ui.notifications;
 
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;;
 import android.widget.TextView;
+
 import com.bumptech.glide.Glide;
 import com.example.plantdroid.DetailPageActivity;
 import com.example.plantdroid.databinding.FragmentItemBinding;
@@ -24,10 +26,10 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
     private ArrayList<String> plant_name;
     private ArrayList<String> plant_picture_url;
 
-    public MyItemRecyclerViewAdapter(ArrayList<String> name, ArrayList<String> picture_url,Context context) {
+    public MyItemRecyclerViewAdapter(ArrayList<String> name, ArrayList<String> picture_url, Context context) {
         plant_name = name;
         plant_picture_url = picture_url;
-        this.mContext= context;
+        this.mContext = context;
     }
 
     @Override
@@ -37,19 +39,21 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
+        int plantposition=position;
         holder.mIdView.setText(plant_name.get(position));
         Glide.with(holder.mContentView)
                 .load(plant_picture_url.get(position))
                 .into(holder.mContentView);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            holder.mCardView.setOnClickListener(new View.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(View view) {
-                                                        Intent intent = new Intent(mContext, DetailPageActivity.class);
-                                                        intent.putExtra("plantName", plant_name);
-                                                        mContext.startActivity(intent);
-                                                    }
-                                                }
+            holder.mCardView.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Intent intent = new Intent(mContext, DetailPageActivity.class);
+                            intent.putExtra("plantName", plant_name.get(plantposition));
+                            mContext.startActivity(intent);
+                        }
+                    }
             );
         }
 
