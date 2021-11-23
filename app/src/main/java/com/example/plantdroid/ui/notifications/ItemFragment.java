@@ -66,12 +66,11 @@ public class ItemFragment extends Fragment {
             public void onChanged(List<Plant> plants) {
                 Log.e("TAG", "onChanged: " + plants.size());
                 for (int i = 0; i < plants.size(); i++) {
-                    if(plants.get(i).getPhylum()=="Angiospermae"){
                         String plantname = plants.get(i).getName();
                         String planturl = plants.get(i).getImg();
                         name.add(plantname);
                         picture_url.add(planturl);
-                    }
+
                 }
                 // Set the adapter
                 if (view instanceof RecyclerView) {

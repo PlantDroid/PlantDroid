@@ -33,6 +33,7 @@ public class ItemFragment8 extends Fragment {
     private ArrayList<String> name = new ArrayList<>();
     private ArrayList<String> picture_url = new ArrayList<>();
     private String[] list = {"Angiospermae", "Gymnospermae", "Pteridophyta", "Bryophyta", "Lichens", "Eumycophyta", "Chlorophyta"};
+
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -66,8 +67,8 @@ public class ItemFragment8 extends Fragment {
             @Override
             public void onChanged(List<Plant> plants) {
                 for (int i = 0; i < plants.size(); i++) {
-                    for (int j=0;j<list.length;j++){
-                        if (plants.get(i).getPhylum()!=list[j]){
+                    for (int j = 0; j < list.length; j++) {
+                        if (plants.get(i).getPhylum() != list[j]) {
                             String plantname = plants.get(i).getName();
                             String planturl = plants.get(i).getImg();
                             name.add(plantname);
@@ -75,7 +76,6 @@ public class ItemFragment8 extends Fragment {
                             break;
                         }
                     }
-
                 }
                 // Set the adapter
                 if (view instanceof RecyclerView) {
@@ -84,11 +84,10 @@ public class ItemFragment8 extends Fragment {
                     StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL);
                     recyclerView.setLayoutManager(layoutManager);
                     Log.e("TAG", "onCreateView: " + name);
-                    recyclerView.setAdapter(new MyItemRecyclerViewAdapter(name, picture_url,getActivity()));
+                    recyclerView.setAdapter(new MyItemRecyclerViewAdapter(name, picture_url, getActivity()));
                 }
             }
         });
-
         return view;
     }
 

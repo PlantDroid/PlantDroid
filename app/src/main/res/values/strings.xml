@@ -18,4 +18,5 @@
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="search">Search</string>
     <string name="search_result">Search Result</string>
+    <string name="there_is_no_plant">There is no plant!</string>
 </resources>

@@ -17,14 +17,13 @@
 
         <fragment
             android:id="@+id/first_fragment"
-            android:name="com.example.plantdroid.ui.notifications.ItemFragment"
+            android:name="com.example.plantdroid.ui.notifications.ItemFragment1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="15dp"
             android:layout_marginRight="16dp"
             android:layout_marginBottom="15dp"
-
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

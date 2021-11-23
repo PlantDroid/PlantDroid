@@ -6,8 +6,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -25,15 +23,13 @@ import java.util.List;
 /**
  * A fragment representing a list of Items.
  */
-public class ItemFragment5 extends Fragment {
+public class ItemFragment1 extends Fragment {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
     private int mColumnCount = 1;
     PlantDroidViewModel plantDroidViewModel;
-    ImageView loadPic;
-    TextView loadtext;
     private ArrayList<String> name = new ArrayList<>();
     private ArrayList<String> picture_url = new ArrayList<>();
 
@@ -44,8 +40,9 @@ public class ItemFragment5 extends Fragment {
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static ItemFragment5 newInstance(int columnCount) {
-        ItemFragment5 fragment = new ItemFragment5();
+    public static ItemFragment1 newInstance(int columnCount) {
+        ItemFragment1 fragment = new ItemFragment1();
+        Log.e("TAG", "ItemFragment");
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
         fragment.setArguments(args);
@@ -65,37 +62,27 @@ public class ItemFragment5 extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_item_list, container, false);
-//        loadPic=view.findViewById(R.id.ic_logo);
-//        loadtext=view.findViewById(R.id.load_text);
-
         plantDroidViewModel = ViewModelProviders.of(this).get(PlantDroidViewModel.class);
         plantDroidViewModel.getAllPlantsLive().observe(getViewLifecycleOwner(), new Observer<List<Plant>>() {
             @Override
             public void onChanged(List<Plant> plants) {
                 Log.e("TAG", "onChanged: " + plants.size());
                 for (int i = 0; i < plants.size(); i++) {
-                    if(plants.get(i).getPhylum()== "Lichens"){
+                    if(plants.get(i).getPhylum()=="Angiospermae"){
                         String plantname = plants.get(i).getName();
                         String planturl = plants.get(i).getImg();
                         name.add(plantname);
                         picture_url.add(planturl);
-                    };
+                    }
                 }
                 // Set the adapter
                 if (view instanceof RecyclerView) {
+                    Context context = view.getContext();
                     RecyclerView recyclerView = (RecyclerView) view;
                     StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL);
                     recyclerView.setLayoutManager(layoutManager);
+                    Log.e("TAG", "onCreateView: " + name);
                     recyclerView.setAdapter(new MyItemRecyclerViewAdapter(name, picture_url,getActivity()));
-//                    if (name.size()>0){
-//                        RecyclerView recyclerView = (RecyclerView) view;
-//                        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL);
-//                        recyclerView.setLayoutManager(layoutManager);
-//                        recyclerView.setAdapter(new MyItemRecyclerViewAdapter(name, picture_url,getActivity()));
-//                    }else {
-//                        loadPic.setVisibility(View.INVISIBLE);
-//                        loadtext.setVisibility(View.INVISIBLE);
-//                    }
                 }
             }
         });
