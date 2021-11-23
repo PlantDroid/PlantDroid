@@ -321,6 +321,10 @@ public class CameraFragment extends Fragment {
         loadView.flag = false;
         CardView layout = getActivity().findViewById(R.id.cameraCardView);
         layout.removeView(loadView);
+        ImageButton imageButton1 = getActivity().findViewById(R.id.cameraBtn);
+        ImageButton imageButton2 = getActivity().findViewById(R.id.albumBtn);
+        imageButton1.setClickable(true);
+        imageButton2.setClickable(true);
     }
 
     public String sendPostRequest(String urlString, JSONObject data) throws Exception {
@@ -617,5 +621,13 @@ public class CameraFragment extends Fragment {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        try {
+            endLoading();
+        } catch (Exception e) {}
     }
 }

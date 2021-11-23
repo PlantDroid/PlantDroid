@@ -18,19 +18,20 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import com.example.plantdroid.Database.Plant;
 import com.example.plantdroid.Database.PlantDroidViewModel;
 import com.example.plantdroid.R;
+import com.example.plantdroid.ui.component.RecyclerViewEmptySupport;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @SuppressLint("ValidFragment")
-public class MainFragment5 extends Fragment {
+public class MainFragment1 extends Fragment {
     private static String catalog_title;
     PlantDroidViewModel plantDroidViewModel;
     private ArrayList<String> name = new ArrayList<>();
     private ArrayList<String> picture_url = new ArrayList<>();
 
-    public static MainFragment5 newInstance(String title) {
-        MainFragment5 mainFragment = new MainFragment5();
+    public static MainFragment1 newInstance(String title) {
+        MainFragment1 mainFragment = new MainFragment1();
         Bundle bundle = new Bundle();
         catalog_title = title;
         bundle.putString("title", title);
@@ -51,14 +52,14 @@ public class MainFragment5 extends Fragment {
             public void onChanged(List<Plant> plants) {
                 Log.e("TAG", "MainFragmentononChanged:" + plants.size());
                 for (int i = 0; i < plants.size(); i++) {
-                    if(plants.get(i).getPhylum()== "Lichens"){
+                    if(plants.get(i).getPhylum()=="Angiospermae"){
                         String plantname = plants.get(i).getName();
                         String planturl = plants.get(i).getImg();
                         name.add(plantname);
                         picture_url.add(planturl);
                     }
                 }
-                RecyclerView recyclerView = view.findViewById(R.id.list0);
+                RecyclerViewEmptySupport recyclerView = view.findViewById(R.id.list0);
                 StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL);
                 recyclerView.setLayoutManager(layoutManager);
                 recyclerView.setAdapter(new MyItemRecyclerViewAdapter(name, picture_url, getActivity()));
