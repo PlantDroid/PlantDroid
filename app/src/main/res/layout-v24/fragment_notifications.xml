@@ -75,15 +75,15 @@
                 android:id="@+id/tablayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textAllCaps="false"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.142"
-                app:tabIndicatorColor="@color/green_light_3"
                 app:tabMode="scrollable"
-                app:tabSelectedTextColor="@color/green_light_3"
+                app:tabTextColor="@color/green_light_3"
                 tools:layout_conversion_absoluteHeight="48dp"
                 tools:layout_conversion_absoluteWidth="412dp"
                 tools:layout_editor_absoluteX="0dp"
@@ -95,4 +95,6 @@
                 android:layout_height="wrap_content" />
         </LinearLayout>
     </LinearLayout>
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

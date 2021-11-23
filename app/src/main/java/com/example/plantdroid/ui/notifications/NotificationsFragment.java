@@ -28,6 +28,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.example.plantdroid.R;
 import com.example.plantdroid.Search_result;
+
 import com.example.plantdroid.databinding.FragmentNotificationsBinding;
 import com.google.android.material.tabs.TabLayout;
 
