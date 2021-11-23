@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.plantdroid.DetailPageActivity;
 import com.example.plantdroid.databinding.FragmentItemBinding;
+
 
 import java.util.ArrayList;
 
@@ -44,6 +46,7 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
         Glide.with(holder.mContentView)
                 .load(plant_picture_url.get(position))
                 .into(holder.mContentView);
+        Log.e("TAG", "plant_picture_url: "+plant_picture_url.get(position));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             holder.mCardView.setOnClickListener(
                     new View.OnClickListener() {

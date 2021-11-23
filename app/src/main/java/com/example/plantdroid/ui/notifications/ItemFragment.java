@@ -70,10 +70,11 @@ public class ItemFragment extends Fragment {
                         String planturl = plants.get(i).getImg();
                         name.add(plantname);
                         picture_url.add(planturl);
-
                 }
                 // Set the adapter
                 if (view instanceof RecyclerView) {
+                    Log.e("TAG", "plant_name: "+ name);
+                    Log.e("TAG", "plant_name: "+ picture_url);
                     Context context = view.getContext();
                     RecyclerView recyclerView = (RecyclerView) view;
                     StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL);

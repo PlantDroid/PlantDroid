@@ -34,14 +34,14 @@
                     android:layout_width="381dp"
                     android:layout_height="match_parent"
                     android:layout_marginLeft="10dp"
-                    android:layout_marginTop="15dp"
+                    android:layout_marginTop="13dp"
                     android:layout_marginBottom="8dp"
                     android:background="@color/cardview_light_background"
                     android:hint="Search..."
                     android:maxLength="10"
                     android:paddingLeft="15dp"
                     android:singleLine="true"
-                    android:textSize="12dp" />
+                    android:textSize="16dp" />
 
                 <ImageButton
                     android:id="@+id/search_button"
