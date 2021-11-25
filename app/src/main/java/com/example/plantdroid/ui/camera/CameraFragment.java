@@ -1,16 +1,21 @@
 package com.example.plantdroid.ui.camera;
 
+
 import static com.yalantis.ucrop.UCrop.REQUEST_CROP;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.location.Address;
+import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,6 +24,7 @@ import android.os.FileUtils;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +40,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
+
 import com.bumptech.glide.Glide;
 import com.example.plantdroid.CameraResultActivity;
 import com.example.plantdroid.LoadingAnimatorView;
@@ -45,6 +52,7 @@ import com.yalantis.ucrop.UCropActivity;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -53,10 +61,14 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Base64;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Locale;
 import java.util.Objects;
 
 import util.CacheUtil;
@@ -93,15 +105,64 @@ public class CameraFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
         return inflater.inflate(R.layout.fragment_camera, container, false);
     }
 
-    @SuppressLint("CheckResult")
+    //设置每一秒获取一次location信息
+
+    public void locationUpdates(Location location) {  //获取指定的查询信息
+        //如果location不为空时
+        if (location != null) {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("您的位置信息：\n");
+            stringBuilder.append("经度：");
+            stringBuilder.append(location.getLongitude());
+            stringBuilder.append("\n纬度：");
+            stringBuilder.append(location.getLatitude());
+            stringBuilder.append(location.getAccuracy());
+            coordinateCamera[0] = String.valueOf(location.getLatitude());
+            coordinateCamera[1] = String.valueOf(location.getLongitude());
+            accuracy = String.valueOf(location.getAccuracy());
+            System.out.println(stringBuilder);
+        } else {
+            //否则输出空信息
+            System.out.println("没有获取到GPS信息");
+        }
+    }
+
+    @SuppressLint({"CheckResult", "MissingPermission"})
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         final LocationManager locationManager =
-                (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+                (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
+
+        LocationListener locationListener = new LocationListener() {
+            // Provider的状态在可用、暂时不可用和无服务三个状态直接切换时触发此函数
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle arg2) {
+            }
+
+            // Provider被enable时触发此函数，比如GPS被打开
+            @Override
+            public void onProviderEnabled(String provider) {
+            }
+
+            // Provider被disable时触发此函数，比如GPS被关闭
+            @Override
+            public void onProviderDisabled(String provider) {
+            }
+
+            //当坐标改变时触发此函数，如果Provider传进相同的坐标，它就不会被触发
+            @Override
+            public void onLocationChanged(Location loc) {
+                System.out.println("==onLocationChanged==");
+                locationUpdates(loc);
+            }
+        };
+
+
         LocationUtil.getInstance(getContext()).setAddressCallback(new LocationUtil.AddressCallback() {
             @Override
             public void onGetAddress(Address address) {
@@ -115,14 +176,12 @@ public class CameraFragment extends Fragment {
 
             @Override
             public void onGetLocation(double lat, double lng, double acc) {
-                coordinate[0] = String.valueOf(lat);
-                coordinate[1] = String.valueOf(lng);
+                coordinateCamera[0] = String.valueOf(lat);
+                coordinateCamera[1] = String.valueOf(lng);
                 accuracy = String.valueOf(acc);
-                System.out.println("coordinate[0]=" + coordinate[0] + "coordinate[1]" + coordinate[1] + "accuracy" + accuracy);
+                System.out.println("coordinate[0]=" + coordinateCamera[0] + "coordinate[1]" + coordinateCamera[1] + "accuracy" + accuracy);
             }
         });
-
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             rxPermissions
                     .request(
@@ -132,9 +191,6 @@ public class CameraFragment extends Fragment {
                         if (granted) {
                             //获得权限
                             try {
-                                // locationManager.removeUpdates(listener);
-                                // locationManager.requestLocationUpdates(
-                                //         LocationManager.GPS_PROVIDER, 0, 0, listener);
                                 showMsg("已授权精确定位权限");
                             } catch (SecurityException e) {
                                 System.out.println("[Error]");
@@ -162,11 +218,17 @@ public class CameraFragment extends Fragment {
                         }
                     });
         }
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+        //从GPS获取最新的定位信息
+
+        Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        locationUpdates(location);    //将最新的定位信息传递给创建的locationUpdates()方法中
         ImageButton cameraBtn = getActivity().findViewById(R.id.cameraBtn);
         cameraBtn.setOnClickListener(new View.OnClickListener() {
-            @SuppressLint("CheckResult")
+
             @Override
             public void onClick(View view) {
+                System.out.println("click camera");
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     rxPermissions
                             .request(Manifest.permission.CAMERA
@@ -174,6 +236,7 @@ public class CameraFragment extends Fragment {
                             .subscribe(granted -> {
                                 if (granted) {
                                     //获得权限
+
                                     turnOnCamera();
                                 } else {
                                     showMsg("未获取到权限,请在设置内打开");
@@ -209,13 +272,61 @@ public class CameraFragment extends Fragment {
             }
         });
 
-        boolean er = shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_BACKGROUND_LOCATION);
-        System.out.println("===========================================" + "\n" + er);
 
-        // showLoading();
     }
 
-    String[] coordinate = new String[2];
+    static boolean fileIsExist(String fileName) {
+        //传入指定的路径，然后判断路径是否存在
+        File file = new File(fileName);
+        if (file.exists())
+            return true;
+        else {
+            //file.mkdirs() 创建文件夹的意思
+            return file.mkdirs();
+        }
+    }
+
+    void saveBitmap(String name, Bitmap bm, Context mContext) {
+        Log.d("Save Bitmap", "Ready to save picture");
+        //指定我们想要存储文件的地址
+        String TargetPath = mContext.getExternalFilesDir(null).getPath() + "/images/";
+        Log.d("Save Bitmap", "Save Path=" + TargetPath);
+        //判断指定文件夹的路径是否存在
+        if (!fileIsExist(TargetPath)) {
+            Log.d("Save Bitmap", "TargetPath isn't exist");
+        } else {
+            //如果指定文件夹创建成功，那么我们则需要进行图片存储操作
+            File saveFile = new File(TargetPath, name);
+
+            try {
+                FileOutputStream saveImgOut = new FileOutputStream(saveFile);
+                // compress - 压缩的意思
+                bm.compress(Bitmap.CompressFormat.JPEG, 80, saveImgOut);
+                //存储完成后需要清除相关的进程
+                saveImgOut.flush();
+                saveImgOut.close();
+                Log.d("Save Bitmap", "The picture is save to your phone!");
+
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            Uri imageUri1;
+            // if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            //     imageUri1 = FileProvider.getUriForFile(getActivity(), "com.example.plantdroid.fileprovider", saveFile);
+            // } else {
+            imageUri1 = Uri.fromFile(saveFile);
+
+            //}
+            Intent shareIntent = new Intent();
+            shareIntent.setAction(Intent.ACTION_SEND);
+            shareIntent.putExtra(Intent.EXTRA_STREAM, imageUri1);
+            shareIntent.setType("image/jpeg");
+            startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.hello)));
+        }
+    }
+
+    String[] coordinateCamera = new String[2];
+    String time;
     String accuracy = "-1";
     LoadingAnimatorView loadView;
     /**
@@ -240,6 +351,38 @@ public class CameraFragment extends Fragment {
     private File outputImageCut;
     Context mContext;
 
+
+    private Bitmap screenShotView(View view) {
+        //开启缓存功能
+        view.setDrawingCacheEnabled(true);
+        //创建缓存
+        view.buildDrawingCache();
+        //获取缓存Bitmap
+        Bitmap bitmap = Bitmap.createBitmap(view.getDrawingCache());
+        return bitmap;
+    }
+
+    /**
+     * 获取整个窗口的截图
+     *
+     * @param context
+     * @return
+     */
+    @SuppressLint("NewApi")
+    private Bitmap captureScreen(Activity context) {
+        View cv = context.getWindow().getDecorView();
+
+        cv.setDrawingCacheEnabled(true);
+        cv.buildDrawingCache();
+        Bitmap bmp = cv.getDrawingCache();
+        if (bmp == null) {
+            return null;
+        }
+
+        bmp.setHasAlpha(false);
+        bmp.prepareToDraw();
+        return bmp;
+    }
 
     @SuppressLint("CheckResult")
     @Override
@@ -297,8 +440,6 @@ public class CameraFragment extends Fragment {
         data.put("plant_details", plantDetails);
         sendPostRequest("https://api.plant.id/v2/identify", data);
         showLoading();
-
-
     }
 
     public void showLoading() {
@@ -352,10 +493,18 @@ public class CameraFragment extends Fragment {
                         os.flush();
                         os.close();
                         System.out.println("[Response code] " + con.getResponseCode());
-                    } catch (Exception e) {
+                    } catch (UnknownHostException e) {
                         System.out.println("[Connection Error]");
                         e.printStackTrace();
-                        Toast.makeText(getActivity(), "connection error.", Toast.LENGTH_SHORT).show();
+                        View v = CameraFragment.super.getView();
+                        v.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                endLoading();
+                                Toast.makeText(getActivity(), "Network Error. Please check your current network or open your VPN.", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
                     }
                     InputStream inputStream = con.getInputStream();
                     byte[] data = new byte[1024];
@@ -374,14 +523,19 @@ public class CameraFragment extends Fragment {
                             Intent intent = new Intent();
                             intent.setClass(getContext(), CameraResultActivity.class);
                             intent.putExtra("response", response);
-                            intent.putExtra("latitude", coordinate[0]);
-                            intent.putExtra("longitude", coordinate[1]);
-                            intent.putExtra("accuracy", accuracy);
-                            System.out.println("[Accuracy] " + accuracy);
-
+                            if (typePhoto) {
+                                intent.putExtra("latitude", coordinateCamera[0]);
+                                intent.putExtra("longitude", coordinateCamera[1]);
+                                intent.putExtra("time", time = String.valueOf(System.currentTimeMillis()));
+                                intent.putExtra("accuracy", accuracy);
+                            } else {
+                                intent.putExtra("latitude", coordinateALBUM[0]);
+                                intent.putExtra("longitude", coordinateALBUM[1]);
+                                intent.putExtra("time", time);
+                                intent.putExtra("accuracy", accuracy);
+                            }
                             endLoading();
                             startActivity(intent);
-                            System.out.println("[Accuracy] " + accuracy);
                         }
                     });
                     System.out.println("[Response] " + response);
@@ -469,13 +623,18 @@ public class CameraFragment extends Fragment {
         Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
     }
 
+    String[] coordinateALBUM = new String[2];
+    Boolean typePhoto;
+
     @SuppressLint("CheckResult")
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        System.out.println(resultCode);
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == getActivity().RESULT_OK) {
             System.out.println(requestCode);
             if (requestCode == OPEN_ALBUM_CODE) {
+                typePhoto = false;
                 //打开相册返回
                 final String[] filePathColumns = {
                         MediaStore.Images.Media.DATA,
@@ -496,10 +655,12 @@ public class CameraFragment extends Fragment {
                 //获取图片路径,名字，添加日期，经度，纬度
                 String imagePath = cursor.getString(columnIndex);
                 //String name = cursor.getString(columnIndexName);
-                //long addDate = cursor.getLong(columnIndexAddDate);
-                coordinate[0] = String.valueOf(cursor.getFloat(columnIndexLatitude));
-
-                coordinate[1] = String.valueOf(cursor.getFloat(columnIndexLongitude));
+                String addDate = String.valueOf(cursor.getLong(columnIndexAddDate));
+                coordinateALBUM[0] = String.valueOf(cursor.getFloat(columnIndexLatitude));
+                coordinateALBUM[1] = String.valueOf(cursor.getFloat(columnIndexLongitude));
+                char a = addDate.charAt(0);
+                time = a + "." + addDate.substring(1) + "000E9";
+                System.out.println("addDate: " + time);
                 accuracy = "-1";
                 cursor.close();
 
@@ -511,6 +672,7 @@ public class CameraFragment extends Fragment {
                 }
 
             } else if (requestCode == TAKE_PHOTO_CODE) {
+                typePhoto = true;
                 Toast.makeText(getActivity(), "Success", Toast.LENGTH_SHORT).show();
 
                 //拍照返回
@@ -518,30 +680,32 @@ public class CameraFragment extends Fragment {
                 System.out.println(imagePath);
                 //调取另一个activity
                 startUCrop();
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    float[] latLong = new float[2];
-                    Uri photoUri = MediaStore.setRequireOriginal(imageUri);
-                    InputStream stream = null;
-                    try {
-                        stream = getActivity().getContentResolver().openInputStream(photoUri);
-                        if (stream != null) {
-                            ExifInterface exifInterface = new ExifInterface(stream);
-                            exifInterface.getLatLong(latLong);
-                            //获取图片经纬度信息，第一个元素为纬度，第二个元素为经度
-                            if (latLong[0] == 0 && latLong[1] == 0) {
-                                System.out.println("本图片无位置信息");
-                            } else {
-                                coordinate[0] = String.valueOf(latLong[0]);
-                                coordinate[1] = String.valueOf(latLong[1]);
-                                accuracy = "-1";
-                                System.out.println("latLong[0]" + latLong[0] + "latLong[1]" + latLong[1]);
-                            }
-                            stream.close();
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
+                // if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                //     float[] latLong = new float[2];
+                //     Uri photoUri = MediaStore.setRequireOriginal(imageUri);
+                //     InputStream stream = null;
+                //     try {
+                //         stream = getActivity().getContentResolver().openInputStream(photoUri);
+                //         if (stream != null) {
+                //             ExifInterface exifInterface = new ExifInterface(stream);
+                //             exifInterface.getLatLong(latLong);
+                //             //获取图片经纬度信息，第一个元素为纬度，第二个元素为经度
+                //             if (latLong[0] == 0 && latLong[1] == 0) {
+                //                 System.out.println("本图片无位置信息");
+                //             } else {
+                //                 coordinateCamera[0] = String.valueOf(latLong[0]);
+                //                 coordinateCamera [1] = String.valueOf(latLong[1]);
+                //                 accuracy = "-1";
+                //                 System.out.println("=============================================");
+                //                 System.out.println("latLong[0]" + latLong[0] + "latLong[1]" + latLong[1]);
+                //                 System.out.println("=============================================");
+                //             }
+                //             stream.close();
+                //         }
+                //     } catch (IOException e) {
+                //         e.printStackTrace();
+                //     }
+                //}
             } else if (requestCode == REQUEST_CROP) {
                 String imagePath;
                 Uri croppedUri = UCrop.getOutput(data);
@@ -628,6 +792,7 @@ public class CameraFragment extends Fragment {
         super.onStop();
         try {
             endLoading();
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
     }
 }
