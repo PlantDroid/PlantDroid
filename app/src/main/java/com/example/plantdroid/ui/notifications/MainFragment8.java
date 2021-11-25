@@ -20,12 +20,13 @@ import com.example.plantdroid.Database.PlantDroidViewModel;
 import com.example.plantdroid.R;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @SuppressLint("ValidFragment")
 public class MainFragment8 extends Fragment {
     private static String catalog_title;
-    private String[] list = {"Magnoliophyta", "Streptophyta", "Basidiomycota", "Bryophyta", "Lichens", "Eumycophyta", "Magnoliophyta"};
+    private List<String> list = Arrays.asList("Magnoliophyta", "Streptophyta", "Basidiomycota");
 
     public static MainFragment8 newInstance(String title) {
         MainFragment8 mainFragment = new MainFragment8();
@@ -51,14 +52,13 @@ public class MainFragment8 extends Fragment {
             public void onChanged(List<Plant> plants) {
 
                 for (int i = 0; i < plants.size(); i++) {
-                    for (int j = 0; j < list.length; j++) {
-                        if (!plants.get(i).getPhylum().equals(list[j])) {
-                            String plantname = plants.get(i).getName();
-                            String planturl = plants.get(i).getImg();
-                            name.add(plantname);
-                            picture_url.add(planturl);
-                            break;
-                        }
+                    if (!list.contains( plants.get(i).getPhylum())){
+                        Log.e("TAG", "type: "+plants.get(i).getPhylum());
+                        String plantname = plants.get(i).getName();
+                        String planturl = plants.get(i).getImg();
+                        name.add(plantname);
+                        picture_url.add(planturl);
+                        break;
                     }
                 }
                 RecyclerView recyclerView = view.findViewById(R.id.list0);
