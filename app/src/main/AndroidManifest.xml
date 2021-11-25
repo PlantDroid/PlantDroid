@@ -25,9 +25,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PlantDroid"
         tools:ignore="ExtraText" >
-        <meta-data
-            android:name="com.google.android.actions"
-            android:resource="@xml/actions" />
 
         <activity
             android:name=".Search_result"
