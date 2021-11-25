@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/detailPageLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/green_light_1"
@@ -9,6 +10,7 @@
     tools:context=".DetailPageActivity">
 
     <ScrollView
+        android:id="@+id/detailPageScrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -49,13 +51,50 @@
                 android:textStyle="bold" />
 
             <androidx.cardview.widget.CardView
+                android:id="@+id/plantWikiCard"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                android:layout_marginHorizontal="15dp"
+                android:layout_marginTop="20dp"
+                app:cardCornerRadius="15dp"
+                app:cardElevation="5dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:padding="15dp">
+
+                    <TextView
+                        android:id="@+id/textView10"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="5dp"
+                        android:text="Wiki"
+                        android:textColor="@color/green_dark_1"
+                        android:textSize="20sp" />
+
+                    <TextView
+                        android:id="@+id/plantWikiLink"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@color/white"
+                        android:text="http://teaforence.com"
+
+                        android:textColor="@color/green_light_3" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
                 android:id="@+id/plantLocationCard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:layout_marginHorizontal="15dp"
-                android:layout_marginTop="20dp"
-
+                android:layout_marginTop="10dp"
                 app:cardCornerRadius="15dp"
                 app:cardElevation="5dp">
 
@@ -65,12 +104,13 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="15dp">
+
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="5dp"
                         android:text="Finding Location"
                         android:textColor="@color/green_dark_1"
-                        android:layout_marginBottom="5dp"
                         android:textSize="20sp" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -95,9 +135,9 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="5dp"
                         android:text="Common Names"
                         android:textColor="@color/green_dark_1"
-                        android:layout_marginBottom="5dp"
                         android:textSize="20sp" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -155,8 +195,8 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Taxonomy"
                         android:layout_marginBottom="5dp"
+                        android:text="Taxonomy"
                         android:textColor="@color/green_dark_1"
                         android:textSize="20sp" />
                 </LinearLayout>
@@ -178,11 +218,12 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="15dp">
+
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Edible Parts"
                         android:layout_marginBottom="5dp"
+                        android:text="Edible Parts"
                         android:textColor="@color/green_dark_1"
                         android:textSize="20sp" />
 
@@ -210,12 +251,13 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Propagation Methods"
                         android:layout_marginBottom="5dp"
+                        android:text="Propagation Methods"
                         android:textColor="@color/green_dark_1"
                         android:textSize="20sp" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
+
         </LinearLayout>
     </ScrollView>
 
