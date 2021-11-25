@@ -22,6 +22,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+import com.ethanhua.skeleton.Skeleton;
 import com.example.plantdroid.Database.Plant;
 import com.example.plantdroid.Database.PlantDroidViewModel;
 import com.example.plantdroid.R;
