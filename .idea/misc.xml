@@ -11,12 +11,17 @@
         <entry key="..\:/coding/PlantDroid/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.37552083333333336" />
         <entry key="..\:/coding/PlantDroid/app/src/main/res/drawable/ic_baseline_brightness_1_8.xml" value="0.37552083333333336" />
         <entry key="..\:/coding/PlantDroid/app/src/main/res/drawable/ic_baseline_location_on_18.xml" value="0.37552083333333336" />
+        <entry key="..\:/coding/PlantDroid/app/src/main/res/drawable/ic_baseline_photo_camera_96.xml" value="0.32407407407407407" />
         <entry key="..\:/coding/PlantDroid/app/src/main/res/drawable/ic_baseline_search_24.xml" value="0.3592592592592593" />
+        <entry key="..\:/coding/PlantDroid/app/src/main/res/drawable/ic_brightness_green_dark_8.xml" value="0.32407407407407407" />
+        <entry key="..\:/coding/PlantDroid/app/src/main/res/drawable/ic_check.xml" value="0.32407407407407407" />
         <entry key="..\:/coding/PlantDroid/app/src/main/res/drawable/ic_dashboard_black_24dp.xml" value="0.37552083333333336" />
         <entry key="..\:/coding/PlantDroid/app/src/main/res/drawable/ic_grass_24.xml" value="0.37552083333333336" />
+        <entry key="..\:/coding/PlantDroid/app/src/main/res/drawable/ic_home_black_24dp.xml" value="0.32407407407407407" />
         <entry key="..\:/coding/PlantDroid/app/src/main/res/drawable/ic_launcher_background.xml" value="0.37552083333333336" />
         <entry key="..\:/coding/PlantDroid/app/src/main/res/drawable/ic_notifications_black_24dp.xml" value="0.37552083333333336" />
         <entry key="..\:/coding/PlantDroid/app/src/main/res/drawable/ic_round_star_rate_16.xml" value="0.37552083333333336" />
+        <entry key="..\:/coding/PlantDroid/app/src/main/res/drawable/round_button.xml" value="0.32407407407407407" />
         <entry key="..\:/coding/PlantDroid/app/src/main/res/drawable/shape_white.xml" value="0.35435897435897434" />
         <entry key="..\:/coding/PlantDroid/app/src/main/res/layout-v23/fragment_item.xml" value="0.2921195652173913" />
         <entry key="..\:/coding/PlantDroid/app/src/main/res/layout-v24/fragment_notifications.xml" value="0.3333333333333333" />
@@ -53,6 +58,7 @@
         <entry key="..\:/coding/PlantDroid/app/src/main/res/layout/fragment_view6.xml" value="0.2875905797101449" />
         <entry key="..\:/coding/PlantDroid/app/src/main/res/layout/fragment_view7.xml" value="0.2875905797101449" />
         <entry key="..\:/coding/PlantDroid/app/src/main/res/layout/fragment_view8.xml" value="0.2875905797101449" />
+        <entry key="..\:/coding/PlantDroid/app/src/main/res/layout/fragment_view_skelenton.xml" value="0.3066123188405797" />
         <entry key="..\:/coding/PlantDroid/app/src/main/res/layout/layout1.xml" value="0.328125" />
         <entry key="..\:/coding/PlantDroid/app/src/main/res/layout/layout2.xml" value="0.33106884057971014" />
         <entry key="..\:/coding/PlantDroid/app/src/main/res/layout/layout3.xml" value="0.328125" />
