@@ -118,7 +118,7 @@ public class LocationUtil {
         }
 
         //3.获取上次的位置，一般第一次运行，此值为null
-        // location = locationManager.getLastKnownLocation(locationProvider);
+        //location = locationManager.getLastKnownLocation(locationProvider);
         // if (location != null) {
         //     // 显示当前设备的位置信息
         //     System.out.println("==显示当前设备的位置信息==");
@@ -130,7 +130,7 @@ public class LocationUtil {
         // 监视地理位置变化，第二个和第三个参数分别为更新的最短时间minTime和最短距离minDistace
         //LocationManager 每隔 5 秒钟会检测一下位置的变化情况，当移动距离超过 10 米的时候，
         // 就会调用 LocationListener 的 onLocationChanged() 方法，并把新的位置信息作为参数传入。
-        locationManager.requestLocationUpdates(locationProvider, 5000, 10, locationListener);
+        locationManager.requestLocationUpdates(locationProvider, 0, 0, locationListener);
     }
 
     //获取经纬度
@@ -225,7 +225,7 @@ public class LocationUtil {
             return;
         }
         LocationManager locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 10, locationListener);
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
         location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         showLocation();
     }
