@@ -54,6 +54,7 @@ public class CameraResultActivity extends AppCompatActivity {
     float accuracy = 0;
     float longitude = 0;
     float latitude = 0;
+    String time = null;
 
     ArrayList<CardView> cardViews = new ArrayList<>();
     ArrayList<String> plantPros = new ArrayList<>();
@@ -80,6 +81,7 @@ public class CameraResultActivity extends AppCompatActivity {
         latitude = Float.parseFloat(intent.getStringExtra("latitude"));
         longitude = Float.parseFloat(intent.getStringExtra("longitude"));
         plantsStr = intent.getStringExtra("response");
+        time = intent.getStringExtra("time");
 
         DP15 = getPixelsFromDp(15);
         DP90 = getPixelsFromDp(90);
@@ -381,10 +383,8 @@ public class CameraResultActivity extends AppCompatActivity {
                 propagationMethods = plantDetails.getString("propagation_methods");
             } catch (JSONException e) {}
             JSONObject taxonomy = plantDetails.getJSONObject("taxonomy");
-            String discoverTime = null;
-            try {
-                discoverTime = resultJSON.getString("uploaded_datetime");
-            } catch (JSONException e) {}
+            String discoverTime = time;
+            // discoverTime = resultJSON.getString("uploaded_datetime");
             System.out.println("[DiscoverTime] " + discoverTime);
             Plant plant = new Plant(plantName, plantDetails.getString("common_names"),
                     taxonomy.getString("kingdom"), taxonomy.getString("phylum"), taxonomy.getString("class"),

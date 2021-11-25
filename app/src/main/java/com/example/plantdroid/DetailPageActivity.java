@@ -115,7 +115,7 @@ public class DetailPageActivity extends AppCompatActivity {
             System.out.println("[Loaction] " + String.valueOf(longitude) + ", " + String.valueOf(latitude));
 
             String discoverTime = "???";
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && !discovery.getFoundTime().equals("0.000E9")) {
                 BigDecimal bd;
                 bd = new BigDecimal(discovery.getFoundTime());
                 Date date = new Date(bd.longValue() * 1000L);
