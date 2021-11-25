@@ -28,7 +28,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -62,6 +61,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Base64;
@@ -273,19 +273,19 @@ public class CameraFragment extends Fragment {
         });
 
 
-
     }
-    static boolean fileIsExist(String fileName)
-    {
+
+    static boolean fileIsExist(String fileName) {
         //传入指定的路径，然后判断路径是否存在
-        File file=new File(fileName);
+        File file = new File(fileName);
         if (file.exists())
             return true;
-        else{
+        else {
             //file.mkdirs() 创建文件夹的意思
             return file.mkdirs();
         }
     }
+
     void saveBitmap(String name, Bitmap bm, Context mContext) {
         Log.d("Save Bitmap", "Ready to save picture");
         //指定我们想要存储文件的地址
@@ -314,7 +314,7 @@ public class CameraFragment extends Fragment {
             // if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             //     imageUri1 = FileProvider.getUriForFile(getActivity(), "com.example.plantdroid.fileprovider", saveFile);
             // } else {
-                imageUri1 = Uri.fromFile(saveFile);
+            imageUri1 = Uri.fromFile(saveFile);
 
             //}
             Intent shareIntent = new Intent();
@@ -326,7 +326,7 @@ public class CameraFragment extends Fragment {
     }
 
     String[] coordinateCamera = new String[2];
-    String time ;
+    String time;
     String accuracy = "-1";
     LoadingAnimatorView loadView;
     /**
@@ -493,10 +493,18 @@ public class CameraFragment extends Fragment {
                         os.flush();
                         os.close();
                         System.out.println("[Response code] " + con.getResponseCode());
-                    } catch (Exception e) {
+                    } catch (UnknownHostException e) {
                         System.out.println("[Connection Error]");
                         e.printStackTrace();
-                        Toast.makeText(getActivity(), "connection error.", Toast.LENGTH_SHORT).show();
+                        View v = CameraFragment.super.getView();
+                        v.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                endLoading();
+                                Toast.makeText(getActivity(), "Network Error. Please check your current network or open your VPN.", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
                     }
                     InputStream inputStream = con.getInputStream();
                     byte[] data = new byte[1024];
@@ -520,7 +528,7 @@ public class CameraFragment extends Fragment {
                                 intent.putExtra("longitude", coordinateCamera[1]);
                                 intent.putExtra("time", time = String.valueOf(System.currentTimeMillis()));
                                 intent.putExtra("accuracy", accuracy);
-                            }else{
+                            } else {
                                 intent.putExtra("latitude", coordinateALBUM[0]);
                                 intent.putExtra("longitude", coordinateALBUM[1]);
                                 intent.putExtra("time", time);
@@ -614,8 +622,10 @@ public class CameraFragment extends Fragment {
     private void showMsg(String msg) {
         Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
     }
-    String[] coordinateALBUM =new String[2];
+
+    String[] coordinateALBUM = new String[2];
     Boolean typePhoto;
+
     @SuppressLint("CheckResult")
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -648,9 +658,9 @@ public class CameraFragment extends Fragment {
                 String addDate = String.valueOf(cursor.getLong(columnIndexAddDate));
                 coordinateALBUM[0] = String.valueOf(cursor.getFloat(columnIndexLatitude));
                 coordinateALBUM[1] = String.valueOf(cursor.getFloat(columnIndexLongitude));
-                char a =addDate.charAt(0);
-                time = a+"."+addDate.substring(1)+"000E9";
-                System.out.println("addDate: "+time);
+                char a = addDate.charAt(0);
+                time = a + "." + addDate.substring(1) + "000E9";
+                System.out.println("addDate: " + time);
                 accuracy = "-1";
                 cursor.close();
 
@@ -756,6 +766,7 @@ public class CameraFragment extends Fragment {
         }
         return file.getAbsolutePath();
     }
+
     /**
      * 本地图片识别
      */
@@ -781,6 +792,7 @@ public class CameraFragment extends Fragment {
         super.onStop();
         try {
             endLoading();
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
     }
 }
