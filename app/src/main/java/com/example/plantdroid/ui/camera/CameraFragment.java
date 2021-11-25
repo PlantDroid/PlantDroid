@@ -526,6 +526,7 @@ public class CameraFragment extends Fragment {
                                 intent.putExtra("time", time);
                                 intent.putExtra("accuracy", accuracy);
                             }
+                            endLoading();
                             startActivity(intent);
                         }
                     });
@@ -647,8 +648,9 @@ public class CameraFragment extends Fragment {
                 String addDate = String.valueOf(cursor.getLong(columnIndexAddDate));
                 coordinateALBUM[0] = String.valueOf(cursor.getFloat(columnIndexLatitude));
                 coordinateALBUM[1] = String.valueOf(cursor.getFloat(columnIndexLongitude));
-                time =addDate;
-                System.out.println("addDate: "+addDate);
+                char a =addDate.charAt(0);
+                time = a+"."+addDate.substring(1)+"000E9";
+                System.out.println("addDate: "+time);
                 accuracy = "-1";
                 cursor.close();
 
