@@ -79,8 +79,6 @@ public class DetailPageActivity extends AppCompatActivity {
                 SimpleDateFormat simpleDate = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault());
                 String fileName = simpleDate.format(now.getTime());
 
-                Bitmap cs =  captureScreen(this);
-                System.out.println("+++++++++++++++++++++++++++++++++" + cs.toString() + "+++++++++++++++++++++++++++++");
                 viewSaveToImage(fileName, findViewById(R.id.detailPageScrollView));
                 // saveBitmap(fileName+".jpg",cs,this);
         }
@@ -106,38 +104,22 @@ public class DetailPageActivity extends AppCompatActivity {
         // Bitmap cachebmp = loadBitmapFromView(view);
         saveBitmap(fileName, cachebmp, this);
     }
-
-    private Bitmap loadBitmapFromView(View v) {
-        int w = v.getWidth();
-        int h = v.getHeight();
-
-        Bitmap bmp = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-        Canvas c = new Canvas(bmp);
-
-        c.drawColor(Color.WHITE);
-        /** 如果不设置canvas画布为白色，则生成透明 */
-
-        v.layout(0, 0, w, h);
-        v.draw(c);
-
-        return bmp;
-    }
-
-    @SuppressLint("NewApi")
-    private Bitmap captureScreen(Activity context) {
-        View cv = context.getWindow().getDecorView();
-
-        cv.setDrawingCacheEnabled(true);
-        cv.buildDrawingCache();
-        Bitmap bmp = cv.getDrawingCache();
-        if (bmp == null) {
-            return null;
-        }
-
-        bmp.setHasAlpha(false);
-        bmp.prepareToDraw();
-        return bmp;
-    }
+    
+    // @SuppressLint("NewApi")
+    // private Bitmap captureScreen(Activity context) {
+    //     View cv = context.getWindow().getDecorView();
+    //
+    //     cv.setDrawingCacheEnabled(true);
+    //     cv.buildDrawingCache();
+    //     Bitmap bmp = cv.getDrawingCache();
+    //     if (bmp == null) {
+    //         return null;
+    //     }
+    //
+    //     bmp.setHasAlpha(false);
+    //     bmp.prepareToDraw();
+    //     return bmp;
+    // }
 
     static boolean fileIsExist(String fileName) {
         //传入指定的路径，然后判断路径是否存在
