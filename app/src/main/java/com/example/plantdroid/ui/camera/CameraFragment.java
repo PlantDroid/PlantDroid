@@ -23,6 +23,7 @@ import android.os.Environment;
 import android.os.FileUtils;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -231,21 +232,21 @@ public class CameraFragment extends Fragment {
                         }
                     });
         }
-        Button shareB =getActivity().findViewById((R.id.button2));
-        shareB.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View view) {
-                String dir = Environment.getExternalStorageDirectory().getAbsolutePath() ;
-                Calendar now = new GregorianCalendar();
-                SimpleDateFormat simpleDate = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault());
-                String fileName = simpleDate.format(now.getTime());
-                Bitmap cs =  screenShotView(requireView());
-                //System.out.println("+++++++++++++++++++++++++++++++++"+cs.toString()+"+++++++++++++++++++++++++++++");
-                saveBitmap(fileName+".jpg",cs,getContext());
-
-            }
-        });
+        // Button shareB =getActivity().findViewById((R.id.button2));
+        // shareB.setOnClickListener(new View.OnClickListener() {
+        //
+        //     @Override
+        //     public void onClick(View view) {
+        //         String dir = Environment.getExternalStorageDirectory().getAbsolutePath() ;
+        //         Calendar now = new GregorianCalendar();
+        //         SimpleDateFormat simpleDate = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault());
+        //         String fileName = simpleDate.format(now.getTime());
+        //         Bitmap cs =  screenShotView(requireView());
+        //         //System.out.println("+++++++++++++++++++++++++++++++++"+cs.toString()+"+++++++++++++++++++++++++++++");
+        //         saveBitmap(fileName+".jpg",cs,getContext());
+        //
+        //     }
+        // });
 
         ImageButton cameraBtn = getActivity().findViewById(R.id.cameraBtn);
         cameraBtn.setOnClickListener(new View.OnClickListener() {
@@ -295,7 +296,6 @@ public class CameraFragment extends Fragment {
             }
         });
 
-        ivPicture = getActivity().findViewById(R.id.preImgView);
     }
     static boolean fileIsExist(String fileName)
     {
