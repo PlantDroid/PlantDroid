@@ -12,6 +12,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.icu.math.BigDecimal;
@@ -20,6 +22,7 @@ import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,6 +32,7 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -55,6 +59,7 @@ import java.util.List;
 import java.util.Locale;
 
 import util.LoadImage;
+import util.LogUtil;
 
 public class DetailPageActivity extends AppCompatActivity {
 
@@ -68,34 +73,54 @@ public class DetailPageActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.media_route_menu_item://监听菜单按钮
+            case R.id.media_route_menu_item:
                 Toast.makeText(this, "share", Toast.LENGTH_SHORT).show();
                 Calendar now = new GregorianCalendar();
                 SimpleDateFormat simpleDate = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault());
                 String fileName = simpleDate.format(now.getTime());
 
-                Bitmap cs =  captureScreen(this);
-                System.out.println("+++++++++++++++++++++++++++++++++"+cs.toString()+"+++++++++++++++++++++++++++++");
-
-                saveBitmap(fileName+".jpg",cs,this);
+                viewSaveToImage(fileName, findViewById(R.id.detailPageScrollView));
+                // saveBitmap(fileName+".jpg",cs,this);
         }
         return super.onOptionsItemSelected(item);
     }
-    @SuppressLint("NewApi")
-    private Bitmap captureScreen(Activity context) {
-        View cv = context.getWindow().getDecorView();
 
-        cv.setDrawingCacheEnabled(true);
-        cv.buildDrawingCache();
-        Bitmap bmp = cv.getDrawingCache();
-        if (bmp == null) {
-            return null;
+    private void viewSaveToImage(String fileName, ScrollView view) {
+        view.setDrawingCacheEnabled(true);
+        view.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+        view.setDrawingCacheBackgroundColor(Color.WHITE);
+
+        int h = 0;
+        Bitmap cachebmp = null;
+        for (int i = 0; i < view.getChildCount(); i++) {
+            h += view.getChildAt(i).getHeight();
         }
+        cachebmp = Bitmap.createBitmap(view.getWidth(), h, Bitmap.Config.RGB_565);
+        final Canvas canvas = new Canvas(cachebmp);
+        canvas.drawColor(getColor(R.color.green_light_1));
+        view.draw(canvas);
 
-        bmp.setHasAlpha(false);
-        bmp.prepareToDraw();
-        return bmp;
+        // 把一个View转换成图片
+        // Bitmap cachebmp = loadBitmapFromView(view);
+        saveBitmap(fileName, cachebmp, this);
     }
+    
+    // @SuppressLint("NewApi")
+    // private Bitmap captureScreen(Activity context) {
+    //     View cv = context.getWindow().getDecorView();
+    //
+    //     cv.setDrawingCacheEnabled(true);
+    //     cv.buildDrawingCache();
+    //     Bitmap bmp = cv.getDrawingCache();
+    //     if (bmp == null) {
+    //         return null;
+    //     }
+    //
+    //     bmp.setHasAlpha(false);
+    //     bmp.prepareToDraw();
+    //     return bmp;
+    // }
+
     static boolean fileIsExist(String fileName) {
         //传入指定的路径，然后判断路径是否存在
         File file = new File(fileName);
@@ -197,9 +222,33 @@ public class DetailPageActivity extends AppCompatActivity {
         });
     }
 
+    private void setLongClick(TextView v) {
+        v.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                System.out.println("[Long Click]");
+                return false;
+            }
+        });
+    }
+
     private void setPlainInfo(Plant plant) {
         TextView plantName = findViewById(R.id.plantName);
         plantName.setText(plant.getName());
+        // plantName
+        setLongClick(plantName);
+
+        TextView plantWikiLink = findViewById(R.id.plantWikiLink);
+        plantWikiLink.setText(plant.getWiki() + " (click to jump)");
+        plantWikiLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Uri uri = Uri.parse(plant.getWiki());
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(intent);
+            }
+        });
+
         TextView plantDesc = findViewById(R.id.plantDescription);
         plantDesc.setText(plant.getDescription());
         ImageView plantImg = findViewById(R.id.plantImg);

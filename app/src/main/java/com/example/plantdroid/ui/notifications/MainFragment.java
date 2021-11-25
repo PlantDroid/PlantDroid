@@ -68,8 +68,11 @@ public class MainFragment extends Fragment {
                     View include = view.findViewById(R.id.empty_layout);
                     include.setVisibility(View.GONE);
                 }
+
             }
         });
+        name.clear();
+        picture_url.clear();
         return view;
     }
 }

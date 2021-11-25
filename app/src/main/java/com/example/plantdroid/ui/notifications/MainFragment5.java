@@ -49,9 +49,10 @@ public class MainFragment5 extends Fragment {
         plantDroidViewModel.getAllPlantsLive().observe(getViewLifecycleOwner(), new Observer<List<Plant>>() {
             @Override
             public void onChanged(List<Plant> plants) {
-                Log.e("TAG", "MainFragmentononChanged:" + plants.size());
+
                 for (int i = 0; i < plants.size(); i++) {
-                    if(plants.get(i).getPhylum()== "Lichens"){
+                    Log.e("TAG", "Lichens:" + plants.get(i).getPhylum());
+                    if(plants.get(i).getPhylum().equals("Lichens")){
                         String plantname = plants.get(i).getName();
                         String planturl = plants.get(i).getImg();
                         name.add(plantname);
@@ -68,6 +69,8 @@ public class MainFragment5 extends Fragment {
                 }
             }
         });
+        name.clear();
+        picture_url.clear();
         return view;
     }
 }
