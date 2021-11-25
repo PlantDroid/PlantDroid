@@ -1,19 +1,28 @@
 package com.example.plantdroid;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.icu.math.BigDecimal;
 import android.location.Address;
 import android.location.Geocoder;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -33,11 +42,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 
@@ -45,7 +58,96 @@ import util.LoadImage;
 
 public class DetailPageActivity extends AppCompatActivity {
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.region_right_menu, menu);
+        return true;
+        // return super.onCreateOptionsMenu(menu);
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.media_route_menu_item://监听菜单按钮
+                Toast.makeText(this, "share", Toast.LENGTH_SHORT).show();
+                Calendar now = new GregorianCalendar();
+                SimpleDateFormat simpleDate = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault());
+                String fileName = simpleDate.format(now.getTime());
+
+                Bitmap cs =  captureScreen(this);
+                System.out.println("+++++++++++++++++++++++++++++++++"+cs.toString()+"+++++++++++++++++++++++++++++");
+
+                saveBitmap(fileName+".jpg",cs,this);
+        }
+        return super.onOptionsItemSelected(item);
+    }
+    @SuppressLint("NewApi")
+    private Bitmap captureScreen(Activity context) {
+        View cv = context.getWindow().getDecorView();
+
+        cv.setDrawingCacheEnabled(true);
+        cv.buildDrawingCache();
+        Bitmap bmp = cv.getDrawingCache();
+        if (bmp == null) {
+            return null;
+        }
+
+        bmp.setHasAlpha(false);
+        bmp.prepareToDraw();
+        return bmp;
+    }
+    static boolean fileIsExist(String fileName) {
+        //传入指定的路径，然后判断路径是否存在
+        File file = new File(fileName);
+        if (file.exists())
+            return true;
+        else {
+            //file.mkdirs() 创建文件夹的意思
+            return file.mkdirs();
+        }
+    }
+
+    void saveBitmap(String name, Bitmap bm, Context mContext) {
+        Log.d("Save Bitmap", "Ready to save picture");
+        //指定我们想要存储文件的地址
+        String TargetPath = mContext.getExternalFilesDir(null) + "/images/";
+        Log.d("Save Bitmap", "Save Path=" + TargetPath);
+        //判断指定文件夹的路径是否存在
+        if (!fileIsExist(TargetPath)) {
+            Log.d("Save Bitmap", "TargetPath isn't exist");
+        } else {
+            //如果指定文件夹创建成功，那么我们则需要进行图片存储操作
+            File saveFile = new File(TargetPath, name);
+
+            try {
+                FileOutputStream saveImgOut = new FileOutputStream(saveFile);
+                // compress - 压缩的意思
+                bm.compress(Bitmap.CompressFormat.JPEG, 80, saveImgOut);
+                //存储完成后需要清除相关的进程
+                saveImgOut.flush();
+                saveImgOut.close();
+                Log.d("Save Bitmap", "The picture is save to your phone!");
+
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            Uri imageUri1;
+            // if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            //     imageUri1 = FileProvider.getUriForFile(getActivity(), "com.example.plantdroid.fileprovider", saveFile);
+            // } else {
+            imageUri1 = FileProvider.getUriForFile(
+                    this,
+                    "com.example.plantdroid.fileprovider",
+                    saveFile);
+
+            //}
+            Intent shareIntent = new Intent();
+            shareIntent.setAction(Intent.ACTION_SEND);
+            shareIntent.putExtra(Intent.EXTRA_STREAM, imageUri1);
+            shareIntent.setType("image/jpeg");
+            startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.hello)));
+        }
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,6 +206,7 @@ public class DetailPageActivity extends AppCompatActivity {
         LoadImage.setImageView(plantImg, plant.getImg());
     }
 
+    @SuppressLint("NewApi")
     private void setLocations(List<DiscoveredPlant> discoveries) throws IOException {
         // String[] locations = {"You have found this at XJTLU, 2021.10.03", "You have found this at Tian'an men, 2021.12.03"};
         LinearLayout locationsLayout = findViewById(R.id.plantLocationsLayout);

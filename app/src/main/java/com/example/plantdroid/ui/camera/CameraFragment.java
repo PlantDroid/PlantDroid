@@ -28,6 +28,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -223,6 +224,7 @@ public class CameraFragment extends Fragment {
 
         Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         locationUpdates(location);    //将最新的定位信息传递给创建的locationUpdates()方法中
+
         ImageButton cameraBtn = getActivity().findViewById(R.id.cameraBtn);
         cameraBtn.setOnClickListener(new View.OnClickListener() {
 
@@ -275,55 +277,14 @@ public class CameraFragment extends Fragment {
 
     }
 
-    static boolean fileIsExist(String fileName) {
-        //传入指定的路径，然后判断路径是否存在
-        File file = new File(fileName);
-        if (file.exists())
-            return true;
-        else {
-            //file.mkdirs() 创建文件夹的意思
-            return file.mkdirs();
-        }
-    }
 
-    void saveBitmap(String name, Bitmap bm, Context mContext) {
-        Log.d("Save Bitmap", "Ready to save picture");
-        //指定我们想要存储文件的地址
-        String TargetPath = mContext.getExternalFilesDir(null).getPath() + "/images/";
-        Log.d("Save Bitmap", "Save Path=" + TargetPath);
-        //判断指定文件夹的路径是否存在
-        if (!fileIsExist(TargetPath)) {
-            Log.d("Save Bitmap", "TargetPath isn't exist");
-        } else {
-            //如果指定文件夹创建成功，那么我们则需要进行图片存储操作
-            File saveFile = new File(TargetPath, name);
+    /**
+     * 获取整个窗口的截图
+     *
+     * @param context
+     * @return
+     */
 
-            try {
-                FileOutputStream saveImgOut = new FileOutputStream(saveFile);
-                // compress - 压缩的意思
-                bm.compress(Bitmap.CompressFormat.JPEG, 80, saveImgOut);
-                //存储完成后需要清除相关的进程
-                saveImgOut.flush();
-                saveImgOut.close();
-                Log.d("Save Bitmap", "The picture is save to your phone!");
-
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-            Uri imageUri1;
-            // if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            //     imageUri1 = FileProvider.getUriForFile(getActivity(), "com.example.plantdroid.fileprovider", saveFile);
-            // } else {
-            imageUri1 = Uri.fromFile(saveFile);
-
-            //}
-            Intent shareIntent = new Intent();
-            shareIntent.setAction(Intent.ACTION_SEND);
-            shareIntent.putExtra(Intent.EXTRA_STREAM, imageUri1);
-            shareIntent.setType("image/jpeg");
-            startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.hello)));
-        }
-    }
 
     String[] coordinateCamera = new String[2];
     String time;
@@ -352,37 +313,6 @@ public class CameraFragment extends Fragment {
     Context mContext;
 
 
-    private Bitmap screenShotView(View view) {
-        //开启缓存功能
-        view.setDrawingCacheEnabled(true);
-        //创建缓存
-        view.buildDrawingCache();
-        //获取缓存Bitmap
-        Bitmap bitmap = Bitmap.createBitmap(view.getDrawingCache());
-        return bitmap;
-    }
-
-    /**
-     * 获取整个窗口的截图
-     *
-     * @param context
-     * @return
-     */
-    @SuppressLint("NewApi")
-    private Bitmap captureScreen(Activity context) {
-        View cv = context.getWindow().getDecorView();
-
-        cv.setDrawingCacheEnabled(true);
-        cv.buildDrawingCache();
-        Bitmap bmp = cv.getDrawingCache();
-        if (bmp == null) {
-            return null;
-        }
-
-        bmp.setHasAlpha(false);
-        bmp.prepareToDraw();
-        return bmp;
-    }
 
     @SuppressLint("CheckResult")
     @Override
