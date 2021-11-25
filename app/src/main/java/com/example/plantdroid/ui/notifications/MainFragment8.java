@@ -25,7 +25,7 @@ import java.util.List;
 @SuppressLint("ValidFragment")
 public class MainFragment8 extends Fragment {
     private static String catalog_title;
-    private String[] list = {"Angiospermae", "Gymnospermae", "Pteridophyta", "Bryophyta", "Lichens", "Eumycophyta", "Chlorophyta"};
+    private String[] list = {"Magnoliophyta", "Streptophyta", "Basidiomycota", "Bryophyta", "Lichens", "Eumycophyta", "Magnoliophyta"};
 
     public static MainFragment8 newInstance(String title) {
         MainFragment8 mainFragment = new MainFragment8();
@@ -49,10 +49,10 @@ public class MainFragment8 extends Fragment {
         plantDroidViewModel.getAllPlantsLive().observe(getViewLifecycleOwner(), new Observer<List<Plant>>() {
             @Override
             public void onChanged(List<Plant> plants) {
-                Log.e("TAG", "MainFragmentononChanged:" + plants.size());
+
                 for (int i = 0; i < plants.size(); i++) {
                     for (int j = 0; j < list.length; j++) {
-                        if (plants.get(i).getPhylum() != list[j]) {
+                        if (!plants.get(i).getPhylum().equals(list[j])) {
                             String plantname = plants.get(i).getName();
                             String planturl = plants.get(i).getImg();
                             name.add(plantname);
@@ -71,6 +71,9 @@ public class MainFragment8 extends Fragment {
                 }
             }
         });
+        name.clear();
+        picture_url.clear();
         return view;
+
     }
 }

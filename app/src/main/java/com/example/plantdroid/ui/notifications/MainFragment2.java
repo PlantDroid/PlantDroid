@@ -50,7 +50,7 @@ public class MainFragment2 extends Fragment {
             @Override
             public void onChanged(List<Plant> plants) {
                 for (int i = 0; i < plants.size(); i++) {
-                    if(plants.get(i).getPhylum()=="Gymnospermae"){
+                    if(plants.get(i).getPhylum().equals("Magnoliophyta")){
                         String plantname = plants.get(i).getName();
                         String planturl = plants.get(i).getImg();
                         name.add(plantname);
@@ -67,6 +67,8 @@ public class MainFragment2 extends Fragment {
                 }
             }
         });
+        name.clear();
+        picture_url.clear();
         return view;
     }
 }
