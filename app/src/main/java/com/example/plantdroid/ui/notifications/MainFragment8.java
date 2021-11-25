@@ -1,18 +1,11 @@
 package com.example.plantdroid.ui.notifications;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.ColorFilter;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -25,22 +18,26 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import com.example.plantdroid.Database.Plant;
 import com.example.plantdroid.Database.PlantDroidViewModel;
 import com.example.plantdroid.R;
-import com.example.plantdroid.ui.component.RecyclerViewEmptySupport;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @SuppressLint("ValidFragment")
-public class MainFragment extends Fragment {
+public class MainFragment8 extends Fragment {
     private static String catalog_title;
+    private String[] list = {"Angiospermae", "Gymnospermae", "Pteridophyta", "Bryophyta", "Lichens", "Eumycophyta", "Chlorophyta"};
 
-    public static MainFragment newInstance(String title) {
-        MainFragment mainFragment = new MainFragment();
+    public static MainFragment8 newInstance(String title) {
+        MainFragment8 mainFragment = new MainFragment8();
         Bundle bundle = new Bundle();
         catalog_title = title;
         bundle.putString("title", title);
         mainFragment.setArguments(bundle);
         return mainFragment;
+    }
+
+    public static String getTitle() {
+        return catalog_title;
     }
 
     @Override
@@ -52,14 +49,19 @@ public class MainFragment extends Fragment {
         plantDroidViewModel.getAllPlantsLive().observe(getViewLifecycleOwner(), new Observer<List<Plant>>() {
             @Override
             public void onChanged(List<Plant> plants) {
-                Log.e("TAG", "MainFragmentononChanged:" + catalog_title);
+                Log.e("TAG", "MainFragmentononChanged:" + plants.size());
                 for (int i = 0; i < plants.size(); i++) {
-                    String plantname = plants.get(i).getName();
-                    String planturl = plants.get(i).getImg();
-                    name.add(plantname);
-                    picture_url.add(planturl);
+                    for (int j = 0; j < list.length; j++) {
+                        if (plants.get(i).getPhylum() != list[j]) {
+                            String plantname = plants.get(i).getName();
+                            String planturl = plants.get(i).getImg();
+                            name.add(plantname);
+                            picture_url.add(planturl);
+                            break;
+                        }
+                    }
                 }
-                RecyclerViewEmptySupport recyclerView = view.findViewById(R.id.list0);
+                RecyclerView recyclerView = view.findViewById(R.id.list0);
                 StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL);
                 recyclerView.setLayoutManager(layoutManager);
                 recyclerView.setAdapter(new MyItemRecyclerViewAdapter(name, picture_url, getActivity()));

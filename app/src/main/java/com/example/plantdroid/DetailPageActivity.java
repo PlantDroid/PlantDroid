@@ -4,11 +4,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
+import android.icu.math.BigDecimal;
+import android.location.Address;
 import android.location.Geocoder;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
@@ -20,13 +25,18 @@ import android.widget.Toast;
 import com.example.plantdroid.Database.DiscoveredPlant;
 import com.example.plantdroid.Database.Plant;
 import com.example.plantdroid.Database.PlantDroidViewModel;
+import com.example.plantdroid.ui.dashboard.DashboardFragment;
+import com.example.plantdroid.ui.notifications.NotificationsFragment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -57,18 +67,18 @@ public class DetailPageActivity extends AppCompatActivity {
                 } else {
                     Plant plant = plants.get(0);
                     System.out.println("[Plant] " + plant.getId());
-                    // plantDroidViewModel.getDiscoveredPlantsByPlantID(plant.getId()).observe(DetailPageActivity.this, new Observer<List<DiscoveredPlant>>() {
-                    //     @Override
-                    //     public void onChanged(List<DiscoveredPlant> discoveredPlants) {
-                    //         System.out.println("[Discovery] " + String.valueOf(plant.getId()));
-                    //         try {
-                    //             setLocations(discoveredPlants);
-                    //         }catch (IOException e) {
-                    //             System.out.println("[IO Error] location io error.");
-                    //             e.printStackTrace();
-                    //         }
-                    //     }
-                    // });
+                    plantDroidViewModel.getDiscoveredPlantsByPlantID(plant.getId()).observe(DetailPageActivity.this, new Observer<List<DiscoveredPlant>>() {
+                        @Override
+                        public void onChanged(List<DiscoveredPlant> discoveredPlants) {
+                            System.out.println("[Discovery] " + String.valueOf(plant.getId()));
+                            try {
+                                setLocations(discoveredPlants);
+                            } catch (IOException e) {
+                                System.out.println("[IO Error] location io error.");
+                                e.printStackTrace();
+                            }
+                        }
+                    });
                     try {
                         setPlainInfo(plant);
                         setCommonNames(plant);
@@ -95,19 +105,53 @@ public class DetailPageActivity extends AppCompatActivity {
 
     private void setLocations(List<DiscoveredPlant> discoveries) throws IOException {
         // String[] locations = {"You have found this at XJTLU, 2021.10.03", "You have found this at Tian'an men, 2021.12.03"};
-        ArrayList<String> locations = new ArrayList<>();
+        LinearLayout locationsLayout = findViewById(R.id.plantLocationsLayout);
+        FrameLayout.LayoutParams taxonomyLayoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
+        taxonomyLayoutParams.topMargin = 3;
         for (DiscoveredPlant discovery : discoveries) {
+            String location = "";
             double longitude = discovery.getLongitude();
             double latitude = discovery.getLatitude();
             System.out.println("[Loaction] " + String.valueOf(longitude) + ", " + String.valueOf(latitude));
-            Geocoder gc = new Geocoder(this, Locale.getDefault());
-            List<android.location.Address> locationList = gc.getFromLocation(latitude, longitude, 1);
-            System.out.println("[Location List] " + locationList.size());
-            if (locationList.isEmpty()) locations.add("Found at ???");
-            else locations.add("Found at " + locationList.get(0));
+
+            String discoverTime = "???";
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                BigDecimal bd;
+                bd = new BigDecimal(discovery.getFoundTime());
+                Date date = new Date(bd.longValue() * 1000L);
+                Format format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                discoverTime = format.format(date);
+            }
+
+            if (latitude == 0 && longitude == 0)
+                location = "Found at ??? , " + String.valueOf(discoverTime);
+            else {
+                Geocoder gc = new Geocoder(this, Locale.getDefault());
+                List<Address> locationList = gc.getFromLocation(latitude, longitude, 1);
+                location = "Found at " + locationList.get(0).getAddressLine(0) + ", " + discoverTime;
+            }
+
+            TextView textView = new TextView(this);
+            textView.setText(location);
+            textView.setLayoutParams(taxonomyLayoutParams);
+            Resources resources = getResources();
+            Drawable icon = resources.getDrawable(R.drawable.ic_baseline_location_on_18);
+            textView.setCompoundDrawablesWithIntrinsicBounds(icon, null, null, null);
+            textView.setCompoundDrawablePadding(20);
+            if (latitude != 0 || longitude != 0) {
+                textView.setTextColor(getColor(R.color.green_light_3));
+                textView.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
+                textView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(DetailPageActivity.this, MapActivity.class);
+                        intent.putExtra("discoverId", discovery.getId());
+                        startActivity(intent);
+                    }
+                });
+            }
+            locationsLayout.addView(textView);
         }
-        LinearLayout locationsLayout = findViewById(R.id.plantLocationsLayout);
-        setCardItems(locationsLayout, locations, 1);
     }
 
     private void setCommonNames(Plant plant) throws JSONException {
@@ -182,4 +226,5 @@ public class DetailPageActivity extends AppCompatActivity {
             layout.addView(textView);
         }
     }
+
 }

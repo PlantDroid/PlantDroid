@@ -60,7 +60,8 @@ public class PlantDroidRepository {
     LiveData<List<DiscoveredPlant>> getAllDiscoveredPlantList(){
         return allDiscoveredPlantList;
     }
-    LiveData<List<DiscoveredPlant>> getDiscoveredPlantsByPlantID(int plant_id){return getDiscoveredPlantsByPlantID(plant_id);}
+    LiveData<List<DiscoveredPlant>> getDiscoveredPlantsByPlantID(int plant_id){return plantDroidDao.getDiscoveredPlantsByPlantID(plant_id);}
+
     void insertDiscoveredPlants(DiscoveredPlant... discoveredPlants){
         new InsertDiscoveredPlantAsyncTask(plantDroidDao).execute(discoveredPlants);
     }
@@ -74,6 +75,14 @@ public class PlantDroidRepository {
         new DeleteAllDiscoveredPlantAsyncTask(plantDroidDao).execute();
     }
 
+//    static void asd(PlantDroidDao plantDroidDao, Runnable onFinish,  DiscoveredPlant ...d){
+//        new Thread(() -> {
+//            plantDroidDao.insertDiscoveredPlants(d);
+//            if (onFinish != null) {
+//                onFinish.run();
+//            }
+//        }).start();
+//    }
 
 
     static class InsertPlantAsyncTask extends AsyncTask<Plant, Void, Void> {
@@ -131,15 +140,7 @@ public class PlantDroidRepository {
             return null;
         }
     }
-    
-//    static void asd(PlantDroidDao plantDroidDao, Runnable onFinish,  DiscoveredPlant ...d){
-//        new Thread(() -> {
-//            plantDroidDao.insertDiscoveredPlants(d);
-//            if (onFinish != null) {
-//                onFinish.run();
-//            }
-//        }).start();
-//    }
+
 
     static class InsertDiscoveredPlantAsyncTask extends AsyncTask<DiscoveredPlant, Void, Void> {
         private PlantDroidDao plantDroidDao;

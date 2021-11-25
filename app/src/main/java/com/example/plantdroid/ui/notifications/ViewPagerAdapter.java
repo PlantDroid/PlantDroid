@@ -19,8 +19,25 @@ class ViewPagerAdapter extends FragmentStatePagerAdapter {
     }
 
     @Override
-    public MainFragment getItem(int position) {
-        return (MainFragment) mFragments.get(position);
+    public Fragment getItem(int position) {
+        if (position==0){
+            return (MainFragment)mFragments.get(position);
+        }else if (position==1){
+            return (MainFragment2) mFragments.get(position);
+        }else if (position==2){
+            return (MainFragment3) mFragments.get(position);
+        }else if (position==3){
+            return (MainFragment4) mFragments.get(position);
+        }else if (position==4){
+            return (MainFragment5) mFragments.get(position);
+        }else if (position==5){
+            return (MainFragment6) mFragments.get(position);
+        }else if (position==6){
+            return (MainFragment7) mFragments.get(position);
+        } else if (position==7){
+            return (MainFragment1) mFragments.get(position);
+        }
+        return (MainFragment8) mFragments.get(position);
     }
 
 

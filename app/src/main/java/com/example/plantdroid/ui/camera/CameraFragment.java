@@ -34,6 +34,8 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
@@ -41,6 +43,7 @@ import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.example.plantdroid.CameraResultActivity;
+import com.example.plantdroid.LoadingAnimatorView;
 import com.example.plantdroid.R;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.yalantis.ucrop.UCrop;
@@ -195,7 +198,6 @@ public class CameraFragment extends Fragment {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             rxPermissions
                     .request(
-
                             Manifest.permission.ACCESS_FINE_LOCATION)
                     .subscribe(granted -> {
                         System.out.println("[Granted] " + granted);
@@ -218,10 +220,8 @@ public class CameraFragment extends Fragment {
                         System.out.println("[Granted] " + granted);
                         if (granted) {
                             //获得权限
-
                             try {
                                 showMsg("已获后台位置权限");
-
                             } catch (SecurityException e) {
                                 System.out.println("[Error]");
                                 e.printStackTrace();
@@ -350,6 +350,7 @@ public class CameraFragment extends Fragment {
     String[] coordinateCamera = new String[2];
     String time ;
     String accuracy = "-1";
+    LoadingAnimatorView loadView;
     /**
      * 打开相册
      */
@@ -368,7 +369,6 @@ public class CameraFragment extends Fragment {
      * 动态权限
      */
     private RxPermissions rxPermissions;
-
     private File outputImage;
     private File outputImageCut;
     Context mContext;
@@ -420,6 +420,7 @@ public class CameraFragment extends Fragment {
 
         FileInputStream fis = new FileInputStream(file);
 
+
         String res = null;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             res = Base64.getEncoder().encodeToString(FileUtil.readFileByBytes(fileString));
@@ -460,10 +461,36 @@ public class CameraFragment extends Fragment {
                 .put("synonyms");
         data.put("plant_details", plantDetails);
         sendPostRequest("https://api.plant.id/v2/identify", data);
+        showLoading();
 
 
     }
 
+    public void showLoading() {
+        DisplayMetrics dm = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
+        int screenWidth = dm.widthPixels;
+        int screenHeight = dm.heightPixels;
+
+        CardView layout = getActivity().findViewById(R.id.cameraCardView);
+        loadView = new LoadingAnimatorView(getActivity(), screenWidth, screenHeight);
+        layout.addView(loadView);
+        System.out.println("[Start Loading]");
+        ImageButton imageButton1 = getActivity().findViewById(R.id.cameraBtn);
+        ImageButton imageButton2 = getActivity().findViewById(R.id.albumBtn);
+        imageButton1.setClickable(false);
+        imageButton2.setClickable(false);
+    }
+
+    public void endLoading() {
+        loadView.flag = false;
+        CardView layout = getActivity().findViewById(R.id.cameraCardView);
+        layout.removeView(loadView);
+        ImageButton imageButton1 = getActivity().findViewById(R.id.cameraBtn);
+        ImageButton imageButton2 = getActivity().findViewById(R.id.albumBtn);
+        imageButton1.setClickable(true);
+        imageButton2.setClickable(true);
+    }
 
     public String sendPostRequest(String urlString, JSONObject data) throws Exception {
         URL url = new URL(urlString);
@@ -482,20 +509,20 @@ public class CameraFragment extends Fragment {
                     con.setRequestMethod("POST");
                     con.setRequestProperty("Content-type", "application/x-javascript->json");
                     con.addRequestProperty("Charset", "UTF-8");
-                    // System.out.println("[Connection] " + con.toString());
-                    con.connect();
-                    // System.out.println("[Connection] " + con.getRequestMethod());
-                    // System.out.println("[Connection] is connected.");
-                    OutputStream os = con.getOutputStream();
-                    os.write(data.toString().getBytes());
-                    os.flush();
-                    os.close();
-                    // System.out.println("[Output Stream] finished.");
-                    System.out.println("[Response code] " + con.getResponseCode());
-
-                    // System.out.println("[Connection] " + con.getRequestMethod());
+                    System.out.println("[Connection] " + con.toString());
+                    try {
+                        con.connect();
+                        OutputStream os = con.getOutputStream();
+                        os.write(data.toString().getBytes());
+                        os.flush();
+                        os.close();
+                        System.out.println("[Response code] " + con.getResponseCode());
+                    } catch (Exception e) {
+                        System.out.println("[Connection Error]");
+                        e.printStackTrace();
+                        Toast.makeText(getActivity(), "connection error.", Toast.LENGTH_SHORT).show();
+                    }
                     InputStream inputStream = con.getInputStream();
-                    // System.out.println("[Input Stream] get.");
                     byte[] data = new byte[1024];
                     StringBuffer sb1 = new StringBuffer();
                     int length = 0;
@@ -617,9 +644,7 @@ public class CameraFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == getActivity().RESULT_OK) {
-
             System.out.println(requestCode);
-
             if (requestCode == OPEN_ALBUM_CODE) {
                 typePhoto = false;
                 //打开相册返回
@@ -629,7 +654,6 @@ public class CameraFragment extends Fragment {
                         MediaStore.Images.Media.DATE_ADDED,
                         MediaStore.Images.Media.LATITUDE,
                         MediaStore.Images.Media.LONGITUDE,
-
                 };
                 final Uri imageUri = Objects.requireNonNull(data).getData();
                 Cursor cursor = getActivity().getContentResolver().query(imageUri, filePathColumns, null, null, null);
@@ -760,16 +784,24 @@ public class CameraFragment extends Fragment {
         try {
             System.out.println("[Image Path] " + imagePath);
             //通过图片路径显示图片
-            Glide.with(this)
-                    .load(imagePath)
-                    .placeholder(R.drawable.bluebell)
-                    .fitCenter()
-                    .into(ivPicture);
+            // Glide.with(this)
+            //         .load(imagePath)
+            //         .placeholder(R.drawable.bluebell)
+            //         .fitCenter()
+            //         .into(ivPicture);
             String imageBase64 = base64EncodeFromFile(imagePath);
             //图像识别
             ImageDiscern(imageBase64);
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        try {
+            endLoading();
+        } catch (Exception e) {}
     }
 }

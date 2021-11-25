@@ -2,16 +2,22 @@ package com.example.plantdroid;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.BitmapFactory;
 import android.icu.math.BigDecimal;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.amap.api.maps.AMap;
 import com.amap.api.maps.MapView;
+import com.amap.api.maps.model.BitmapDescriptorFactory;
 import com.amap.api.maps.model.CustomMapStyleOptions;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.Marker;
@@ -29,6 +35,7 @@ import java.io.InputStream;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 public class MapActivity extends AppCompatActivity {
     MapView mMapView = null;
@@ -40,28 +47,40 @@ public class MapActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         MapActivity.context = getApplicationContext();
+        setContentView(R.layout.activity_map);
+        mMapView = (MapView) findViewById(R.id.map);
+        mMapView.onCreate(savedInstanceState);
+        initMap();
+    }
+
+
+    static Context getAppContext() {
+        return MapActivity.context;
+    }
+
+    private void initMap() {
+        // 给授权
         ServiceSettings.updatePrivacyShow(this, true, true);
         ServiceSettings.updatePrivacyAgree(this, true);
-        setContentView(R.layout.activity_map);
-        //获取地图控件引用
-        mMapView = (MapView) findViewById(R.id.map);
-        //在activity执行onCreate时执行mMapView.onCreate(savedInstanceState)，创建地图
-        mMapView.onCreate(savedInstanceState);
+
         AMap aMap = null;
         if (aMap == null) {
             aMap = mMapView.getMap();
         }
         MyLocationStyle myLocationStyle;
-        myLocationStyle = new MyLocationStyle();//初始化定位蓝点样式类myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE);//连续定位、且将视角移动到地图中心点，定位点依照设备方向旋转，并且会跟随设备移动。（1秒1次定位）如果不设置myLocationType，默认也会执行此种模式。
-
-        myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_MAP_ROTATE_NO_CENTER);
+        myLocationStyle = new MyLocationStyle();
+//        aMap.setMapLanguage("en"); 设置英语
+        myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE_NO_CENTER);
         myLocationStyle.interval(2000); //设置连续定位模式下的定位间隔，只在连续定位模式下生效，单次定位模式下不会生效。单位为毫秒。
         aMap.setMyLocationStyle(myLocationStyle);//设置定位蓝点的Style
         aMap.getUiSettings().setMyLocationButtonEnabled(true);//设置默认定位按钮是否显示，非必需设置。
         aMap.setMyLocationEnabled(true);// 设置为true表示启动显示定位蓝点，false表示隐藏定位蓝点并不进行定位，默认是false。
 
-
         getAllLocation(aMap);
+        setMapStyle(aMap);
+    }
+
+    private void setMapStyle(AMap aMap) {
         String styleName = "style.data";
         FileOutputStream outputStream = null;
         InputStream inputStream = null;
@@ -93,40 +112,55 @@ public class MapActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-        Log.i("####加载自定义地图=", filePath + styleName);
+
         aMap.setCustomMapStyle(
                 new com.amap.api.maps.model.CustomMapStyleOptions()
                         .setEnable(true)
                         .setStyleDataPath(filePath + "/" + styleName)
-//                        .setStyleExtraPath("/mnt/sdcard/amap/style_extra.data")                       .setStyleTexturePath("/mnt/sdcard/amap/textures.zip")
-                        );
+                        .setStyleExtraPath(filePath + "/" + "style_extra.data")
+        );
 
-    }
-
-    private Context getAppContext() {
-        return MapActivity.context;
     }
 
     protected void getAllLocation(AMap aMap) {
+
         PlantDroidViewModel plantDroidViewModel = ViewModelProviders.of(this).get(PlantDroidViewModel.class);
 
         plantDroidViewModel.getAllDiscoveredPlantsLive().observe(this, plants -> {
+            MarkerOptions markerOption = new MarkerOptions();
+            markerOption.icon(BitmapDescriptorFactory.fromBitmap(BitmapFactory
+                    .decodeResource(getResources(), R.drawable.plant)));
+//            markerOption.setFlat(true);//设置marker平贴地图效果
 
 
             for (int i = 0; i < plants.size(); i++) {
                 DiscoveredPlant plant = plants.get(i);
+                double la = plant.getLatitude();
+                double lo = plant.getLongitude();
+                if (la == 0 && lo == 0) {
+                    la += Math.random() / 10;
+                    lo += Math.random() / 10;
+                }
 
-                LatLng latLng = new LatLng(plant.getLatitude(), plant.getLongitude());
-                BigDecimal bd;
-                bd = new BigDecimal(plant.getFoundTime());
+                LatLng latLng = new LatLng(la, lo);
 
-                Date date = new Date(bd.longValue() * 1000L);
-                Log.i("TImeeee", "getAllLocation: " + date);
+                plantDroidViewModel.getPlantById(plant.getId()).observe(this, p -> {
 
-                Format format = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
-                final Marker marker = aMap.addMarker(new MarkerOptions().position(latLng).title("Plant " + String.valueOf(plant.getPlant_id())).snippet("Found at " + format.format(date)));
+                    BigDecimal bd;
+                    bd = new BigDecimal(plant.getFoundTime());
+                    Date date = new Date(bd.longValue() * 1000L);
+                    Format format = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
+                    markerOption.position(latLng);
+                    markerOption.title(p.get(0).getName()).snippet("Found at " + format.format(date));
+
+                    final Marker marker = aMap.addMarker(markerOption);
+                    InfoWindow info_window = new InfoWindow();
+                    aMap.setInfoWindowAdapter(info_window);
+
+                });
+
+
             }
-
         });
     }
 
@@ -158,4 +192,40 @@ public class MapActivity extends AppCompatActivity {
         mMapView.onSaveInstanceState(outState);
     }
 
+
+}
+
+class InfoWindow implements AMap.InfoWindowAdapter {
+
+
+    @Override
+    public View getInfoWindow(Marker marker) {
+
+        View infoWindow = LayoutInflater.from(MapActivity.getAppContext()).inflate(
+                R.layout.custom_info_window, null);
+        render(marker, infoWindow);
+        return infoWindow;
+
+
+    }
+
+    public void render(Marker marker, View view) {
+
+
+        String title = marker.getTitle();
+//        Log.i("333333333", "render: " + marker.getTitle().isEmpty());
+        if (title != null) {
+            TextView title_ui = (TextView) view.findViewById(R.id.info_title);
+            title_ui.setText(title);
+            String snippet = marker.getSnippet();
+            TextView sippet_ui = (TextView) view.findViewById(R.id.info_snippet);
+            sippet_ui.setText(snippet);
+        }
+    }
+
+
+    @Override
+    public View getInfoContents(Marker marker) {
+        return null;
+    }
 }

@@ -19,13 +19,13 @@
     <fragment
         android:id="@+id/navigation_dashboard"
         android:name="com.example.plantdroid.ui.dashboard.DashboardFragment"
-        android:label="@string/title_catalog"
+        android:label="@string/title_map"
         tools:layout="@layout/fragment_dashboard" />
 
     <fragment
         android:id="@+id/navigation_notifications"
         android:name="com.example.plantdroid.ui.notifications.NotificationsFragment"
-        android:label="@string/title_map"
+        android:label="@string/title_catalog"
         tools:layout="@layout/fragment_notifications" />
 
 </navigation>

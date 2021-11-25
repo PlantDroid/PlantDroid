@@ -34,8 +34,8 @@ public interface PlantDroidDao {
     @Query("SELECT * FROM PLANT WHERE plant_name LIKE :name")
     LiveData<List<Plant>> getPlantByName(String name);
 
-    @Query("SELECT * FROM PLANT WHERE plant_name LIKE :name "
-            + "OR common_names LIKE '%' + :name + '%' ")
+    @Query("SELECT * FROM PLANT WHERE plant_name LIKE '%' || :name || '%' "
+            + "OR common_names LIKE '%' || :name || '%' ")
     LiveData<List<Plant>> searchPlantByName(String name);
 
     @Query("SELECT * FROM PLANT WHERE phylum LIKE :phylum")
