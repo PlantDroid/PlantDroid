@@ -23,6 +23,7 @@ import android.os.Environment;
 import android.os.FileUtils;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -130,7 +131,7 @@ public class CameraFragment extends Fragment {
         }
     }
 
-    @SuppressLint("CheckResult")
+    @SuppressLint({"CheckResult", "MissingPermission"})
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -160,21 +161,7 @@ public class CameraFragment extends Fragment {
                 locationUpdates(loc);
             }
         };
-        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
-        //从GPS获取最新的定位信息
 
-        Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        locationUpdates(location);    //将最新的定位信息传递给创建的locationUpdates()方法中
 
         LocationUtil.getInstance(getContext()).setAddressCallback(new LocationUtil.AddressCallback() {
             @Override
@@ -231,27 +218,17 @@ public class CameraFragment extends Fragment {
                         }
                     });
         }
-        Button shareB =getActivity().findViewById((R.id.button2));
-        shareB.setOnClickListener(new View.OnClickListener() {
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+        //从GPS获取最新的定位信息
 
-            @Override
-            public void onClick(View view) {
-                String dir = Environment.getExternalStorageDirectory().getAbsolutePath() ;
-                Calendar now = new GregorianCalendar();
-                SimpleDateFormat simpleDate = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault());
-                String fileName = simpleDate.format(now.getTime());
-                Bitmap cs =  screenShotView(requireView());
-                //System.out.println("+++++++++++++++++++++++++++++++++"+cs.toString()+"+++++++++++++++++++++++++++++");
-                saveBitmap(fileName+".jpg",cs,getContext());
-
-            }
-        });
-
+        Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        locationUpdates(location);    //将最新的定位信息传递给创建的locationUpdates()方法中
         ImageButton cameraBtn = getActivity().findViewById(R.id.cameraBtn);
         cameraBtn.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
+                System.out.println("click camera");
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     rxPermissions
                             .request(Manifest.permission.CAMERA
@@ -295,7 +272,8 @@ public class CameraFragment extends Fragment {
             }
         });
 
-        ivPicture = getActivity().findViewById(R.id.preImgView);
+
+
     }
     static boolean fileIsExist(String fileName)
     {
@@ -462,8 +440,6 @@ public class CameraFragment extends Fragment {
         data.put("plant_details", plantDetails);
         sendPostRequest("https://api.plant.id/v2/identify", data);
         showLoading();
-
-
     }
 
     public void showLoading() {
@@ -642,6 +618,7 @@ public class CameraFragment extends Fragment {
     @SuppressLint("CheckResult")
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        System.out.println(resultCode);
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == getActivity().RESULT_OK) {
             System.out.println(requestCode);
