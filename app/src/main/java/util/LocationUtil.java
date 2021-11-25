@@ -148,7 +148,7 @@ public class LocationUtil {
             if(addressCallback != null){
                 addressCallback.onGetLocation(latitude,longitude,accuracy);
             }
-            getAddress(latitude, longitude);
+            //getAddress(latitude, longitude);
         }
     }
 

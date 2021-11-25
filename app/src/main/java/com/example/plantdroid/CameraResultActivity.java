@@ -78,8 +78,11 @@ public class CameraResultActivity extends AppCompatActivity {
 
         Intent intent = this.getIntent();
         accuracy = Float.parseFloat(intent.getStringExtra("accuracy"));
-        latitude = Float.parseFloat(intent.getStringExtra("latitude"));
-        longitude = Float.parseFloat(intent.getStringExtra("longitude"));
+        System.out.println("[latitude]"+intent.getStringExtra("latitude"));
+        if (intent.getStringExtra("latitude") != null)
+            latitude = Float.parseFloat(intent.getStringExtra("latitude"));
+        if (intent.getStringExtra("longitude") != null)
+            longitude = Float.parseFloat(intent.getStringExtra("longitude"));
         plantsStr = intent.getStringExtra("response");
         time = intent.getStringExtra("time");
 

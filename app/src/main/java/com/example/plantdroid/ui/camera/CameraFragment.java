@@ -131,37 +131,35 @@ public class CameraFragment extends Fragment {
             System.out.println("没有获取到GPS信息");
         }
     }
+    LocationListener locationListener = new LocationListener() {
+        // Provider的状态在可用、暂时不可用和无服务三个状态直接切换时触发此函数
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle arg2) {
+        }
+
+        // Provider被enable时触发此函数，比如GPS被打开
+        @Override
+        public void onProviderEnabled(String provider) {
+        }
+
+        // Provider被disable时触发此函数，比如GPS被关闭
+        @Override
+        public void onProviderDisabled(String provider) {
+        }
+
+        //当坐标改变时触发此函数，如果Provider传进相同的坐标，它就不会被触发
+        @Override
+        public void onLocationChanged(Location loc) {
+            System.out.println("==onLocationChanged==");
+            locationUpdates(loc);
+        }
+    };
 
     @SuppressLint({"CheckResult", "MissingPermission"})
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        final LocationManager locationManager =
-                (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
 
-        LocationListener locationListener = new LocationListener() {
-            // Provider的状态在可用、暂时不可用和无服务三个状态直接切换时触发此函数
-            @Override
-            public void onStatusChanged(String provider, int status, Bundle arg2) {
-            }
-
-            // Provider被enable时触发此函数，比如GPS被打开
-            @Override
-            public void onProviderEnabled(String provider) {
-            }
-
-            // Provider被disable时触发此函数，比如GPS被关闭
-            @Override
-            public void onProviderDisabled(String provider) {
-            }
-
-            //当坐标改变时触发此函数，如果Provider传进相同的坐标，它就不会被触发
-            @Override
-            public void onLocationChanged(Location loc) {
-                System.out.println("==onLocationChanged==");
-                locationUpdates(loc);
-            }
-        };
 
 
         LocationUtil.getInstance(getContext()).setAddressCallback(new LocationUtil.AddressCallback() {
@@ -186,7 +184,8 @@ public class CameraFragment extends Fragment {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             rxPermissions
                     .request(
-                            Manifest.permission.ACCESS_FINE_LOCATION)
+                            Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_COARSE_LOCATION)
                     .subscribe(granted -> {
                         System.out.println("[Granted] " + granted);
                         if (granted) {
@@ -215,15 +214,23 @@ public class CameraFragment extends Fragment {
                                 e.printStackTrace();
                             }
                         } else {
+
                             showMsg("未获取到后台位置权限,请在设置内打开");
                         }
-                    });
-        }
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
-        //从GPS获取最新的定位信息
+                        LocationManager locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
 
-        Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        locationUpdates(location);    //将最新的定位信息传递给创建的locationUpdates()方法中
+                        if (ActivityCompat.checkSelfPermission
+                                (getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                            return;
+                        }else{
+                            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+                            Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                            locationUpdates(location);
+                        }
+                    });
+
+        }
+
 
         ImageButton cameraBtn = getActivity().findViewById(R.id.cameraBtn);
         cameraBtn.setOnClickListener(new View.OnClickListener() {
@@ -287,7 +294,7 @@ public class CameraFragment extends Fragment {
 
 
     String[] coordinateCamera = new String[2];
-    String time;
+    String timeALBUM;
     String accuracy = "-1";
     LoadingAnimatorView loadView;
     /**
@@ -453,15 +460,22 @@ public class CameraFragment extends Fragment {
                             Intent intent = new Intent();
                             intent.setClass(getContext(), CameraResultActivity.class);
                             intent.putExtra("response", response);
+
                             if (typePhoto) {
                                 intent.putExtra("latitude", coordinateCamera[0]);
                                 intent.putExtra("longitude", coordinateCamera[1]);
-                                intent.putExtra("time", time = String.valueOf(System.currentTimeMillis()));
+                                String tim= String.valueOf(System.currentTimeMillis());
+                                char a = tim.charAt(0);
+                                String timeCamera = a + "." + tim.substring(1) + "000E9";
+                                intent.putExtra("time", timeCamera);
+
+
                                 intent.putExtra("accuracy", accuracy);
+
                             } else {
                                 intent.putExtra("latitude", coordinateALBUM[0]);
                                 intent.putExtra("longitude", coordinateALBUM[1]);
-                                intent.putExtra("time", time);
+                                intent.putExtra("time", timeALBUM);
                                 intent.putExtra("accuracy", accuracy);
                             }
                             endLoading();
@@ -589,8 +603,8 @@ public class CameraFragment extends Fragment {
                 coordinateALBUM[0] = String.valueOf(cursor.getFloat(columnIndexLatitude));
                 coordinateALBUM[1] = String.valueOf(cursor.getFloat(columnIndexLongitude));
                 char a = addDate.charAt(0);
-                time = a + "." + addDate.substring(1) + "000E9";
-                System.out.println("addDate: " + time);
+                timeALBUM = a + "." + addDate.substring(1) + "000E9";
+
                 accuracy = "-1";
                 cursor.close();
 
