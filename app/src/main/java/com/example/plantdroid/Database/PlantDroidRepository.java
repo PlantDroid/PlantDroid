@@ -41,6 +41,9 @@ public class PlantDroidRepository {
     LiveData<List<Plant>> getPlantListByPhylum(String phylum){
         return plantDroidDao.getPlantListByPhylum(phylum);
     }
+    LiveData<List<Plant>> getPlantListByClass(String plantClass){
+        return plantDroidDao.getPlantListByClass(plantClass);
+    }
 
 
     void insertPlants(Plant... plants){

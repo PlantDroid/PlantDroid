@@ -41,7 +41,8 @@ public interface PlantDroidDao {
     @Query("SELECT * FROM PLANT WHERE phylum LIKE :phylum")
     LiveData<List<Plant>> getPlantListByPhylum(String phylum);
 
-
+    @Query("SELECT * FROM PLANT WHERE class LIKE :plantClass")
+    LiveData<List<Plant>> getPlantListByClass(String plantClass);
 
     //operation for table found_list
     @Insert

@@ -82,10 +82,9 @@ public class PlantDroidViewModel extends AndroidViewModel {
     }
 
 
-
     /**
      * method to get all Plants with provided plant in Database
-     * @param name plant name
+     * @param name desired plant name
      * @return a LiveData<List<Plant>>
      */
     public LiveData<List<Plant>> getPlantByName(String name){
@@ -101,6 +100,14 @@ public class PlantDroidViewModel extends AndroidViewModel {
        return plantDroidRepository.getPlantById(id);
     }
 
+    /**
+     * method to get all Plants with provided plant class name in Database
+     * @param className class name
+     * @return a LiveData<List<Plant>>
+     */
+    public LiveData<List<Plant>> getPlantListByClass(String className){
+        return plantDroidRepository.getPlantListByClass(className);
+    }
 
     /**
      * method to get all Discovered Plants in Database
