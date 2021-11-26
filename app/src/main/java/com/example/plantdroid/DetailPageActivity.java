@@ -281,7 +281,10 @@ public class DetailPageActivity extends AppCompatActivity {
             else {
                 Geocoder gc = new Geocoder(this, Locale.getDefault());
                 List<Address> locationList = gc.getFromLocation(latitude, longitude, 1);
-                location = "Found at " + locationList.get(0).getAddressLine(0) + ", " + discoverTime;
+                if (locationList.size() == 0)
+                    location = "Found at ???";
+                else location = "Found at " + locationList.get(0).getAddressLine(0);
+                location += ", " + discoverTime;
             }
 
             TextView textView = new TextView(this);
