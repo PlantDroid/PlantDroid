@@ -1,31 +1,30 @@
 package com.example.plantdroid;
 
-import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.icu.math.BigDecimal;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.amap.api.maps.AMap;
+import com.amap.api.maps.CameraUpdate;
+import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.MapView;
 import com.amap.api.maps.model.BitmapDescriptorFactory;
-import com.amap.api.maps.model.CustomMapStyleOptions;
+import com.amap.api.maps.model.CameraPosition;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MarkerOptions;
 import com.amap.api.maps.model.MyLocationStyle;
 import com.amap.api.services.core.ServiceSettings;
 import com.example.plantdroid.Database.DiscoveredPlant;
-import com.example.plantdroid.Database.Plant;
 import com.example.plantdroid.Database.PlantDroidViewModel;
 
 import java.io.File;
@@ -35,7 +34,7 @@ import java.io.InputStream;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class MapActivity extends AppCompatActivity {
     MapView mMapView = null;
@@ -46,11 +45,15 @@ public class MapActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+        Intent i = getIntent();
+        String discoverId = getIntent().getStringExtra("discoverId");
+
+
         MapActivity.context = getApplicationContext();
         setContentView(R.layout.activity_map);
         mMapView = (MapView) findViewById(R.id.map);
         mMapView.onCreate(savedInstanceState);
-        initMap();
+        initMap(discoverId);
     }
 
 
@@ -58,7 +61,7 @@ public class MapActivity extends AppCompatActivity {
         return MapActivity.context;
     }
 
-    private void initMap() {
+    private void initMap(String discoverId) {
         // 给授权
         ServiceSettings.updatePrivacyShow(this, true, true);
         ServiceSettings.updatePrivacyAgree(this, true);
@@ -66,6 +69,10 @@ public class MapActivity extends AppCompatActivity {
         AMap aMap = null;
         if (aMap == null) {
             aMap = mMapView.getMap();
+        }
+        if (discoverId != null) {
+            getDiscoveredPlants(discoverId, aMap);
+
         }
         MyLocationStyle myLocationStyle;
         myLocationStyle = new MyLocationStyle();
@@ -78,6 +85,7 @@ public class MapActivity extends AppCompatActivity {
 
         getAllLocation(aMap);
         setMapStyle(aMap);
+        aMap.setOnInfoWindowClickListener(listener);
     }
 
     private void setMapStyle(AMap aMap) {
@@ -122,6 +130,31 @@ public class MapActivity extends AppCompatActivity {
 
     }
 
+    protected void getDiscoveredPlants(String plantId, AMap aMap) {
+        PlantDroidViewModel plantDroidViewModel = ViewModelProviders.of(this).get(PlantDroidViewModel.class);
+
+        int id = Integer.parseInt(plantId);
+
+
+        plantDroidViewModel.getDiscoveredPlantsByPlantID(id).observe(this, plants -> {
+            DiscoveredPlant dp = (plants.get(0));
+            double lo = 0.00, la = 0.00;
+
+            if (dp.getLongitude() != null) {
+
+                lo = dp.getLongitude();
+                la = dp.getLatitude();
+
+            }
+            Log.i("33333333333", "getDiscoveredPlants: " + lo + la);
+            CameraUpdate mCameraUpdate = CameraUpdateFactory.newCameraPosition(
+                    new CameraPosition(new LatLng(la, lo), 10, 0, 0));
+            aMap.moveCamera(mCameraUpdate);
+        });
+
+
+    }
+
     protected void getAllLocation(AMap aMap) {
 
         PlantDroidViewModel plantDroidViewModel = ViewModelProviders.of(this).get(PlantDroidViewModel.class);
@@ -146,20 +179,20 @@ public class MapActivity extends AppCompatActivity {
 
                 plantDroidViewModel.getPlantById(plant.getId()).observe(this, p -> {
 
-                    BigDecimal bd;
-                    bd = new BigDecimal(plant.getFoundTime());
-                    Date date = new Date(bd.longValue() * 1000L);
-                    Format format = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
-                    markerOption.position(latLng);
-                    markerOption.title(p.get(0).getName()).snippet("Found at " + format.format(date));
+                    if (!p.isEmpty()) {
+                        BigDecimal bd;
+                        bd = new BigDecimal(plant.getFoundTime());
+                        Date date = new Date(bd.longValue() * 1000L);
+                        Format format = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
+                        markerOption.position(latLng);
+                        markerOption.title(p.get(0).getName()).snippet("Found at " + format.format(date));
 
-                    final Marker marker = aMap.addMarker(markerOption);
-                    InfoWindow info_window = new InfoWindow();
-                    aMap.setInfoWindowAdapter(info_window);
+                        final Marker marker = aMap.addMarker(markerOption);
+                        InfoWindow info_window = new InfoWindow();
+                        aMap.setInfoWindowAdapter(info_window);
 
+                    }
                 });
-
-
             }
         });
     }
@@ -192,6 +225,16 @@ public class MapActivity extends AppCompatActivity {
         mMapView.onSaveInstanceState(outState);
     }
 
+    AMap.OnInfoWindowClickListener listener = new AMap.OnInfoWindowClickListener() {
+
+        @Override
+        public void onInfoWindowClick(Marker marker) {
+            Intent intent = new Intent(MapActivity.this, DetailPageActivity.class);
+            intent.putExtra("plantName", marker.getTitle());
+            startActivity(intent);
+            MapActivity.this.onPause();
+        }
+    };
 
 }
 
@@ -205,15 +248,10 @@ class InfoWindow implements AMap.InfoWindowAdapter {
                 R.layout.custom_info_window, null);
         render(marker, infoWindow);
         return infoWindow;
-
-
     }
 
     public void render(Marker marker, View view) {
-
-
         String title = marker.getTitle();
-//        Log.i("333333333", "render: " + marker.getTitle().isEmpty());
         if (title != null) {
             TextView title_ui = (TextView) view.findViewById(R.id.info_title);
             title_ui.setText(title);
@@ -223,9 +261,9 @@ class InfoWindow implements AMap.InfoWindowAdapter {
         }
     }
 
-
     @Override
     public View getInfoContents(Marker marker) {
         return null;
     }
+
 }
