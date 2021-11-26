@@ -67,7 +67,7 @@
                 android:layout_marginLeft="30dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="30dp"
-                android:text="You can find more detial at https://plant.id/"
+                android:text="You can find more detail at https://plant.id/"
                 android:textSize="16sp" />
 
             <GridLayout

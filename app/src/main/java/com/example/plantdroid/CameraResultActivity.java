@@ -373,9 +373,11 @@ public class CameraResultActivity extends AppCompatActivity {
             String plantDesc = plantDetails.getJSONObject("wiki_description").getString("value");
             String plantImg = null;
             try {
+                // plantImg = plantJSON.getJSONArray("similar_images").getJSONObject(0).getString("url");
+                plantImg = plantDetails.getJSONObject("wiki_image").getString("value");
+            } catch (JSONException e) {
                 plantImg = plantJSON.getJSONArray("similar_images").getJSONObject(0).getString("url");
-                // plantImg = plantDetails.getJSONObject("wiki_image").getString("value");
-            } catch (JSONException e) {}
+            }
             System.out.println("[Plant Img] " + plantImg);
             String edibleParts = null;
             try {
