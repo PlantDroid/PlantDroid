@@ -15,6 +15,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
@@ -154,6 +155,7 @@ public class CameraResultActivity extends AppCompatActivity {
             Toast.makeText(this, "Hard to recognize, please choose/take another photo.", Toast.LENGTH_LONG).show();
             this.finish();
         }
+
     }
 
     public void showConfirmDialog() {
@@ -257,6 +259,16 @@ public class CameraResultActivity extends AppCompatActivity {
         candidatePlantDescription.setText("Description: " + plantDescs.get(index));
         candidatePlantWiki.setText(plantWikiUrls.get(index));
         candidatePlantProbability.setText("Similarity " + plantPros.get(index));
+
+        candidatePlantWiki.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Uri uri = Uri.parse(plantWikiUrls.get(index));
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(intent);
+            }
+        });
+        candidatePlantWiki.setTextColor(getColor(R.color.green_dark_1));
     }
 
     public void setRecordBtn() {

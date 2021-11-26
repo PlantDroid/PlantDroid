@@ -31,6 +31,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -278,6 +279,16 @@ public class CameraFragment extends Fragment {
                 } else {
                     openAlbum();
                 }
+            }
+        });
+
+        TextView plantIdLink = getActivity().findViewById(R.id.plantIdLink);
+        plantIdLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Uri uri = Uri.parse("https://plant.id/");
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(intent);
             }
         });
 
