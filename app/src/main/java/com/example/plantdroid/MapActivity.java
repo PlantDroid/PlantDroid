@@ -48,7 +48,6 @@ public class MapActivity extends AppCompatActivity {
         Intent i = getIntent();
         String discoverId = getIntent().getStringExtra("discoverId");
 
-
         MapActivity.context = getApplicationContext();
         setContentView(R.layout.activity_map);
         mMapView = (MapView) findViewById(R.id.map);
@@ -136,17 +135,16 @@ public class MapActivity extends AppCompatActivity {
         int id = Integer.parseInt(plantId);
 
 
-        plantDroidViewModel.getDiscoveredPlantsByPlantID(id).observe(this, plants -> {
+        plantDroidViewModel.getDiscoveredPlantById(id).observe(this, plants -> {
             DiscoveredPlant dp = (plants.get(0));
+            Log.i("33333333333", "getDiscoveredPlants: " + dp.getFoundTime());
             double lo = 0.00, la = 0.00;
-
             if (dp.getLongitude() != null) {
-
                 lo = dp.getLongitude();
                 la = dp.getLatitude();
 
             }
-            Log.i("33333333333", "getDiscoveredPlants: " + lo + la);
+
             CameraUpdate mCameraUpdate = CameraUpdateFactory.newCameraPosition(
                     new CameraPosition(new LatLng(la, lo), 10, 0, 0));
             aMap.moveCamera(mCameraUpdate);
@@ -174,16 +172,14 @@ public class MapActivity extends AppCompatActivity {
                     la += Math.random() / 10;
                     lo += Math.random() / 10;
                 }
-
                 LatLng latLng = new LatLng(la, lo);
-
-                plantDroidViewModel.getPlantById(plant.getId()).observe(this, p -> {
+                plantDroidViewModel.getPlantById(plant.getPlant_id()).observe(this, p -> {
 
                     if (!p.isEmpty()) {
                         BigDecimal bd;
                         bd = new BigDecimal(plant.getFoundTime());
                         Date date = new Date(bd.longValue() * 1000L);
-                        Format format = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
+                        Format format = new SimpleDateFormat("yyyy M    M dd HH:mm:ss");
                         markerOption.position(latLng);
                         markerOption.title(p.get(0).getName()).snippet("Found at " + format.format(date));
 
@@ -246,12 +242,17 @@ class InfoWindow implements AMap.InfoWindowAdapter {
 
         View infoWindow = LayoutInflater.from(MapActivity.getAppContext()).inflate(
                 R.layout.custom_info_window, null);
-        render(marker, infoWindow);
-        return infoWindow;
+        if (marker.getTitle() != null) {
+            render(marker, infoWindow);
+            return infoWindow;
+        }
+        return null;
     }
 
     public void render(Marker marker, View view) {
+
         String title = marker.getTitle();
+
         if (title != null) {
             TextView title_ui = (TextView) view.findViewById(R.id.info_title);
             title_ui.setText(title);

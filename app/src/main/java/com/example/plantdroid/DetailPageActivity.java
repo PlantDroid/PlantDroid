@@ -301,7 +301,7 @@ public class DetailPageActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         Intent intent = new Intent(DetailPageActivity.this, MapActivity.class);
-                        intent.putExtra("discoverId",Integer.toString(discovery.getPlant_id()) );
+                        intent.putExtra("discoverId",Integer.toString(discovery.getId()) );
                         startActivity(intent);
                     }
                 });
