@@ -42,7 +42,7 @@ public class NotificationsFragment extends Fragment {
     private ViewPager mViewPager;
     private ImageButton Search_button;
     //左右滑动的标题
-    private String[] mTitles = {"All","Magnoliophyta", "Streptophyta", "Basidiomycota", "Bryophyta", "Lichens", "Eumycophyta", "Magnoliophyta", "Other"};
+    private String[] mTitles = {"All","Pinopsida", "Cycadopsida", "Polypodiopsida", "Magnoliopsida", "Streptophyta", "Basidiomycota", "Magnoliopsida", "Other"};
     //每个标题对应的Fragment
     private List<Fragment> fragments;
     private NotificationsViewModel notificationsViewModel;
@@ -97,7 +97,6 @@ public class NotificationsFragment extends Fragment {
 
         Fragment fragment1 = MainFragment.newInstance(mTitles[0]);
         fragments.add(fragment1);
-
         Fragment fragment2 = MainFragment2.newInstance(mTitles[1]);
         fragments.add(fragment2);
         Fragment fragment3 = MainFragment3.newInstance(mTitles[2]);

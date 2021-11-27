@@ -50,7 +50,9 @@ public class MainFragment2 extends Fragment {
             @Override
             public void onChanged(List<Plant> plants) {
                 for (int i = 0; i < plants.size(); i++) {
-                    if(plants.get(i).getPlantClass().equals("Magnoliophyta")){
+                    Log.e("TAG", "pinopsida:" + plants.get(i).getPlantClass());
+                    if(plants.get(i).getPlantClass().equals("Pinopsida")){
+                        Log.e("TAG", "pinopsida:" + plants.get(i).getPlantClass());
                         String plantname = plants.get(i).getName();
                         String planturl = plants.get(i).getImg();
                         name.add(plantname);

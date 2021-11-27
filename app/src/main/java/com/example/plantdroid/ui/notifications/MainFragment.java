@@ -54,8 +54,7 @@ public class MainFragment extends Fragment {
             @Override
             public void onChanged(List<Plant> plants) {
                 for (int i = 0; i < plants.size(); i++) {
-                    Log.e("TAG", "getPlantClasstype: ???");
-                    Log.e("TAG", "getPlantClasstype: "+plants.get(i).getPlantClass());
+                    Log.e("TAG", "gettype: "+plants.get(i).getPlantClass() );
                     String plantname = plants.get(i).getName();
                     String planturl = plants.get(i).getImg();
                     name.add(plantname);

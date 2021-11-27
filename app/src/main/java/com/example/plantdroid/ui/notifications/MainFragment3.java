@@ -50,7 +50,8 @@ public class MainFragment3 extends Fragment {
             @Override
             public void onChanged(List<Plant> plants) {
                 for (int i = 0; i < plants.size(); i++) {
-                    if(plants.get(i).getPlantClass().equals("Streptophyta")){
+                    if(plants.get(i).getPlantClass().equals("Cycadopsida")){
+                        Log.e("TAG", "Cycadopsida:" + plants.get(i).getPlantClass());
                         String plantname = plants.get(i).getName();
                         String planturl = plants.get(i).getImg();
                         name.add(plantname);

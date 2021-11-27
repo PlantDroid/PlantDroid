@@ -26,7 +26,7 @@ import java.util.List;
 @SuppressLint("ValidFragment")
 public class MainFragment8 extends Fragment {
     private static String catalog_title;
-    private List<String> list = Arrays.asList("Magnoliophyta", "Streptophyta", "Basidiomycota");
+    private List<String> list = Arrays.asList("Pinopsida", "Cycadopsida", "Polypodiopsida", "Magnoliopsida", "Streptophyta", "Basidiomycota", "Magnoliopsida");
 
     public static MainFragment8 newInstance(String title) {
         MainFragment8 mainFragment = new MainFragment8();
@@ -52,7 +52,7 @@ public class MainFragment8 extends Fragment {
             public void onChanged(List<Plant> plants) {
 
                 for (int i = 0; i < plants.size(); i++) {
-                    if (!list.contains( plants.get(i).getPlantClass())){
+                    if (!list.contains( plants.get(i).getPlantClass())&!list.contains(plants.get(i).getPhylum())){
                         String plantname = plants.get(i).getName();
                         String planturl = plants.get(i).getImg();
                         name.add(plantname);
