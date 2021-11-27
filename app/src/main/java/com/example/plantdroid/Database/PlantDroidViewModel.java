@@ -152,10 +152,20 @@ public class PlantDroidViewModel extends AndroidViewModel {
     /**
      * method to get all Discovered plants matching the given plant_id in Database
      * @param plant_id plant id
-     * @return a LiveData<List<Plant>>
+     * @return a LiveData<List<DiscoveredPlant>>
      */
     public LiveData<List<DiscoveredPlant>> getDiscoveredPlantsByPlantID(int plant_id){
         return plantDroidRepository.getDiscoveredPlantsByPlantID(plant_id);
     }
+
+    /**
+     * method to get the discoveredPlant via id
+     * @param id target discoveredPlant instance id
+     * @return a LiveData<List<DiscoveredPlant>>
+     */
+    public LiveData<List<DiscoveredPlant>> getDiscoveredPlantById(int id){
+        return plantDroidRepository.getDiscoveredPlantById(id);
+    }
+
 
 }
