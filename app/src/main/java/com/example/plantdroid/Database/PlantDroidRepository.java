@@ -64,6 +64,8 @@ public class PlantDroidRepository {
         return allDiscoveredPlantList;
     }
     LiveData<List<DiscoveredPlant>> getDiscoveredPlantsByPlantID(int plant_id){return plantDroidDao.getDiscoveredPlantsByPlantID(plant_id);}
+    LiveData<List<DiscoveredPlant>> getDiscoveredPlantById(int id){return plantDroidDao.getDiscoveredPlantByID(id);}
+
 
     void insertDiscoveredPlants(DiscoveredPlant... discoveredPlants){
         new InsertDiscoveredPlantAsyncTask(plantDroidDao).execute(discoveredPlants);
