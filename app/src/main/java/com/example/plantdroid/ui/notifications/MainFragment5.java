@@ -51,8 +51,7 @@ public class MainFragment5 extends Fragment {
             public void onChanged(List<Plant> plants) {
 
                 for (int i = 0; i < plants.size(); i++) {
-                    Log.e("TAG", "Lichens:" + plants.get(i).getPhylum());
-                    if(plants.get(i).getPhylum().equals("Lichens")){
+                    if(plants.get(i).getPlantClass().equals("Lichens")){
                         String plantname = plants.get(i).getName();
                         String planturl = plants.get(i).getImg();
                         name.add(plantname);

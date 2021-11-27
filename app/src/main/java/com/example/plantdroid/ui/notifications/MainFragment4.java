@@ -50,7 +50,7 @@ public class MainFragment4 extends Fragment {
             @Override
             public void onChanged(List<Plant> plants) {
                 for (int i = 0; i < plants.size(); i++) {
-                    if(plants.get(i).getPhylum().equals("Basidiomycota")){
+                    if(plants.get(i).getPlantClass().equals("Basidiomycota")){
                         String plantname = plants.get(i).getName();
                         String planturl = plants.get(i).getImg();
                         name.add(plantname);

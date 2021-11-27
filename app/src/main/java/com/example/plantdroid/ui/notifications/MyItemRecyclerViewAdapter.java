@@ -46,7 +46,6 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
         Glide.with(holder.mContentView)
                 .load(plant_picture_url.get(position))
                 .into(holder.mContentView);
-        Log.e("TAG", "plant_picture_url: "+plant_picture_url.get(position));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             holder.mCardView.setOnClickListener(
                     new View.OnClickListener() {

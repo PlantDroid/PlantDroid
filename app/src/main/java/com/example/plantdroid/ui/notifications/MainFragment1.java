@@ -53,7 +53,7 @@ public class MainFragment1 extends Fragment {
 
                 for (int i = 0; i < plants.size(); i++) {
                     Log.e("TAG", "Magnoliophyta: "+plants.get(i).getPhylum() );
-                    if(plants.get(i).getPhylum().equals("Magnoliophyta")){
+                    if(plants.get(i).getPlantClass().equals("Magnoliophyta")){
                         String plantname = plants.get(i).getName();
                         String planturl = plants.get(i).getImg();
                         name.add(plantname);

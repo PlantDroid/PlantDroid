@@ -53,8 +53,9 @@ public class MainFragment extends Fragment {
         plantDroidViewModel.getAllPlantsLive().observe(getViewLifecycleOwner(), new Observer<List<Plant>>() {
             @Override
             public void onChanged(List<Plant> plants) {
-                Log.e("TAG", "MainFragmentononChanged:" + catalog_title);
                 for (int i = 0; i < plants.size(); i++) {
+                    Log.e("TAG", "getPlantClasstype: ???");
+                    Log.e("TAG", "getPlantClasstype: "+plants.get(i).getPlantClass());
                     String plantname = plants.get(i).getName();
                     String planturl = plants.get(i).getImg();
                     name.add(plantname);
