@@ -34,8 +34,6 @@ class ViewPagerAdapter extends FragmentStatePagerAdapter {
             return (MainFragment6) mFragments.get(position);
         }else if (position==6){
             return (MainFragment7) mFragments.get(position);
-        } else if (position==7){
-            return (MainFragment1) mFragments.get(position);
         }
         return (MainFragment8) mFragments.get(position);
     }
