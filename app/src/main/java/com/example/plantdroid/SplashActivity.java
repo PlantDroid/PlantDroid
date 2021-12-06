@@ -1,18 +1,17 @@
 package com.example.plantdroid;
 
 
-        import android.app.Activity;
-        import android.content.Intent;
-        import android.os.Bundle;
-        import android.view.View;
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
 
 /**
  * 开屏页
- *
  */
 public class SplashActivity extends Activity {
 
-    private static final int sleepTime = 2000;
+    private static final int sleepTime = 1000;
 
     @Override
     protected void onCreate(Bundle arg0) {
@@ -39,7 +38,6 @@ public class SplashActivity extends Activity {
                 //进入主页面
                 startActivity(new Intent(SplashActivity.this, BottomNavigationActivity.class));
                 finish();
-
             }
         }).start();
     }

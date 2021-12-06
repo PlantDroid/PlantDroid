@@ -28,7 +28,7 @@
                 android:layout_width="65dp"
                 android:layout_height="65dp"
                 android:gravity="center"
-                android:background="@drawable/round_button"/>
+                android:background="@drawable/logo"/>
 
             <TextView
                 android:id="@+id/item_number"
