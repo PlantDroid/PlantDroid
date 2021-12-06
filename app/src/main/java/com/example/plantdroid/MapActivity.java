@@ -4,10 +4,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.icu.math.BigDecimal;
+import android.media.Image;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -34,7 +36,10 @@ import java.io.InputStream;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+
+import util.LoadImage;
 
 public class MapActivity extends AppCompatActivity {
     MapView mMapView = null;
@@ -126,44 +131,31 @@ public class MapActivity extends AppCompatActivity {
                         .setStyleDataPath(filePath + "/" + styleName)
                         .setStyleExtraPath(filePath + "/" + "style_extra.data")
         );
-
     }
 
     protected void getDiscoveredPlants(String plantId, AMap aMap) {
         PlantDroidViewModel plantDroidViewModel = ViewModelProviders.of(this).get(PlantDroidViewModel.class);
-
         int id = Integer.parseInt(plantId);
-
-
         plantDroidViewModel.getDiscoveredPlantById(id).observe(this, plants -> {
             DiscoveredPlant dp = (plants.get(0));
-            Log.i("33333333333", "getDiscoveredPlants: " + dp.getFoundTime());
             double lo = 0.00, la = 0.00;
             if (dp.getLongitude() != null) {
                 lo = dp.getLongitude();
                 la = dp.getLatitude();
-
             }
-
             CameraUpdate mCameraUpdate = CameraUpdateFactory.newCameraPosition(
                     new CameraPosition(new LatLng(la, lo), 10, 0, 0));
             aMap.moveCamera(mCameraUpdate);
         });
-
-
     }
 
     protected void getAllLocation(AMap aMap) {
-
         PlantDroidViewModel plantDroidViewModel = ViewModelProviders.of(this).get(PlantDroidViewModel.class);
-
         plantDroidViewModel.getAllDiscoveredPlantsLive().observe(this, plants -> {
             MarkerOptions markerOption = new MarkerOptions();
             markerOption.icon(BitmapDescriptorFactory.fromBitmap(BitmapFactory
                     .decodeResource(getResources(), R.drawable.plant)));
 //            markerOption.setFlat(true);//设置marker平贴地图效果
-
-
             for (int i = 0; i < plants.size(); i++) {
                 DiscoveredPlant plant = plants.get(i);
                 double la = plant.getLatitude();
@@ -181,7 +173,7 @@ public class MapActivity extends AppCompatActivity {
                         Date date = new Date(bd.longValue() * 1000L);
                         Format format = new SimpleDateFormat("yyyy M    M dd HH:mm:ss");
                         markerOption.position(latLng);
-                        markerOption.title(p.get(0).getName()).snippet("Found at " + format.format(date));
+                        markerOption.title(p.get(0).getName()).snippet(format.format(date) + "$" + p.get(0).getImg());
 
                         final Marker marker = aMap.addMarker(markerOption);
                         InfoWindow info_window = new InfoWindow();
@@ -257,8 +249,12 @@ class InfoWindow implements AMap.InfoWindowAdapter {
             TextView title_ui = (TextView) view.findViewById(R.id.info_title);
             title_ui.setText(title);
             String snippet = marker.getSnippet();
+            String[] snippetLst = snippet.split("\\$");
             TextView sippet_ui = (TextView) view.findViewById(R.id.info_snippet);
-            sippet_ui.setText(snippet);
+            sippet_ui.setText("Found at " + snippetLst[0]);
+
+            ImageView plantImg = (ImageView) view.findViewById(R.id.info_imag);
+            LoadImage.setImageView(plantImg, snippetLst[1]);
         }
     }
 
