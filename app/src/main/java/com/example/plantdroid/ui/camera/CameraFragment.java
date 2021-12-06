@@ -132,6 +132,7 @@ public class CameraFragment extends Fragment {
             System.out.println("没有获取到GPS信息");
         }
     }
+
     LocationListener locationListener = new LocationListener() {
         // Provider的状态在可用、暂时不可用和无服务三个状态直接切换时触发此函数
         @Override
@@ -160,7 +161,6 @@ public class CameraFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
 
 
         LocationUtil.getInstance(getContext()).setAddressCallback(new LocationUtil.AddressCallback() {
@@ -223,7 +223,7 @@ public class CameraFragment extends Fragment {
                         if (ActivityCompat.checkSelfPermission
                                 (getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                             return;
-                        }else{
+                        } else {
                             locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
                             Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                             locationUpdates(location);
@@ -331,7 +331,6 @@ public class CameraFragment extends Fragment {
     Context mContext;
 
 
-
     @SuppressLint("CheckResult")
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -359,8 +358,9 @@ public class CameraFragment extends Fragment {
      * @param imageBase64 图片Base64
      */
     private void ImageDiscern(String imageBase64) throws Exception {
-        // String apiKey = "ojlt9sSkvTjiugRGANYWXD1JQ035ttwx5oUILTL4rSYVGbzzN2";
-        String apiKey = "4PjUdBxwusXeBznHkdVREaF0WMquaTE6xIJrJprxLt5l13eU2M";
+//         String apiKey = "ojlt9sSkvTjiugRGANYWXD1JQ035ttwx5oUILTL4rSYVGbzzN2";
+//        String apiKey = "4PjUdBxwusXeBznHkdVREaF0WMquaTE6xIJrJprxLt5l13eU2M";
+        String apiKey = "B4dUArzXoRW6SILORcC0iEWGl0PGmFQv5EpK8vf8a2r5xPaCS7";
 
         JSONObject data = new JSONObject();
         data.put("api_key", apiKey);
@@ -475,7 +475,7 @@ public class CameraFragment extends Fragment {
                             if (typePhoto) {
                                 intent.putExtra("latitude", coordinateCamera[0]);
                                 intent.putExtra("longitude", coordinateCamera[1]);
-                                String tim= String.valueOf(System.currentTimeMillis());
+                                String tim = String.valueOf(System.currentTimeMillis());
                                 char a = tim.charAt(0);
                                 String timeCamera = a + "." + tim.substring(1) + "000E9";
                                 intent.putExtra("time", timeCamera);

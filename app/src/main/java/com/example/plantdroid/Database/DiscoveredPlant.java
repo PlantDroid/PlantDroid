@@ -50,7 +50,7 @@ public class DiscoveredPlant {
         this.foundTime = foundTime;
     }
 
-    public Float getLatitude() {
+    public float getLatitude() {
         return latitude;
     }
 
@@ -58,7 +58,7 @@ public class DiscoveredPlant {
         this.latitude = latitude;
     }
 
-    public Float getLongitude() {
+    public float getLongitude() {
         return longitude;
     }
 

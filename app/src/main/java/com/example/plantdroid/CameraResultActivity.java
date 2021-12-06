@@ -1,53 +1,39 @@
 package com.example.plantdroid;
 
-import androidx.annotation.DrawableRes;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
-import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.example.plantdroid.Database.DiscoveredPlant;
 import com.example.plantdroid.Database.Plant;
 import com.example.plantdroid.Database.PlantDroidViewModel;
-import com.example.plantdroid.ui.camera.CameraFragment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import util.LoadImage;
+import util.LoadImageUtil;
 
 public class CameraResultActivity extends AppCompatActivity {
 
@@ -243,7 +229,7 @@ public class CameraResultActivity extends AppCompatActivity {
             //         .fitCenter()
             //         .into(resultImg);
             // System.out.println("[File url] " + fileUrl);
-            LoadImage.setImageView(resultImg, fileUrl);
+            LoadImageUtil.setImageView(resultImg, fileUrl);
         } catch (JSONException e) {
             System.out.println("[Load result image failed]");
             e.printStackTrace();
@@ -321,7 +307,7 @@ public class CameraResultActivity extends AppCompatActivity {
         ImageView plantImgView = new ImageView(this);
         ConstraintLayout.LayoutParams candidatePlantImgLayoutParams = new ConstraintLayout.LayoutParams(DP90, DP90);
         // load network image
-        LoadImage.setImageView(plantImgView, plantImgUrl);
+        LoadImageUtil.setImageView(plantImgView, plantImgUrl);
         plantImgView.setLayoutParams(candidatePlantImgLayoutParams);
         plantImgCard.addView(plantImgView);
         return plantImgCard;

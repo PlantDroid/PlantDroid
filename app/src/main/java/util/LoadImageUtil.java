@@ -9,14 +9,14 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class LoadImage {
+public class LoadImageUtil {
 
     public static void setImageView(ImageView imgView, String imgUrl) {
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    byte[] data = LoadImage.getImage(imgUrl);
+                    byte[] data = LoadImageUtil.getImage(imgUrl);
                     if (data != null) {
                         Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);    // bitmap
                         imgView.post(new Runnable() {
