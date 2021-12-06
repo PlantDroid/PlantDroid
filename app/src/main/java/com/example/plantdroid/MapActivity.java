@@ -39,7 +39,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-import util.LoadImage;
+import util.LoadImageUtil;
 
 public class MapActivity extends AppCompatActivity {
     MapView mMapView = null;
@@ -139,10 +139,8 @@ public class MapActivity extends AppCompatActivity {
         plantDroidViewModel.getDiscoveredPlantById(id).observe(this, plants -> {
             DiscoveredPlant dp = (plants.get(0));
             double lo = 0.00, la = 0.00;
-            if (dp.getLongitude() != null) {
                 lo = dp.getLongitude();
                 la = dp.getLatitude();
-            }
             CameraUpdate mCameraUpdate = CameraUpdateFactory.newCameraPosition(
                     new CameraPosition(new LatLng(la, lo), 10, 0, 0));
             aMap.moveCamera(mCameraUpdate);
@@ -254,7 +252,7 @@ class InfoWindow implements AMap.InfoWindowAdapter {
             sippet_ui.setText("Found at " + snippetLst[0]);
 
             ImageView plantImg = (ImageView) view.findViewById(R.id.info_imag);
-            LoadImage.setImageView(plantImg, snippetLst[1]);
+            LoadImageUtil.setImageView(plantImg, snippetLst[1]);
         }
     }
 
