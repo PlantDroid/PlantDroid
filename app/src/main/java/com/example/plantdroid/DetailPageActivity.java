@@ -7,7 +7,6 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -22,13 +21,10 @@ import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -39,12 +35,9 @@ import android.widget.Toast;
 import com.example.plantdroid.Database.DiscoveredPlant;
 import com.example.plantdroid.Database.Plant;
 import com.example.plantdroid.Database.PlantDroidViewModel;
-import com.example.plantdroid.ui.dashboard.DashboardFragment;
-import com.example.plantdroid.ui.notifications.NotificationsFragment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -58,8 +51,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 
-import util.LoadImage;
-import util.LogUtil;
+import util.LoadImageUtil;
 
 public class DetailPageActivity extends AppCompatActivity {
 
@@ -252,7 +244,7 @@ public class DetailPageActivity extends AppCompatActivity {
         TextView plantDesc = findViewById(R.id.plantDescription);
         plantDesc.setText(plant.getDescription());
         ImageView plantImg = findViewById(R.id.plantImg);
-        LoadImage.setImageView(plantImg, plant.getImg());
+        LoadImageUtil.setImageView(plantImg, plant.getImg());
     }
 
     @SuppressLint("NewApi")
