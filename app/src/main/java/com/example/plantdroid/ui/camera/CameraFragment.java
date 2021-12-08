@@ -192,41 +192,13 @@ public class CameraFragment extends Fragment {
                         if (granted) {
                             //获得权限
                             try {
-                                showMsg("已授权精确定位权限");
+                                //showMsg("已授权精确定位权限");
                             } catch (SecurityException e) {
                                 System.out.println("[Error]");
                                 e.printStackTrace();
                             }
                         } else {
-                            showMsg("未获取到位置权限,请在设置内打开");
-                        }
-                    });
-            rxPermissions
-                    .request(
-                            Manifest.permission.ACCESS_BACKGROUND_LOCATION)
-                    .subscribe(granted -> {
-                        System.out.println("[Granted] " + granted);
-                        if (granted) {
-                            //获得权限
-                            try {
-                                showMsg("已获后台位置权限");
-                            } catch (SecurityException e) {
-                                System.out.println("[Error]");
-                                e.printStackTrace();
-                            }
-                        } else {
-
-                            showMsg("未获取到后台位置权限,请在设置内打开");
-                        }
-                        LocationManager locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
-
-                        if (ActivityCompat.checkSelfPermission
-                                (getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                            return;
-                        } else {
-                            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
-                            Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                            locationUpdates(location);
+                            //showMsg("未获取到位置权限,请在设置内打开");
                         }
                     });
 
@@ -239,21 +211,76 @@ public class CameraFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 System.out.println("click camera");
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                // if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
                     rxPermissions
                             .request(Manifest.permission.CAMERA
                             )
                             .subscribe(granted -> {
                                 if (granted) {
-                                    //获得权限
-
                                     turnOnCamera();
                                 } else {
-                                    showMsg("未获取到权限,请在设置内打开");
+                                    showMsg("No permission, please open in Settings");
                                 }
                             });
                 } else {
-                    turnOnCamera();
+                    rxPermissions
+                            .request(Manifest.permission.CAMERA,
+                                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                            )
+                            .subscribe(granted -> {
+                                if (granted) {
+                                    turnOnCamera();
+                                } else {
+                                    showMsg("No permission, please open in Settings");
+                                }
+                            });
+                }
+
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    rxPermissions
+                            .request(
+                                    Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+                            .subscribe(granted -> {
+                                System.out.println("[Granted] " + granted);
+                                if (granted) {
+                                    //获得权限
+                                    try {
+                                        //showMsg("已获后台位置权限");
+                                    } catch (SecurityException e) {
+                                        System.out.println("[Error]");
+                                        e.printStackTrace();
+                                    }
+                                } else {
+
+                                    //showMsg("未获取到后台位置权限,请在设置内打开");
+                                }
+
+                            });
+                    LocationManager locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
+
+                    if (ActivityCompat.checkSelfPermission
+                            (getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        return;
+                    } else {
+                        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+                        Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                        locationUpdates(location);
+                    }
+                    // }
+                }else {
+                    LocationManager locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
+
+                    if (ActivityCompat.checkSelfPermission
+                            (getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        return;
+                    } else {
+                        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+                        Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                        locationUpdates(location);
+                    }
                 }
             }
         });
@@ -273,7 +300,7 @@ public class CameraFragment extends Fragment {
                                     //获得权限
                                     openAlbum();
                                 } else {
-                                    showMsg("未获取到权限,请在设置内打开");
+                                    showMsg("No permission, please open in Settings");
                                 }
                             });
                 } else {
@@ -635,32 +662,6 @@ public class CameraFragment extends Fragment {
                 System.out.println(imagePath);
                 //调取另一个activity
                 startUCrop();
-                // if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                //     float[] latLong = new float[2];
-                //     Uri photoUri = MediaStore.setRequireOriginal(imageUri);
-                //     InputStream stream = null;
-                //     try {
-                //         stream = getActivity().getContentResolver().openInputStream(photoUri);
-                //         if (stream != null) {
-                //             ExifInterface exifInterface = new ExifInterface(stream);
-                //             exifInterface.getLatLong(latLong);
-                //             //获取图片经纬度信息，第一个元素为纬度，第二个元素为经度
-                //             if (latLong[0] == 0 && latLong[1] == 0) {
-                //                 System.out.println("本图片无位置信息");
-                //             } else {
-                //                 coordinateCamera[0] = String.valueOf(latLong[0]);
-                //                 coordinateCamera [1] = String.valueOf(latLong[1]);
-                //                 accuracy = "-1";
-                //                 System.out.println("=============================================");
-                //                 System.out.println("latLong[0]" + latLong[0] + "latLong[1]" + latLong[1]);
-                //                 System.out.println("=============================================");
-                //             }
-                //             stream.close();
-                //         }
-                //     } catch (IOException e) {
-                //         e.printStackTrace();
-                //     }
-                //}
             } else if (requestCode == REQUEST_CROP) {
                 String imagePath;
                 Uri croppedUri = UCrop.getOutput(data);
@@ -679,12 +680,12 @@ public class CameraFragment extends Fragment {
             if (resultCode == UCrop.RESULT_ERROR) {
                 if (data != null) {
                     Throwable throwable = UCrop.getError(data);
-                    Toast.makeText(getActivity(), throwable.getMessage().toString() + "裁剪失败", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), throwable.getMessage().toString() + "Cut out failure", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(getActivity(), "裁剪失败", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Cut out failure", Toast.LENGTH_SHORT).show();
                 }
             }
-            showMsg("没有上传图片呦(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧");
+            showMsg("No pictures uploaded");
         }
     }
 
@@ -728,12 +729,6 @@ public class CameraFragment extends Fragment {
     private void localImageDiscern(String imagePath) throws Exception {
         try {
             System.out.println("[Image Path] " + imagePath);
-            //通过图片路径显示图片
-            // Glide.with(this)
-            //         .load(imagePath)
-            //         .placeholder(R.drawable.bluebell)
-            //         .fitCenter()
-            //         .into(ivPicture);
             String imageBase64 = base64EncodeFromFile(imagePath);
             //图像识别
             ImageDiscern(imageBase64);
