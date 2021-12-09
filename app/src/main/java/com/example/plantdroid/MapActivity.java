@@ -52,7 +52,6 @@ public class MapActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Intent i = getIntent();
         String discoverId = getIntent().getStringExtra("discoverId");
-
         MapActivity.context = getApplicationContext();
         setContentView(R.layout.activity_map);
         mMapView = (MapView) findViewById(R.id.map);
@@ -78,15 +77,13 @@ public class MapActivity extends AppCompatActivity {
             getDiscoveredPlants(discoverId, aMap);
 
         }
-        MyLocationStyle myLocationStyle;
-        myLocationStyle = new MyLocationStyle();
+        MyLocationStyle myLocationStyle = new MyLocationStyle();
 //        aMap.setMapLanguage("en"); 设置英语
-        myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE_NO_CENTER);
+        myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE);
         myLocationStyle.interval(2000); //设置连续定位模式下的定位间隔，只在连续定位模式下生效，单次定位模式下不会生效。单位为毫秒。
         aMap.setMyLocationStyle(myLocationStyle);//设置定位蓝点的Style
         aMap.getUiSettings().setMyLocationButtonEnabled(true);//设置默认定位按钮是否显示，非必需设置。
         aMap.setMyLocationEnabled(true);// 设置为true表示启动显示定位蓝点，false表示隐藏定位蓝点并不进行定位，默认是false。
-
         getAllLocation(aMap);
         setMapStyle(aMap);
         aMap.setOnInfoWindowClickListener(listener);
@@ -139,8 +136,8 @@ public class MapActivity extends AppCompatActivity {
         plantDroidViewModel.getDiscoveredPlantById(id).observe(this, plants -> {
             DiscoveredPlant dp = (plants.get(0));
             double lo = 0.00, la = 0.00;
-                lo = dp.getLongitude();
-                la = dp.getLatitude();
+            lo = dp.getLongitude();
+            la = dp.getLatitude();
             CameraUpdate mCameraUpdate = CameraUpdateFactory.newCameraPosition(
                     new CameraPosition(new LatLng(la, lo), 10, 0, 0));
             aMap.moveCamera(mCameraUpdate);
@@ -164,12 +161,11 @@ public class MapActivity extends AppCompatActivity {
                 }
                 LatLng latLng = new LatLng(la, lo);
                 plantDroidViewModel.getPlantById(plant.getPlant_id()).observe(this, p -> {
-
                     if (!p.isEmpty()) {
                         BigDecimal bd;
                         bd = new BigDecimal(plant.getFoundTime());
                         Date date = new Date(bd.longValue() * 1000L);
-                        Format format = new SimpleDateFormat("yyyy M    M dd HH:mm:ss");
+                        Format format = new SimpleDateFormat("yyyy-MM-dd");
                         markerOption.position(latLng);
                         markerOption.title(p.get(0).getName()).snippet(format.format(date) + "$" + p.get(0).getImg());
 
