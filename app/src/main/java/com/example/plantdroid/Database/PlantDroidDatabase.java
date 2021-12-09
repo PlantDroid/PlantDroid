@@ -6,13 +6,13 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-@Database(entities = {Plant.class, DiscoveredPlant.class}, version = 5, exportSchema = false)
+@Database(entities = {Plant.class, DiscoveredPlant.class}, version = 9, exportSchema = false)
 public abstract class PlantDroidDatabase extends RoomDatabase {
     private static PlantDroidDatabase INSTANCE;
 
     static synchronized PlantDroidDatabase getDatabase(Context context){
         if (INSTANCE == null){
-            INSTANCE = Room.databaseBuilder(context.getApplicationContext(), PlantDroidDatabase.class, "plant_droid_database")
+            INSTANCE = Room.databaseBuilder(context.getApplicationContext(), PlantDroidDatabase.class, "plant_droid_database.db")
                     .createFromAsset("prefill_database.db")
                     .fallbackToDestructiveMigration()
                     .build();
