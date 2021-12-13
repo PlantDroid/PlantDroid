@@ -35,6 +35,7 @@ import android.widget.Toast;
 import com.example.plantdroid.Database.DiscoveredPlant;
 import com.example.plantdroid.Database.Plant;
 import com.example.plantdroid.Database.PlantDroidViewModel;
+import com.example.plantdroid.ui.map.MapActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
