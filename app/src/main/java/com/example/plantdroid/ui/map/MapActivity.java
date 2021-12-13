@@ -1,12 +1,10 @@
-package com.example.plantdroid;
+package com.example.plantdroid.ui.map;
 
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.icu.math.BigDecimal;
-import android.media.Image;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -28,6 +26,8 @@ import com.amap.api.maps.model.MyLocationStyle;
 import com.amap.api.services.core.ServiceSettings;
 import com.example.plantdroid.Database.DiscoveredPlant;
 import com.example.plantdroid.Database.PlantDroidViewModel;
+import com.example.plantdroid.DetailPageActivity;
+import com.example.plantdroid.R;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -36,8 +36,6 @@ import java.io.InputStream;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 import util.LoadImageUtil;
 
