@@ -1,5 +1,6 @@
 package com.example.plantdroid.ui.map;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
@@ -7,6 +8,7 @@ import android.icu.math.BigDecimal;
 import android.location.Address;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,6 +35,7 @@ import com.example.plantdroid.Database.PlantDroidViewModel;
 import com.example.plantdroid.DetailPageActivity;
 import com.example.plantdroid.R;
 import com.example.plantdroid.ui.camera.CameraFragment;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -94,9 +97,18 @@ public class MapActivity extends AppCompatActivity {
                     coord[1] = String.valueOf(lng);
                 }
             });
-            CameraUpdate mCameraUpdate = CameraUpdateFactory.newCameraPosition(
-                    new CameraPosition(new LatLng(Double.valueOf(coord[0]), Double.valueOf(coord[1])), 17, 0, 0));
-            aMap.moveCamera(mCameraUpdate);
+            try {
+                CameraUpdate mCameraUpdate = CameraUpdateFactory.newCameraPosition(
+                        new CameraPosition(new LatLng(Double.valueOf(coord[0]), Double.valueOf(coord[1])), 17, 0, 0));
+                aMap.moveCamera(mCameraUpdate);
+            } catch (Exception e) {
+
+                CameraUpdate mCameraUpdate = CameraUpdateFactory.newCameraPosition(
+                        new CameraPosition(new LatLng(31.281268, 120.713579), 13, 0, 0));
+                aMap.moveCamera(mCameraUpdate);
+
+            }
+
         }
         MyLocationStyle myLocationStyle = new MyLocationStyle();
 //        aMap.setMapLanguage("en"); 设置英语
