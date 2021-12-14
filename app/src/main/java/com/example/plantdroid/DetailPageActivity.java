@@ -306,7 +306,7 @@ public class DetailPageActivity extends AppCompatActivity {
     private void setCommonNames(Plant plant) throws JSONException {
         ArrayList<String> commonNames = new ArrayList<>();
         System.out.println(plant.getCommonNames());
-        if (plant.getCommonNames() == null) commonNames.add("null");
+        if (plant.getCommonNames() == null) commonNames.add("No common name.");
         else {
             JSONArray commonNamesJSONArray = new JSONArray(plant.getCommonNames());
             // String[] commonNames = {"Lily-of-the-valley", "May bells", "Our Lady's tears", "Mary's tears", "muguet", "glovewort", "Apollinaris"}
@@ -333,7 +333,7 @@ public class DetailPageActivity extends AppCompatActivity {
     private void setEdibleParts(Plant plant) throws JSONException {
         // String[] edibleParts = {"flowers", "gum", "leaves", "seeds"};
         ArrayList<String> edibleParts = new ArrayList<>();
-        if (plant.getEdibleParts() == null) edibleParts.add("null");
+        if (plant.getEdibleParts() == null) edibleParts.add("No edible part.");
         else {
             JSONArray ediblePartsJSONArray = new JSONArray(plant.getEdibleParts());
             // String[] commonNames = {"Lily-of-the-valley", "May bells", "Our Lady's tears", "Mary's tears", "muguet", "glovewort", "Apollinaris"}
@@ -347,7 +347,7 @@ public class DetailPageActivity extends AppCompatActivity {
     private void setPropagationMethods(Plant plant) throws JSONException {
         // String[] propagationMethods = {"cuttings", "seeds"};
         ArrayList<String> propagationMethods = new ArrayList<>();
-        if (plant.getPropagationMethods() == null) propagationMethods.add("null");
+        if (plant.getPropagationMethods() == null) propagationMethods.add("No propagation method.");
         else {
             JSONArray propagationMethodsSONArray = new JSONArray(plant.getPropagationMethods());
             // String[] commonNames = {"Lily-of-the-valley", "May bells", "Our Lady's tears", "Mary's tears", "muguet", "glovewort", "Apollinaris"}
