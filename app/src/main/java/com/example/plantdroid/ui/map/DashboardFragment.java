@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -29,7 +30,7 @@ public class DashboardFragment extends Fragment {
         binding = FragmentDashboardBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
         final TextView textView = binding.textDashboard;
-        final Button btn = binding.mapBtn;
+        final ImageButton btn = binding.mapBtn;
 
         RxPermissions rxPermissions = new RxPermissions(getParentFragment().getActivity());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) rxPermissions

@@ -204,7 +204,7 @@ public class MapActivity extends AppCompatActivity {
                         Format format = new SimpleDateFormat("yyyy-MM-dd");
                         String plantPhylum = p.get(0).getPhylum();
                         String plantClass = p.get(0).getPlantClass();
-                        Log.i("TAG222222222222", "getAllLocation: " + plantPhylum + " " + plantClass);
+
                         MarkerOptions markerOption = new MarkerOptions();
                         if (plantClass.equals("Pinopsida"))
                             markerOption.icon(BitmapDescriptorFactory.fromBitmap(BitmapFactory
@@ -218,7 +218,7 @@ public class MapActivity extends AppCompatActivity {
                         else if (plantClass.equals("Magnoliopsida"))
                             markerOption.icon(BitmapDescriptorFactory.fromBitmap(BitmapFactory
                                     .decodeResource(getResources(), R.drawable.magnoliophyta)));
-                        else if (plantClass.equals("Polytrichopsida"))
+                        else if (plantPhylum.equals("Streptophyta"))
                             markerOption.icon(BitmapDescriptorFactory.fromBitmap(BitmapFactory
                                     .decodeResource(getResources(), R.drawable.plant)));
                         else if (plantClass.equals("Cycadopsida"))
