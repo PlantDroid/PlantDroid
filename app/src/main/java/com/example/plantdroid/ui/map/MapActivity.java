@@ -54,6 +54,10 @@ public class MapActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+        // 给授权
+        ServiceSettings.updatePrivacyShow(this, true, true);
+        ServiceSettings.updatePrivacyAgree(this, true);
+
         Intent i = getIntent();
         String discoverId = getIntent().getStringExtra("discoverId");
         MapActivity.context = getApplicationContext();
@@ -69,9 +73,6 @@ public class MapActivity extends AppCompatActivity {
     }
 
     private void initMap(String discoverId) {
-        // 给授权
-        ServiceSettings.updatePrivacyShow(this, true, true);
-        ServiceSettings.updatePrivacyAgree(this, true);
 
         AMap aMap = null;
         if (aMap == null) {
