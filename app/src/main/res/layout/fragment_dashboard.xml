@@ -39,15 +39,12 @@
             android:background="#bbffffff"
             android:layout_marginHorizontal="20dp">
 
-
-
-
             <TextView
                 android:id="@+id/text_dashboard1"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="100dp"
+                android:layout_marginTop="200dp"
                 android:layout_marginEnd="8dp"
                 android:text="You have found "
                 android:textAlignment="center"
@@ -69,7 +66,6 @@
                 android:textColor="@color/green_light_4"
                 android:textSize="34sp"
                 android:textStyle="bold"
-
                 app:layout_constraintBottom_toTopOf="@+id/text_dashboard2"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"

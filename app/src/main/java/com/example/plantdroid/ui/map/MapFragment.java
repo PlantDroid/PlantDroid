@@ -19,7 +19,7 @@ import com.example.plantdroid.Database.PlantDroidViewModel;
 import com.example.plantdroid.databinding.FragmentDashboardBinding;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
-public class DashboardFragment extends Fragment {
+public class MapFragment extends Fragment {
 
 
     private FragmentDashboardBinding binding;
