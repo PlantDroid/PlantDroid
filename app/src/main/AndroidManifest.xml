@@ -28,7 +28,7 @@
         >
 
         <activity
-            android:name=".Search_result"
+            android:name=".ui.notifications.Search_result"
             android:exported="false" />
 
         <meta-data

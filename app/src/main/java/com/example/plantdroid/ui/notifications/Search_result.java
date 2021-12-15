@@ -1,28 +1,20 @@
-package com.example.plantdroid;
+package com.example.plantdroid.ui.notifications;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.OrientationHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.plantdroid.Database.DiscoveredPlant;
 import com.example.plantdroid.Database.Plant;
 import com.example.plantdroid.Database.PlantDroidViewModel;
-import com.example.plantdroid.ui.notifications.MyItemRecyclerViewAdapter;
-import com.example.plantdroid.ui.notifications.NotificationsFragment;
+import com.example.plantdroid.R;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 

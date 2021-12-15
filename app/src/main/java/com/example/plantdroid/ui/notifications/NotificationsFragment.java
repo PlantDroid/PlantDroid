@@ -1,33 +1,21 @@
 package com.example.plantdroid.ui.notifications;
 
-import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
-
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.ColorFilter;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
 import com.example.plantdroid.R;
-import com.example.plantdroid.Search_result;
 
 import com.example.plantdroid.databinding.FragmentNotificationsBinding;
 import com.google.android.material.tabs.TabLayout;
@@ -42,7 +30,7 @@ public class NotificationsFragment extends Fragment {
     private ViewPager mViewPager;
     private ImageButton Search_button;
     //左右滑动的标题
-    private String[] mTitles = {"All","Pinopsida", "Cycadopsida", "Polypodiopsida", "Magnoliopsida", "Streptophyta", "Basidiomycota", "Other"};
+    private String[] mTitles = {"All", "Pinopsida", "Cycadopsida", "Polypodiopsida", "Magnoliopsida", "Streptophyta", "Basidiomycota", "Other"};
     //每个标题对应的Fragment
     private List<Fragment> fragments;
     private FragmentNotificationsBinding binding;
@@ -91,7 +79,10 @@ public class NotificationsFragment extends Fragment {
             }
         });
         fragments = new ArrayList<>();
-
+//        for (int i = 0; i < mTitles.length; i++) {
+//            Fragment fragment1 = MainFragment.newInstance(mTitles[i]);
+//            fragments.add(fragment1);
+//        }
         Fragment fragment1 = MainFragment.newInstance(mTitles[0]);
         fragments.add(fragment1);
         Fragment fragment2 = MainFragment2.newInstance(mTitles[1]);
