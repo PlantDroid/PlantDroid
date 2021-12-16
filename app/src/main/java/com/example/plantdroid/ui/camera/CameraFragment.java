@@ -387,8 +387,8 @@ public class CameraFragment extends Fragment {
     private void ImageDiscern(String imageBase64) throws Exception {
 //         String apiKey = "ojlt9sSkvTjiugRGANYWXD1JQ035ttwx5oUILTL4rSYVGbzzN2";
 //        String apiKey = "4PjUdBxwusXeBznHkdVREaF0WMquaTE6xIJrJprxLt5l13eU2M";
-        String apiKey = "B4dUArzXoRW6SILORcC0iEWGl0PGmFQv5EpK8vf8a2r5xPaCS7";
-
+//        String apiKey = "B4dUArzXoRW6SILORcC0iEWGl0PGmFQv5EpK8vf8a2r5xPaCS7";
+        String apiKey = "xEgQlF4IQZe9ttc1g5ohfrDlB7BVrHJ0AWONf4IadPyihXAVXs";
         JSONObject data = new JSONObject();
         data.put("api_key", apiKey);
 
