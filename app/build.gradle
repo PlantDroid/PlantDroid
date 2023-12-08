@@ -34,6 +34,8 @@ android {
     buildFeatures {
         viewBinding true
     }
+    namespace 'com.example.plantdroid'
+    buildToolsVersion '30.0.3'
 }
 
 dependencies {
@@ -81,7 +83,7 @@ dependencies {
     implementation "android.arch.lifecycle:viewmodel:1.1.0"
 
     //below is for Room
-    def room_version = "2.3.0"
+    def room_version = "2.4.0"
     implementation "androidx.room:room-runtime:$room_version"
     annotationProcessor "androidx.room:room-compiler:$room_version"
     // optional - RxJava2 support for Room
